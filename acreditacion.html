@@ -2,86 +2,423 @@
 <html lang="es">
 
 <head>
-    <!--Configuración general de la página-->
+    <!-- Configuración general de la página -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
     <title>Acreditación | Elegidos ICEC Juvenil</title>
 
-    <!--Archivo de estilos-->
+    <!-- Archivo de estilos -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <!--Encabezado y menú principal-->
+
+    <!-- Encabezado y menú principal -->
     <header class="encabezado">
 
         <a href="index.html" class="marca">
-            <img src="Logos/logo-elegidos.png" alt="Logo Elegidos ICEC Juvenil">
+            <img
+                src="Logos/logo-elegidos.png"
+                alt="Logo Elegidos ICEC Juvenil">
 
             <span>Elegidos ICEC Juvenil</span>
         </a>
 
-        <nav class="menu-principal" aria-label="Navegación principal">
+        <nav
+            class="menu-principal"
+            aria-label="Navegación principal">
+
             <a href="index.html">Inicio</a>
             <a href="informacion.html#informacion">Información</a>
-            <a href="acreditacion.html" aria-current="page">Acreditación</a>
-            <a href="contacto.html#contacto">Contacto</a>
 
+            <a
+                href="acreditacion.html"
+                aria-current="page">
+                Acreditación
+            </a>
+
+            <a href="contacto.html#contacto">Contacto</a>
         </nav>
+
     </header>
-    <!--Contenido principal (Acreditación)-->
+
+    <!-- Contenido principal de acreditación -->
     <main class="contenido-acreditacion">
+
         <section id="acreditacion" class="acreditacion">
 
-            <!--Presentacion del formulario-->
+            <!-- Presentación del formulario -->
             <div class="cabecera-formulario">
-            <h1>Formulario de acreditación</h1>
 
-            <p>
-                Completa tu perfil para inscribirte en Reconectados con la cruz.
-            </p>
+                <h1>Formulario de acreditación</h1>
 
-            <p>
-                ¿Ya tienes un perfil?
-                <a href="#inicio-sesion">Inicia sesión aquí</a>
-            </p>
+                <p>
+                    Completa tu perfil para inscribirte en
+                    Reconectados con la Cruz.
+                </p>
+
+                <p>
+                    ¿Ya tienes un perfil?
+                    <a href="#inicio-sesion">Inicia sesión aquí</a>
+                </p>
+
             </div>
 
-            <!--Formulario para crear el perfil-->
-            <form id="Formulario-acreditacion" class="formulario-acreditacion">
+            <!-- Formulario para crear el perfil -->
+            <form
+                id="formulario-acreditacion"
+                class="formulario-acreditacion">
 
-                <!--Datos para ingresar nuevamente en futuros eventos-->
+                <!-- Datos para futuros ingresos -->
                 <fieldset class="grupo-formulario">
-                    <legend>Datos de accese</legend>
+
+                    <legend>Datos de acceso</legend>
 
                     <div class="campos-grid">
+
                         <div class="campo">
-                            <label for="correo">Correo electronico</label>
+                            <label for="correo">
+                                Correo electrónico
+                            </label>
+
                             <input
                                 type="email"
-                                id="corero"
+                                id="correo"
                                 name="correo"
                                 autocomplete="email"
                                 required>
                         </div>
 
                         <div class="campo">
-                            <label for="conrasena">Crear Contraseña</label>
+                            <label for="contrasena">
+                                Crear contraseña
+                            </label>
+
                             <input
                                 type="password"
-                                id="conrasena"
-                                name="conrasena"
+                                id="contrasena"
+                                name="contrasena"
                                 minlength="8"
                                 autocomplete="new-password"
                                 required>
 
-                                <small>Mínimo 8 Caracteres. </small>
+                            <small>Mínimo 8 caracteres.</small>
                         </div>
 
                     </div>
+
                 </fieldset>
+
+                <!-- Datos personales del participante -->
+                <fieldset class="grupo-formulario">
+
+                    <legend>Datos personales</legend>
+
+                    <div class="campos-grid">
+
+                        <div class="campo">
+                            <label for="nombre-completo">
+                                Nombre completo
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nombre-completo"
+                                name="nombreCompleto"
+                                autocomplete="name"
+                                required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="rut">RUT</label>
+
+                            <input
+                                type="text"
+                                id="rut"
+                                name="rut"
+                                placeholder="12.345.678-9"
+                                required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="fecha-nacimiento">
+                                Fecha de nacimiento
+                            </label>
+
+                            <input
+                                type="date"
+                                id="fecha-nacimiento"
+                                name="fechaNacimiento"
+                                autocomplete="bday"
+                                required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="telefono">Teléfono</label>
+
+                            <input
+                                type="tel"
+                                id="telefono"
+                                name="telefono"
+                                autocomplete="tel"
+                                placeholder="+56 9 1234 5678"
+                                required>
+                        </div>
+
+                    </div>
+
+                </fieldset>
+
+                <!-- Información de salud -->
+                <fieldset class="grupo-formulario">
+
+                    <legend>Información de salud</legend>
+
+                    <div class="campos-grid">
+
+                        <div class="campo">
+                            <label for="tiene-alergias">
+                                ¿Tiene algún tipo de alergia?
+                            </label>
+
+                            <select
+                                id="tiene-alergias"
+                                name="tieneAlergias"
+                                required>
+
+                                <option value="">
+                                    Seleccione una opción
+                                </option>
+
+                                <option value="no">No</option>
+                                <option value="si">Sí</option>
+                            </select>
+                        </div>
+
+                        <div
+                            class="campo"
+                            id="campo-detalle-alergias"
+                            hidden>
+
+                            <label for="detalle-alergias">
+                                Escriba sus alergias
+                            </label>
+
+                            <input
+                                type="text"
+                                id="detalle-alergias"
+                                name="detalleAlergias"
+                                placeholder="Ejemplo: penicilina o frutos secos">
+                        </div>
+
+                        <div class="campo">
+                            <label for="tiene-enfermedad">
+                                ¿Tiene alguna enfermedad o condición médica?
+                            </label>
+
+                            <select
+                                id="tiene-enfermedad"
+                                name="tieneEnfermedad"
+                                required>
+
+                                <option value="">
+                                    Seleccione una opción
+                                </option>
+
+                                <option value="no">No</option>
+                                <option value="si">Sí</option>
+                            </select>
+                        </div>
+
+                        <div
+                            class="campo"
+                            id="campo-detalle-enfermedad"
+                            hidden>
+
+                            <label for="detalle-enfermedad">
+                                Indique cuál
+                            </label>
+
+                            <input
+                                type="text"
+                                id="detalle-enfermedad"
+                                name="detalleEnfermedad"
+                                placeholder="Describa la condición médica">
+                        </div>
+
+                        <div class="campo">
+                            <label for="toma-medicamentos">
+                                ¿Toma medicamentos?
+                            </label>
+
+                            <select
+                                id="toma-medicamentos"
+                                name="tomaMedicamentos"
+                                required>
+
+                                <option value="">
+                                    Seleccione una opción
+                                </option>
+
+                                <option value="no">No</option>
+                                <option value="si">Sí</option>
+                            </select>
+                        </div>
+
+                        <div
+                            class="campo"
+                            id="campo-detalle-medicamentos"
+                            hidden>
+
+                            <label for="detalle-medicamentos">
+                                Medicamento, dosis y horario
+                            </label>
+
+                            <input
+                                type="text"
+                                id="detalle-medicamentos"
+                                name="detalleMedicamentos"
+                                placeholder="Nombre, dosis y horario">
+                        </div>
+
+                        <div class="campo">
+                            <label for="restriccion-alimentaria">
+                                ¿Tiene alguna restricción alimentaria?
+                            </label>
+
+                            <select
+                                id="restriccion-alimentaria"
+                                name="restriccionAlimentaria"
+                                required>
+
+                                <option value="">
+                                    Seleccione una opción
+                                </option>
+
+                                <option value="no">No</option>
+                                <option value="si">Sí</option>
+                            </select>
+                        </div>
+
+                        <div
+                            class="campo"
+                            id="campo-detalle-alimentacion"
+                            hidden>
+
+                            <label for="detalle-alimentacion">
+                                Indique cuál
+                            </label>
+
+                            <input
+                                type="text"
+                                id="detalle-alimentacion"
+                                name="detalleAlimentacion"
+                                placeholder="Ejemplo: sin gluten o sin lactosa">
+                        </div>
+
+                    </div>
+
+                </fieldset>
+
+                <!-- Persona a contactar en una emergencia -->
+                <fieldset class="grupo-formulario">
+
+                    <legend>Contacto de emergencia</legend>
+
+                    <div class="campos-grid">
+
+                        <div class="campo">
+                            <label for="nombre-emergencia">
+                                Nombre completo del contacto
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nombre-emergencia"
+                                name="nombreEmergencia"
+                                required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="parentesco">
+                                Parentesco o relación
+                            </label>
+
+                            <input
+                                type="text"
+                                id="parentesco"
+                                name="parentesco"
+                                placeholder="Ejemplo: madre, padre o tutor"
+                                required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="telefono-emergencia">
+                                Teléfono principal
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="telefono-emergencia"
+                                name="telefonoEmergencia"
+                                placeholder="+56 9 1234 5678"
+                                required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="telefono-alternativo">
+                                Teléfono alternativo
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="telefono-alternativo"
+                                name="telefonoAlternativo"
+                                placeholder="+56 9 1234 5678">
+                        </div>
+
+                    </div>
+
+                </fieldset>
+
+                <!-- Confirmación y envío -->
+                <div class="confirmacion-formulario">
+
+                    <label class="casilla-confirmacion">
+
+                        <input
+                            type="checkbox"
+                            id="confirma-informacion"
+                            name="confirmaInformacion"
+                            required>
+
+                        <span>
+                            Confirmo que la información ingresada es correcta.
+                        </span>
+
+                    </label>
+
+                    <button
+                        type="submit"
+                        class="boton boton-guardar">
+
+                        Guardar perfil y continuar al pago
+                    </button>
+
+                </div>
+
             </form>
+
         </section>
+
     </main>
-    
+
+    <!--Funciones del formulario-->
+    <script src="scrip.js"></script>
+
 </body>
+
 </html>
