@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!--Configuración general de la página-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acreditación | Elegidos ICEC Juvenil</title>
+
+    <!--Archivo de estilos-->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!--Encabezado y menú principal-->
+    <header class="encabezado">
+
+        <a href="index.html" class="marca">
+            <img src="Logos/logo-elegidos.png" alt="Logo Elegidos ICEC Juvenil">
+
+            <span>Elegidos ICEC Juvenil</span>
+        </a>
+
+        <nav class="menu-principal" aria-label="Navegación principal">
+            <a href="index.html">Inicio</a>
+            <a href="informacion.html#informacion">Información</a>
+            <a href="acreditacion.html" aria-current="page">Acreditación</a>
+            <a href="contacto.html#contacto">Contacto</a>
+
+        </nav>
+    </header>
+    <!--Contenido principal (Acreditación)-->
+    <main class="contenido-acreditacion">
+        <section id="acreditacion" class="acreditacion">
+
+            <!--Presentacion del formulario-->
+            <div class="cabecera-formulario">
+            <h1>Formulario de acreditación</h1>
+
+            <p>
+                Completa tu perfil para inscribirte en Reconectados con la cruz.
+            </p>
+
+            <p>
+                ¿Ya tienes un perfil?
+                <a href="#inicio-sesion">Inicia sesión aquí</a>
+            </p>
+            </div>
+
+            <!--Formulario para crear el perfil-->
+            <form id="Formulario-acreditacion" class="formulario-acreditacion">
+
+                <!--Datos para ingresar nuevamente en futuros eventos-->
+                <fieldset class="grupo-formulario">
+                    <legend>Datos de accese</legend>
+
+                    <div class="campos-grid">
+                        <div class="campo">
+                            <label for="correo">Correo electronico</label>
+                            <input
+                                type="email"
+                                id="corero"
+                                name="correo"
+                                autocomplete="email"
+                                required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="conrasena">Crear Contraseña</label>
+                            <input
+                                type="password"
+                                id="conrasena"
+                                name="conrasena"
+                                minlength="8"
+                                autocomplete="new-password"
+                                required>
+
+                                <small>Mínimo 8 Caracteres. </small>
+                        </div>
+
+                    </div>
+                </fieldset>
+            </form>
+        </section>
+    </main>
+    
+</body>
+</html>
