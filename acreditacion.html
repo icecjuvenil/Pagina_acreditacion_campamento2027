@@ -75,10 +75,9 @@
                 <!-- Datos para futuros ingresos -->
                 <fieldset class="grupo-formulario">
 
-                    <legend>Datos de acceso</legend>
+                    <legend>Datos de la cuenta</legend>
 
                     <div class="campos-grid">
-
                         <div class="campo">
                             <label for="correo">
                                 Correo electrónico
@@ -380,6 +379,92 @@
                                 placeholder="+56 9 1234 5678">
                         </div>
 
+                    </div>
+
+                </fieldset>
+
+                <!--Opción para acreditar a otras personas-->
+                <fieldset class="grupo-formulario">
+
+                    <legend>Acompañantes</legend>
+
+                    <div class="campo">
+                        <label for="tiene-acompanantes">
+                            ¿Vas a acreditar a otras personas contigo?
+                        </label>
+
+                        <select
+                            id="tiene-acompanantes"
+                            name="tieneAcompanantes"
+                            required>
+
+                            <option value="">Selecione una opción</option>
+                            <option value="no"> 
+                                No, solo me acreditaré yo
+                            </option>
+                            <option value="si">
+                                Si, agregaré acompañantes
+                            </option>
+                        
+                        </select>
+                    </div>
+
+                    <div id ="seccion-acompanantes" hidden>
+                        <p>
+                            Agrega los datos de cada persona que se acredita contigo
+                        </p>
+
+                        <button
+                            type="button"
+                            id="agregar-acompanante"
+                            class="boton boton-agregar">
+
+                            Agregar acompañante
+                        </button>
+
+                        <div id="lista-acompanantes"></div>
+
+                        <!--Modelo para crear cada acompañante-->
+
+                        <template id="plantilla-acompanante">
+                            <article class="tarjeta-acompanante">
+                                <div class="encabezado-acomapanante">
+
+                                    <h3>
+                                        Acompañante_Numero_
+                                    </h3>
+
+                                    <button
+                                        type="button"
+                                        class="boton-eliminar-acompanante">
+
+                                        Eliminar acompañante
+                                    </button>
+                                </div>
+
+                                <!--Datos personales del acompañante -->
+                                <fieldset class="subgrupo-acompanante">
+
+                                    <legend>Datos personales</legend>
+
+                                    <div class="campos-grid">
+
+                                        <div class="campo">
+                                            <label for="nombre-acompanante-__NUMERO__">
+                                                Nombre Completo
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                id="nombre-acompanante-__NUMERO__"
+                                                name="acompanantes[__NUMERO__][nombre]"
+                                                required>
+                                        </div>
+                                        
+                                    </div>
+                                </fieldset>
+                            </article>
+                        </template>
                     </div>
 
                 </fieldset>

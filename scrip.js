@@ -41,3 +41,31 @@ preguntasCondicionales.forEach((pregunta) => {
     seleccion.addEventListener("change", actualizarCampo);
     actualizarCampo();
 });
+
+//Muestra la opcion para agregar acompañantes//
+const seleccionAcompanantes = document.getElementById(
+    "tiene-acompanantes"
+);
+
+const seccionAcompanantes = document.getElementById(
+    "seccion-acompanantes"
+);
+
+function actualizarSeccionAcompanantes() {
+    const agregaraAcompanantes =
+        seleccionAcompanantes.value === "si";
+
+    seccionAcompanantes.hidden =
+        !agregaraAcompanantes;
+}
+
+if (seleccionAcompanantes && seccionAcompanantes) {
+    seleccionAcompanantes.addEventListener(
+        "change",
+        actualizarSeccionAcompanantes
+    );
+
+    actualizarSeccionAcompanantes();
+}
+
+
