@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Resumen y pago | Elegidos ICEC Juvenil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!--Encabezado y menú principal -->
+    <header class="encabezado">
+        <a href="index.html" class="marca">
+            <img src="Logos/logo-elegidos.png" alt="Logo Elegidos ICEC Juvenil">
+        <span>Elegidos ICEC Juvenil</span>
+        </a>
+
+        <nav
+        class="menu-principal"
+        aria-label="Navegación principal">
+
+        <a href="index.html"> Inicio</a>
+        <a href="index.html#informacion">Información</a>
+
+        <a 
+            href="acreditacion.html"
+            aria-current="page">
+            Acreditación
+            </a>
+
+            <a href="index.html#contecto">Contacto</a>
+        </nav>
+    </header>
+
+    <!--Contenido principal del pago-->
+    <main class="contenido-acreditacion">
+        <section class="acreditacion">
+
+            <!--Presentación de la pagina -->
+            <div class="cabecera-formulario">
+                <h1>Resumen y pago</h1>
+
+                <p>
+                    Revisa las personas inscritas y realiza
+                    la tranferencia por el total indicado
+                </p>
+            </div>
+
+            <!--Resumen de la persona principal-->
+            <section class="grupo-formulario">
+
+                <h2>Persona principal</h2>
+
+                <div id="resumen-personal-principal">
+                    <p>Cargando Información...</p>
+                </div>
+            </section>
+            
+            <!--Resumen de los acompañantes-->
+            <section class="grupo-formulario">
+
+                <h2>Acompañantes</h2>
+
+                <div id="resumen-acompanantes">
+                     <p>No se agregaron acompañantes</p>
+                </div>
+            </section>
+
+            <!--Total de la inscripción-->
+            <section class="grupo-formulario resumen-total">
+
+                <div>
+                    <h2>Total a pagar</h2>
+
+                    <p>
+                        Incluye la persona principal y sus acompañantes.
+                    </p>
+                </div>
+
+                <p
+                    id="total-acreditacion"
+                    class="total-acreditacion">
+
+                    $0
+                </p>
+                
+            </section>
+        
+
+        <!--Datos para realizar la transferencia-->
+        <section class="grupo-formulario">
+
+            <h2>Datos bancarios</h2>
+
+            <div class="datos-bancarios">
+                <p>
+                    <strong>Nombre:</strong>
+                    Yanina Salinas
+                </p>
+
+                <p>
+                    <strong>RUT:</strong>
+                    17.858.351-4
+                </p>
+
+                <p>
+                    <strong>Banco:</strong>
+                    Banco de Chile
+                </p>
+
+                <p>
+                    <strong>Tipo de cuenta:</strong>
+                    Cuenta Vista
+                </p>
+
+                <p>
+                    <strong>Número de cuenta:</strong>
+                    00-020-79212-85
+                </p>
+
+                <p>
+                    <strong>Correo:</strong>
+                    ya.salinas28@gmail.com
+                </p>
+            </div>
+        </section>
+
+        <!-- Formulario para enviar el comprobante-->
+         <form 
+            id="formulario-comprobante"
+            class="formulario-acreditacion">
+
+            <fieldset class="grupo-formulario">
+
+                <legend>Comprobante de transferencia</legend>
+            
+            <div class="campos-grid">
+                <div class="campo">
+                    <label for="titular-tranferencia">
+                        Nombre del titular que realizó la transferencia
+                    </label>
+
+                    <input 
+                        type="text"
+                        id="titular-tranferencia" 
+                        name="titular-tranferencia"
+                        required>
+                </div>
+
+                <div class="campo">
+                    <label for="fecha-transferencia">
+                        Fecha de la transferencia
+                    </label>
+
+                    <input 
+                        type="date"
+                        id="fecha-transferencia"
+                        name="fechaTransferencia"
+                        required>
+                </div>
+
+                <div class="campo">
+                    <label for="comprobante-transferencia">
+                        Comprobante
+                    </label>
+
+                    <input
+                        type="file"
+                        id="comprobante-transferencia"
+                        name="comprobanteTransferencia"
+                        accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                        required>
+
+                        <small>
+                            Formatos permitidos: JPG, PNG O PDF.
+                            Tamaño máximo: 5 MG
+                        </small>
+                </div>
+            </div>
+
+            <label class="casilla-confirmacion">
+                <input 
+                    type="checkbox"
+                    id="confirma-transferencia"
+                    name="confirmarTransferencia"
+                    required>
+
+                <span>
+                    Confirmo que el comprobante corresponde
+                    al pago de la inscripción
+                </span>
+
+            </label>
+
+            <div class="confirmacion-formulario">
+
+                <a 
+                    href="acreditacion.html"
+                    id="volver-formulario"
+                    class="boton boton-agregar">
+
+                    Volver y corregir
+                </a>
+
+                <button
+                    type="submit"
+                    class="boton boton-guardar">
+
+                    Enviar comprobante
+                </button>
+            </div>
+        </fieldset>
+        
+    </form>
+
+    <!--Estado de la revision del pago-->
+        <section
+        id="estado-pago"
+        class="grupo-formulario"
+        hidden>
+
+        <h2>Estado del pago</h2>
+
+        <p id="mensaje-estado-pago">
+
+            Comprobante pediente de revisión.
+        </p>
+        
+        </section>
+    </section>
+
+    
+    </main>
+
+    <script src="pago.js"></script>
+</body>
+</html>

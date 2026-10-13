@@ -45,3 +45,39 @@ if (contadorCampamento && diasRestantes) {
         1000 * 60 * 60
     );
 }
+
+// Mantiene el modo QA al entrar desde la página de inicio
+(() => {
+    const parametrosPagina = new URLSearchParams(
+        window.location.search
+    );
+
+    const sitioLocal = [
+        "localhost",
+        "127.0.0.1",
+        "::1"
+    ].includes(window.location.hostname);
+
+    const modoQA =
+        sitioLocal &&
+        parametrosPagina.get("qa") === "1";
+
+    if (!modoQA) {
+        return;
+    }
+
+    // Modifica todos los enlaces hacia la acreditación
+    const enlacesAcreditacion =
+        document.querySelectorAll(
+            'a[href="acreditacion.html"]'
+        );
+
+    enlacesAcreditacion.forEach((enlace) => {
+        enlace.href =
+            "acreditacion.html?qa=1";
+    });
+
+    console.log(
+        "Modo QA iniciado desde la página principal"
+    );
+})();

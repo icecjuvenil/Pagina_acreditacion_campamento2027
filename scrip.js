@@ -1,4 +1,4 @@
-// Preguntas que muestran un campo adicional al responder Sí
+// Preguntas que muestran un campo adicional al responder "Sí"
 const preguntasCondicionales = [
     {
         selectId: "tiene-alergias",
@@ -22,6 +22,7 @@ const preguntasCondicionales = [
     }
 ];
 
+// Activa los campos adicionales de información de salud
 preguntasCondicionales.forEach((pregunta) => {
     const seleccion = document.getElementById(
         pregunta.selectId
@@ -73,6 +74,13 @@ const seccionAcompanantes = document.getElementById(
 );
 
 function actualizarSeccionAcompanantes() {
+    if (
+        !seleccionAcompanantes ||
+        !seccionAcompanantes
+    ) {
+        return;
+    }
+
     const agregaraAcompanantes =
         seleccionAcompanantes.value === "si";
 
@@ -101,9 +109,20 @@ const salidaValorAcreditacion = document.getElementById(
     "valor-acreditacion"
 );
 
-const fechaInicioCampamento = new Date(2027, 0, 8);
+const fechaInicioCampamento = new Date(
+    2027,
+    0,
+    8
+);
 
 function actualizarValorAcreditacion() {
+    if (
+        !entradaFechaNacimiento ||
+        !salidaValorAcreditacion
+    ) {
+        return;
+    }
+
     if (!entradaFechaNacimiento.value) {
         salidaValorAcreditacion.textContent =
             "Seleccione la fecha de nacimiento";
@@ -163,13 +182,19 @@ if (
     salidaValorAcreditacion
 ) {
     entradaFechaNacimiento.addEventListener(
+        "input",
+        actualizarValorAcreditacion
+    );
+
+    entradaFechaNacimiento.addEventListener(
         "change",
         actualizarValorAcreditacion
     );
 
     actualizarValorAcreditacion();
 }
-// Guarda el perfil y decide el siguiente paso
+
+// Guarda el perfil y decide cuál es la siguiente página
 const formularioAcreditacion = document.getElementById(
     "formulario-acreditacion"
 );
@@ -181,7 +206,8 @@ if (formularioAcreditacion) {
             evento.preventDefault();
 
             const valorAcreditacion = Number(
-                salidaValorAcreditacion.dataset.valor
+                salidaValorAcreditacion?.dataset.valor ||
+                "0"
             );
 
             if (valorAcreditacion === 0) {
@@ -212,22 +238,214 @@ if (formularioAcreditacion) {
                 JSON.stringify(datosPersonaPrincipal)
             );
 
+            // Continúa al formulario de acompañantes
             if (
                 datosPersonaPrincipal.tieneAcompanantes ===
                 "si"
             ) {
-                window.location.href =
-                    "acompanantes.html";
+                const parametrosActuales =
+                    new URLSearchParams(
+                    window.location.search
+                );
+
+                const estaEnModoQA =
+                    parametrosActuales.get("qa") === "1";
+
+                    window.location.href =
+                    estaEnModoQA
+                    ? "acompanantes.html?qa=1"
+                    : "acompanantes.html";
 
                 return;
             }
-
+            // Elimina acompañantes de pruebas anteriores
             sessionStorage.removeItem(
                 "acompanantesCampamento"
             );
 
+            // Continúa directamente al resumen y pago
             window.location.href =
-                "resumen.html";
+                "pago.html";
         }
     );
 }
+
+// Completa datos ficticios solamente en modo QA local
+(() => {
+    const parametrosPagina = new URLSearchParams(
+        window.location.search
+    );
+
+    const sitioLocal = [
+        "localhost",
+        "127.0.0.1",
+        "::1"
+    ].includes(window.location.hostname);
+
+    const modoQA =
+        sitioLocal &&
+        parametrosPagina.get("qa") === "1";
+
+    if (!modoQA) {
+        return;
+    }
+
+    // Elimina los datos temporales de pruebas anteriores
+    sessionStorage.removeItem(
+        "personaPrincipalCampamento"
+    );
+
+    sessionStorage.removeItem(
+        "acompanantesCampamento"
+    );
+
+    sessionStorage.removeItem(
+        "pagoCampamento"
+    );
+
+    // Completa un campo y activa sus validaciones
+    function asignarValorPrueba(id, valor) {
+        const elemento = document.getElementById(id);
+
+        if (!elemento) {
+            console.warn(
+                `No se encontró el campo: ${id}`
+            );
+
+            return;
+        }
+
+        elemento.value = valor;
+
+        elemento.dispatchEvent(
+            new Event("input", {
+                bubbles: true
+            })
+        );
+
+        elemento.dispatchEvent(
+            new Event("change", {
+                bubbles: true
+            })
+        );
+    }
+
+    // Datos de la cuenta
+    asignarValorPrueba(
+        "correo",
+        "qa@ejemplo.test"
+    );
+
+    asignarValorPrueba(
+        "contrasena",
+        "PruebaQA2027!"
+    );
+
+    // Datos personales
+    asignarValorPrueba(
+        "nombre-completo",
+        "Usuario de prueba QA"
+    );
+
+    asignarValorPrueba(
+        "rut",
+        "11.111.111-1"
+    );
+
+    asignarValorPrueba(
+        "fecha-nacimiento",
+        "2005-01-01"
+    );
+
+    asignarValorPrueba(
+        "telefono",
+        "+56 9 1111 1111"
+    );
+
+    // Información de salud para la demostración
+    asignarValorPrueba(
+        "tiene-alergias",
+        "si"
+    );
+
+    asignarValorPrueba(
+        "detalle-alergias",
+        "Alergia de demostración: frutos secos"
+    );
+
+    asignarValorPrueba(
+        "tiene-enfermedad",
+        "si"
+    );
+
+    asignarValorPrueba(
+        "detalle-enfermedad",
+        "Condición médica de demostración"
+    );
+
+    asignarValorPrueba(
+        "toma-medicamentos",
+        "si"
+    );
+
+    asignarValorPrueba(
+        "detalle-medicamentos",
+        "Medicamento de demostración, una vez al día"
+    );
+
+    asignarValorPrueba(
+        "restriccion-alimentaria",
+        "si"
+    );
+
+    asignarValorPrueba(
+        "detalle-alimentacion",
+        "Sin lactosa, dato de demostración"
+    );
+
+    // Contacto de emergencia
+    asignarValorPrueba(
+        "nombre-emergencia",
+        "Contacto de prueba"
+    );
+
+    asignarValorPrueba(
+        "parentesco",
+        "Familiar"
+    );
+
+    asignarValorPrueba(
+        "telefono-emergencia",
+        "+56 9 2222 2222"
+    );
+
+    asignarValorPrueba(
+        "telefono-alternativo",
+        "+56 9 3333 3333"
+    );
+
+    // Activa el camino con acompañantes
+    asignarValorPrueba(
+        "tiene-acompanantes",
+        "si"
+    );
+
+    // Confirma que la información es correcta
+    const confirmacion = document.getElementById(
+        "confirma-informacion"
+    );
+
+    if (confirmacion) {
+        confirmacion.checked = true;
+
+        confirmacion.dispatchEvent(
+            new Event("change", {
+                bubbles: true
+            })
+        );
+    }
+
+    console.log(
+        "Modo QA cargado correctamente"
+    );
+})();
