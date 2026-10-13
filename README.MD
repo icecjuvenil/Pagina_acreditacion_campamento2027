@@ -9,7 +9,9 @@ Sitio web para acreditar participantes y acompañantes, calcular el valor de ins
 3. Abrir `index.html` con **Live Server**.
 4. Ingresar al siguiente enlace:
 
-### [Abrir modo QA](http://127.0.0.1:5501/index.html?qa=1)
+### [Abrir modo QA](http://127.0.0.1:5501/Frontend/index.html?qa=1)
+
+
 
 ```text
 http://127.0.0.1:5501/index.html?qa=1
