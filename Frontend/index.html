@@ -2,74 +2,289 @@
 <html lang="es">
 
 <head>
-    <!--Configuración general de la página-->
+    <!-- Configuración general de la página -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reconectados con la cruz | Elegidos ICEC Juvenil</title>
 
-    <!--Archivo de estilos-->
+    <title>Reconciliado en la Cruz | Elegidos ICEC Juvenil</title>
+
+    <!-- Archivo de estilos -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
     <!-- Encabezado y menú principal -->
-     <header class="encabezado">
+    <header class="encabezado">
+
+        <!-- Marca del sitio -->
         <a href="#inicio" class="marca">
-            <img src="Logos/logo-elegidos.png" alt="Logo Elegidos ICEC Juvenil">
+            <img
+                src="Logos/logo-elegidos.png"
+                alt="Logo Elegidos ICEC Juvenil">
+
             <span>Elegidos ICEC Juvenil</span>
         </a>
 
+        <!-- Navegación principal -->
         <nav class="menu-principal" aria-label="Navegación principal">
-            <a href="index.html">Inicio</a>
+            <a href="#inicio">Inicio</a>
             <a href="#informacion">Información</a>
             <a href="acreditacion.html">Acreditación</a>
             <a href="#contacto">Contacto</a>
         </nav>
 
-     </header>
+    </header>
 
-     <!--Contenido principal del sitio-->
-     <main>
+    <!-- Contenido principal del sitio -->
+    <main>
 
-        <!--Portada del campamento actual-->
+        <!-- Portada del campamento actual -->
         <section id="inicio" class="portada">
 
-            <!--Titulo principal para accesibilidad y buscadores-->
+            <!-- Título para accesibilidad y buscadores -->
             <h1 class="titulo-oculto">
-                Reconectados a la Cruz - Campamento ICEC 2027
+                Reconciliado en la Cruz - Campamento ICEC 2027
             </h1>
 
-            <!--Afiche oficial -->
-            <img src="Logos/oficial.png" 
-                alt="Reconectados a la Cruz - Campamento ICEC 2027" 
+            <!-- Afiche oficial -->
+            <img
+                src="Logos/oficial.jpeg"
+                alt="Reconciliado en la Cruz - Campamento ICEC 2027"
                 class="afiche-oficial">
 
-            <!--Infomacion ubicada debebajo del afiche-->
+            <!-- Información ubicada debajo del afiche -->
             <div class="portada-informacion">
-                <!--Fecha y contador-->
-                <div class="portada-informacion">
 
-                    <p class="etiqueta">
-                        campamento Juvenil 2027
-                    </p>
+                <!-- Fecha del campamento -->
+                <div class="fecha-destacada">
+
+                    <span
+                        class="icono-fecha"
+                        aria-hidden="true">
+                        📅
+                    </span>
 
                     <p class="fecha-campamento">
-                        8, 9 y 10 de enero del 2027
+                        8, 9 y 10 de enero de 2027
                     </p>
 
-                    <!--Contador actualizado mediante inicio.js-->
-                    <p
-                        class="contador-campamento"
-                        
-                    ></p>
                 </div>
+
+                <!-- Contador para el inicio del campamento -->
+                <div
+                    class="contador-campamento contador-detallado"
+                    aria-live="polite">
+
+                    <!-- Días -->
+                    <div class="unidad-contador">
+                        <strong id="dias-restantes">...</strong>
+                        <span>Días</span>
+                    </div>
+
+                    <!-- Horas -->
+                    <div class="unidad-contador">
+                        <strong id="horas-restantes">--</strong>
+                        <span>Horas</span>
+                    </div>
+
+                    <!-- Minutos -->
+                    <div class="unidad-contador">
+                        <strong id="minutos-restantes">--</strong>
+                        <span>Minutos</span>
+                    </div>
+
+                    <!-- Segundos -->
+                    <div class="unidad-contador">
+                        <strong id="segundos-restantes">--</strong>
+                        <span>Segundos</span>
+                    </div>
+
+                </div>
+
+                <!-- Botón principal de acreditación -->
+                <div class="acciones-portada">
+
+                    <a
+                        href="acreditacion.html"
+                        class="boton boton-secundario">
+                        Acredítate
+                    </a>
+
+                </div>
+
             </div>
 
-               
         </section>
-     </main>
 
-     <!--Contador del campamento-->
-     <script src="inicio.js"></script>
-    
+        <!--informacion principal del campamento-->
+        <section id="informacion" class="informacion-campamento">
+
+            <!--Titulo de la seccion-->
+            <h2 class="titulo-seccion">
+                Propósito del Campamento
+            </h2>
+
+            <!--Contedor de las tres tarjetas-->
+            <div class="tarjetas-informacion">
+
+            <!-- Tarjeta: Encuentro -->
+            <article class="tarjeta-informacion">
+
+                <span class="icono-informacion" aria-hidden="true">
+                    👥
+                </span>
+
+                <h3>Encuentro</h3>
+
+                <p>
+                    Un tiempo para conectarte con Dios
+                    y vivir una experiencia que marcará tu vida.
+                </p>
+            </article>
+
+            <!-- Tarjeta: Objetivo -->
+            <article class="tarjeta-informacion">
+
+                <span class="icono-informacion" aria-hidden="true">
+                    📖
+                </span>
+
+                <h3>Objetivo</h3>
+
+                <p>
+                    Talleres, tiempos de adoración y enseñanza
+                    para crecer en tu fe y descubrir el propósito
+                    que Dios tiene para ti.
+                </p>
+
+            </article>
+
+            <!-- Tarjeta: Disposición -->
+                <article class="tarjeta-informacion">
+
+                    <span class="icono-informacion" aria-hidden="true">
+                        ✝
+                    </span>
+
+                    <h3>Disposición</h3>
+
+                    <p>
+                        Deja tus cargas en las manos de Cristo
+                        y disfrutemos juntos de su hermosa presencia.
+                    </p>
+
+                </article>
+            </div>    
+
+        </section>
+
+        <!--Carrusel del campamento anterior-->
+        <section id="galeria" class="galeria-campamento">
+
+            <!--Titulo del carrusel-->
+            <h2 class="titulo-galeria">
+                Así vivimos nuestro campamento anterior
+            </h2>
+
+            <!--Contenido genral del carrusel-->
+            <div class="carrusel">
+
+                <!--Boton para retroceder-->
+                <button
+                    type="button"
+                    class="boton-carrusel boton-anterior"
+                    id="carrusel-anterior"
+                    aria-label="Ver fotografias anteriores">
+                    
+                </button>
+
+                <!--Ventana visible del carrusel-->
+                <div class="carrusel-ventana">
+                    <div class="carrusel-pista" id="carrusel-pista">
+                        <!--Fotografia 1-->
+                        <figure class="diapositiva-carrusel">
+                            <img 
+                                src="Logos/Fotos/1.jpg" 
+                                alt="Fotografía 1 del campamento anterior"
+                                loading="lazy">
+                        </figure>
+
+                        <!--Fotografia 2-->
+                        <figure class="diapositiva-carrusel">
+                            <img 
+                                src="Logos/Fotos/2.jpg" 
+                                alt="fotografía 2 del campamento anterior"
+                                loading="lazy">
+                        </figure>
+
+                        <!--Fotografia 3-->
+                        <figure class="diapositiva-carrusel">
+                            <img 
+                                src="Logos/Fotos/3.jpg" 
+                                alt="fotografía 3 del campamento anterior"
+                                loading="lazy">
+                        </figure>
+
+                        <!--fotografia 4-->
+                        <figure class="diapositiva-carrusel">
+                            <img 
+                                src="Logos/Fotos/4.jpg" 
+                                alt="Fotografía 4 del campamento anterior"
+                                loading="lazy">
+                        </figure>
+
+                        <!--Fotografia 5-->
+                        <figure class="diapositiva-carrusel">
+                            <img 
+                                src="Logos/Fotos/5.jpg" 
+                                alt="Fotografía 5 del campamento anterior"
+                                loading="lazy">
+                        </figure>
+
+                        <!--Fotografia 6-->
+                        <figure class="diapositiva-carrusel">
+                            <img 
+                                src="Logos/Fotos/6.jpg" 
+                                alt="Fotografía 6 del campamento anterior"
+                                loading="lazy">
+                        </figure>
+                    </div>
+                </div>
+
+                <!--Boton para avanzar-->
+                <button
+                    type="button"
+                    class="boton-carrusel boton-siguiente"
+                    id="carrusel-siguiente"
+                    aria-label="Ver fotografias siguientes">
+                    
+                </button>
+            </div>
+
+            <!--Indicadores de posicion-->
+            <div class="indicadores-carrusel" aria-label="Posición del carrusel">
+                <button
+                    type="button"
+                    class="indicador-carrusel activo"
+                    data-indice="0"
+                    aria-label="Mostrar primer grupo de fotografias">
+                </button>
+
+                <button
+                    type="button"
+                    class="indicador-carrusel"
+                    data-indice="1"
+                    aria-label="Mostrar segundo grupo de fotografias">
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Contador del campamento -->
+    <script src="inicio.js"></script>
+
 </body>
+
 </html>

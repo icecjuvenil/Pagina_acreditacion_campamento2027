@@ -94,6 +94,6 @@ public class Usuario {
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
     }
-}
+}   
 
 
