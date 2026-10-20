@@ -31,48 +31,40 @@
      <main>
 
         <!--Portada del campamento actual-->
-        <section id="Inicio" class="portada">
+        <section id="inicio" class="portada">
 
-            <!--Informacion principal del evento-->
-            <div class="portada-texto">
-                <p class="etiqueta">Camapamento Juvenil 2027</p>
+            <!--Titulo principal para accesibilidad y buscadores-->
+            <h1 class="titulo-oculto">
+                Reconectados a la Cruz - Campamento ICEC 2027
+            </h1>
 
-                <h1>Reconectados con la cruz</h1>
+            <!--Afiche oficial -->
+            <img src="Logos/oficial.png" 
+                alt="Reconectados a la Cruz - Campamento ICEC 2027" 
+                class="afiche-oficial">
 
-                <!--Frase bíblica central del campamento-->
-                <blockquote class="versiculo">
-                    <p>"“Ya no vivo yo, mas vive Cristo en mí.”</p>
-                    <cite>Gálatas 2:20</cite>
-                </blockquote>
+            <!--Infomacion ubicada debebajo del afiche-->
+            <div class="portada-informacion">
+                <!--Fecha y contador-->
+                <div class="portada-informacion">
 
-                <p class="fecha-campamento">
-                    8, 9 y 10 de enero 2027
-                </p>
+                    <p class="etiqueta">
+                        campamento Juvenil 2027
+                    </p>
 
-                <!--Contador para el inicio del campamento -->
-                <p class="contador-campamento" aria-live="polite">
-                    Faltan
-                    <strong id="dias-restantes">...</strong>
-                    dias para campamento
-                </p>
+                    <p class="fecha-campamento">
+                        8, 9 y 10 de enero del 2027
+                    </p>
 
-                <p class="descripcion">
-                    Crea tu perfil, realiza tu acreditación y accede al material del campamento
-                </p>
-
-                <!--Botones principal de acreditación-->
-                <div class="acciones-portada">
-                    <a href="acreditacion.html" class="boton boton-secundario">
-                        Acredítate
-                    </a>
+                    <!--Contador actualizado mediante inicio.js-->
+                    <p
+                        class="contador-campamento"
+                        
+                    ></p>
                 </div>
             </div>
 
-            <!--Espacio temporal para el logo oficial del evento-->
-            <div class="portada-logo logo-pendiente">
-                <p>Logo oficial de<br>Reconectados con la cruz</p>
-                <span>Proximamente</span>
-            </div>
+               
         </section>
      </main>
 
