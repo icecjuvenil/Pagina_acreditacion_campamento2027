@@ -897,4 +897,504 @@ main {
    }
 
    /*Titulo de la galeria*/
-   .titulo
+   .titulo-galeria{
+    margin: 0;
+
+    color: var(--verde-oscuro);
+    text-align: center;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+   }
+
+   /*linea amarilla debajo del titulo*/
+   .titulo-galeria::after{
+    content: "";
+
+    display: block;
+    width: 48px;
+    height: 4px;
+    margin: 12px auto 30px;
+
+    background-color: var(--amarillo);
+    border-radius: 999px;
+   }
+
+   /* Organiza las flechas y las fotografias */
+   .carrusel {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 16px;
+   }
+
+   .carrusel-ventana{
+    min-width: 0;
+    overflow: hidden;
+   }
+
+   /*Pista que se desplazara mediante JavaScript*/
+   .carrusel-pista{
+        display: flex;
+        gap: 16px;
+
+        transition: transform 0.45s ease;
+   }
+
+   /* Cada fotografía ocupa un tercio del carrusel */
+    .diapositiva-carrusel {
+        flex: 0 0 calc((100% - 32px) / 3);
+        aspect-ratio: 4 / 3;
+
+        background-color: var(--crema);
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+   /*Fotografia interior*/
+   .diapositiva-carrusel img {
+        display: block;
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+   }
+
+   /*flechas del carrusel*/
+   .boton-carrusel{
+
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+
+        width: 46px;
+        height: 46px;
+
+        color: var(--verde-oscuro);
+        background-color: var(--blanco);
+
+        border: 1px solid var(--verde-bosque);
+        border-radius: 50%;
+        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
+
+        cursor: pointer;
+        font-size: 1.5rem;
+
+        transition: 
+            color 0.2s,
+            background-color 0.2s,
+            transform 0.2s;
+   }
+
+   /*cambio de las flechas la pasar el mouse*/
+   .boton-carrusel:hover {
+        color: var(--blanco);
+        background-color: var(--verde-bosque);
+        transform: scale(1.06);
+   }
+
+   /*ayuda visual para navegacion con teclado*/
+   .boton-carrusel:focus-visible{
+        outline: 3px solid var(--amarillo);
+        outline-offset: 3px;
+   }
+
+   /*contenedor de lso puntos inferiores*/
+   .indicadores-carrusel{
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+
+        margin-top: 20px;
+    }
+
+    /*cada punto del carrusel*/
+    .indicador-carrusel{
+        width: 12px;
+        height: 12px;
+        padding: 0;
+
+        background-color: #d8cfbb;
+        border: 0;
+        border-radius: 50%;
+
+        cursor: pointer;
+    }
+
+    /* Punto correspondiente al grupo visible*/
+    .indicador-carrusel.activo{
+        background-color: var(--amarillo);
+    }
+
+    /* ==================================================
+   14. ADAPTACIÓN DEL CARRUSEL PARA TABLETS
+   ================================================== */
+
+    @media (max-width: 900px) {
+
+    /* Muestra dos fotografías */
+    .diapositiva-carrusel {
+        flex-basis: calc((100% - 16px) / 2);
+    }
+}
+
+
+/* ==================================================
+   15. ADAPTACIÓN DEL CARRUSEL PARA CELULARES
+   ================================================== */
+
+    @media (max-width: 600px) {
+
+    .galeria-campamento {
+        padding: 38px 14px;
+        border-radius: 20px;
+    }
+
+    .carrusel {
+        gap: 8px;
+    }
+
+    /* Muestra una fotografía */
+    .diapositiva-carrusel {
+        flex-basis: 100%;
+    }
+
+    .boton-carrusel {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+    }
+}
+/* ==================================================
+   16. VISOR DE FOTOGRAFÍAS AMPLIADAS
+   ================================================== */
+
+/*Indica que las fotografías se pueden ampliar*/
+.diapositiva-carrusel img {
+    cursor: zoom-in;
+    transition:
+        transform 0.25s,
+        filter 0.25s;
+}
+
+/*Efecto al pasar sobre una fotografía*/
+.diapositiva-carrusel:hover img {
+    transform: scale(1.03);
+    filter: brightness(0.9);
+}
+
+/*Ventana completa del visor*/
+.visor-fotografia {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 35px 70px;
+    box-sizing: border-box;
+    background-color: transparent;
+    border: 0;
+    overflow: hidden;
+}
+
+/*Centra la fotografía dentro de la pantalla*/
+.visor-fotografia[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/*Fondo oscuro detrás de la fotografía*/
+.visor-fotografia::backdrop {
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(4px);
+}
+
+/*Fotografía ampliada*/
+.imagen-ampliada {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(1200px, calc(100vw - 160px));
+    max-height: calc(100dvh - 70px);
+    object-fit: contain;
+    background-color: #000000;
+    border-radius: 14px;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+}
+
+/*Botón para cerrar el visor*/
+.cerrar-visor {
+    position: fixed;
+    top: 20px;
+    right: 22px;
+    z-index: 3;
+
+    display: grid;
+    place-items: center;
+
+    width: 46px;
+    height: 46px;
+    padding: 0;
+
+    color: var(--verde-oscuro);
+    background-color: var(--blanco);
+    border: 2px solid var(--verde-oscuro);
+    border-radius: 50%;
+
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        transform 0.2s;
+}
+
+/*Flechas del visor*/
+.flecha-visor {
+    position: fixed;
+    top: 50%;
+    z-index: 2;
+
+    display: grid;
+    place-items: center;
+
+    width: 52px;
+    height: 52px;
+    padding: 0;
+
+    color: var(--verde-oscuro);
+    background-color: rgba(255, 255, 255, 0.94);
+    border: 2px solid var(--verde-oscuro);
+    border-radius: 50%;
+
+    cursor: pointer;
+    font-size: 1.7rem;
+    line-height: 1;
+
+    transform: translateY(-50%);
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        transform 0.2s;
+}
+
+/*Ubicación de la flecha anterior*/
+.flecha-visor-anterior {
+    left: 22px;
+}
+
+/*Ubicación de la flecha siguiente*/
+.flecha-visor-siguiente {
+    right: 22px;
+}
+
+/*Efectos de los botones*/
+.cerrar-visor:hover,
+.flecha-visor:hover {
+    color: var(--blanco);
+    background-color: var(--verde-oscuro);
+}
+
+/*Efecto especial de las flechas*/
+.flecha-visor:hover {
+    transform: translateY(-50%) scale(1.08);
+}
+
+/*Accesibilidad mediante teclado*/
+.cerrar-visor:focus-visible,
+.flecha-visor:focus-visible {
+    outline: 3px solid var(--amarillo);
+    outline-offset: 3px;
+}
+
+/*Adaptación del visor para celulares*/
+@media (max-width: 600px) {
+
+    .visor-fotografia {
+        padding: 16px 12px;
+    }
+
+    .imagen-ampliada {
+        max-width: calc(100vw - 24px);
+        max-height: calc(100dvh - 80px);
+        border-radius: 10px;
+    }
+
+    .cerrar-visor {
+        top: 12px;
+        right: 12px;
+        width: 42px;
+        height: 42px;
+        font-size: 1.7rem;
+    }
+
+    .flecha-visor {
+        width: 44px;
+        height: 44px;
+        font-size: 1.4rem;
+    }
+
+    .flecha-visor-anterior {
+        left: 8px;
+    }
+
+    .flecha-visor-siguiente {
+        right: 8px;
+    }
+}
+
+/* ==================================================
+   17. VISOR EN CELULARES
+   ================================================== */
+
+@media (max-width: 600px) {
+
+    .visor-fotografia {
+        width: 96vw;
+        max-width: 96vw;
+    }
+
+    .imagen-ampliada {
+        max-height: 82vh;
+        border-radius: 10px;
+    }
+
+    .cerrar-visor {
+        top: 8px;
+        right: 8px;
+
+        width: 40px;
+        height: 40px;
+
+        font-size: 1.7rem;
+    }
+}
+
+/* ==================================================
+   17. SECCIÓN DE CONTACTO
+   ================================================== */
+
+   /*Contenedor principla de contacto*/
+   .contacto{
+        width: min(1500px, calc(100% -32px));
+        margin: 16px auto 0;
+        padding: 48px 24px 52px;
+        box-sizing: border-box;
+
+        color: var(--blanco);
+        text-align: center;
+
+        background: 
+            linear-gradient(
+                rgba(8, 47, 32, 0.92),
+                rgba(5, 35, 24, 0.97)
+            ),
+            url(Logos/imagen.png) center 58% / cover no-repeat;
+
+        border-radius: 24px 24px 0 0;
+   }
+
+   /*Titulo de contacto*/
+   .contacto h2 {
+        margin: 0;
+        color: var(--blanco);
+        font-size: clamp(2rem, 4vw, 3rem);
+   }
+
+   /*linea decorativa bajo el titulo*/
+   .contacto .linea-decorativa{
+        display: block;
+        width: 48px;
+        height: 4px;
+        margin: 14px auto 28px;
+
+        background-color: var(--amarillo);
+        border-radius: 20px;
+   }
+
+   /*Enlace oficial de instragam*/
+   .enlace-instagram {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+
+        color: var(--blanco);
+        text-decoration: none;
+        font-size: 1.05rem;
+        font-weight: 700;
+
+        transition: 
+            color 0.2s,
+            transform 0.2s;
+   }
+
+   /*circulo e icono de instagram*/
+   .icono-instagram{
+        width: 72px;
+        height: 72px;
+        padding: 17px;
+        box-sizing: border-box;
+
+        color: var(--amarillo);
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 50%;
+
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+
+        transition:
+            color 0.2s,
+            background-color 0.2s,
+            transform 0.2s;
+   }
+
+   /*punto pequeño del icono de instagram*/
+   .icono-instagram circle:last-of-type{
+        fill: currentColor;
+        stroke:none;
+   }
+
+   /*efecto al pasar sobre el enlace*/
+   .enlace-instagram:hover {
+        color: var(--amarillo);
+        transform: translateY(-4px);
+   }
+
+   .enlace-instagram:hover .icono-instagram {
+    color: var(--verde-oscuro);
+    background-color: var(--amarillo);
+    transform: scale(1.06);
+   }
+
+   /*accesibilidad mediante teclado*/
+   .enlace-instagram:focus-visible{
+        outline: 3px solid var(--amarillo);
+        outline-offset: 6px;
+        border-radius: 8px;
+   }
+
+   /*adaptacion para celulares*/
+   @media (max-width: 600px){
+
+    .contacto{
+        width: calc(100% - 20px);
+        padding: 38px 18px 42px;
+        border-radius: 18px 18px 0 0;
+    }
+
+    .icono-instagram{
+        width: 64px;
+        height: 64px;
+        padding: 15px;
+    }
+   }
