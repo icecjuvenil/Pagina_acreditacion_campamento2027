@@ -1,0 +1,32 @@
+
+name: Verificar Backend ICEC
+
+on:
+  push:
+    branches: [ramaQA]
+  pull_request:
+    branches: [ramaQA]
+  workflow_dispatch:
+
+jobs:
+  compilar:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: campamento-backend
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: campamento-backend/pom.xml
+
+      - name: Compilar backend
+        run: ./mvnw -B -DskipTests package
