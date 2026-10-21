@@ -44,7 +44,7 @@ body {
 
 /* Limita el ancho del contenido principal */
 main {
-    width: min(1180px, calc(100% - 32px));
+    width: calc(100% - 32px);
     margin: 0 auto;
 }
 
@@ -60,7 +60,7 @@ main {
     justify-content: space-between;
     gap: 24px;
 
-    width: min(1180px, calc(100% - 32px));
+    width: calc(100% - 32px);
     margin: 24px auto 0;
     padding: 14px 24px;
 
@@ -379,7 +379,7 @@ main {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
 
-    max-width: 1050px;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -1279,122 +1279,262 @@ main {
    17. SECCIÓN DE CONTACTO
    ================================================== */
 
-   /*Contenedor principla de contacto*/
-   .contacto{
-        width: min(1500px, calc(100% -32px));
-        margin: 16px auto 0;
-        padding: 48px 24px 52px;
-        box-sizing: border-box;
+/*Contenedor principal de contacto*/
+.contacto {
+    width: 100%;
+    margin: 16px auto 0;
+    padding: 10px 10px 15px;
+    box-sizing: border-box;
 
-        color: var(--blanco);
-        text-align: center;
+    color: var(--blanco);
+    text-align: center;
 
-        background: 
-            linear-gradient(
-                rgba(8, 47, 32, 0.92),
-                rgba(5, 35, 24, 0.97)
-            ),
-            url(Logos/imagen.png) center 58% / cover no-repeat;
+    background:
+        linear-gradient(
+            rgba(7, 45, 30, 0.94),
+            rgba(5, 34, 23, 0.97)
+        ),
+        url("Logos/imagen.png") center 20% / cover no-repeat;
 
-        border-radius: 24px 24px 0 0;
-   }
+    border-radius: 24px 24px 0 0;
+}
 
-   /*Titulo de contacto*/
-   .contacto h2 {
-        margin: 0;
-        color: var(--blanco);
-        font-size: clamp(2rem, 4vw, 3rem);
-   }
+/*Título de contacto*/
+.contacto h2 {
+    margin: 0;
+    color: var(--blanco);
+    font-size: clamp(1.8rem, 3vw, 2.35rem);
+}
 
-   /*linea decorativa bajo el titulo*/
-   .contacto .linea-decorativa{
-        display: block;
-        width: 48px;
-        height: 4px;
-        margin: 14px auto 28px;
+/*Línea amarilla bajo el título*/
+.contacto h2::after {
+    content: "";
+    display: block;
 
-        background-color: var(--amarillo);
-        border-radius: 20px;
-   }
+    width: 44px;
+    height: 4px;
+    margin: 10px auto 20px;
 
-   /*Enlace oficial de instragam*/
-   .enlace-instagram {
-        display: inline-flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
+    background-color: var(--amarillo);
+    border-radius: 20px;
+}
 
-        color: var(--blanco);
-        text-decoration: none;
-        font-size: 1.05rem;
-        font-weight: 700;
+/*Enlace oficial de Instagram*/
+.enlace-instagram {
+    display: inline-grid;
+    place-items: center;
 
-        transition: 
-            color 0.2s,
-            transform 0.2s;
-   }
+    color: var(--amarillo);
+    text-decoration: none;
 
-   /*circulo e icono de instagram*/
-   .icono-instagram{
-        width: 72px;
-        height: 72px;
-        padding: 17px;
-        box-sizing: border-box;
+    transition: transform 0.2s;
+}
 
-        color: var(--amarillo);
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        border-radius: 50%;
+/*Círculo e icono de Instagram*/
+.icono-instagram {
+    width: 60px;
+    height: 60px;
+    padding: 15px;
+    box-sizing: border-box;
 
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 1.8;
-        stroke-linecap: round;
-        stroke-linejoin: round;
+    color: var(--amarillo);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
 
-        transition:
-            color 0.2s,
-            background-color 0.2s,
-            transform 0.2s;
-   }
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 
-   /*punto pequeño del icono de instagram*/
-   .icono-instagram circle:last-of-type{
-        fill: currentColor;
-        stroke:none;
-   }
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        transform 0.2s;
+}
 
-   /*efecto al pasar sobre el enlace*/
-   .enlace-instagram:hover {
-        color: var(--amarillo);
-        transform: translateY(-4px);
-   }
+/*Punto pequeño del icono de Instagram*/
+.icono-instagram circle:last-of-type {
+    fill: currentColor;
+    stroke: none;
+}
 
-   .enlace-instagram:hover .icono-instagram {
+/*Efecto al pasar sobre Instagram*/
+.enlace-instagram:hover {
+    transform: translateY(-3px);
+}
+
+.enlace-instagram:hover .icono-instagram {
     color: var(--verde-oscuro);
     background-color: var(--amarillo);
     transform: scale(1.06);
-   }
+}
 
-   /*accesibilidad mediante teclado*/
-   .enlace-instagram:focus-visible{
-        outline: 3px solid var(--amarillo);
-        outline-offset: 6px;
-        border-radius: 8px;
-   }
+/*Accesibilidad mediante teclado*/
+.enlace-instagram:focus-visible {
+    outline: 3px solid var(--amarillo);
+    outline-offset: 6px;
+    border-radius: 50%;
+}
 
-   /*adaptacion para celulares*/
-   @media (max-width: 600px){
+/*Adaptación para celulares*/
+@media (max-width: 600px) {
 
-    .contacto{
-        width: calc(100% - 20px);
-        padding: 38px 18px 42px;
+    .contacto {
+        width: 100%;
+        padding: 24px 18px 28px;
         border-radius: 18px 18px 0 0;
     }
 
-    .icono-instagram{
-        width: 64px;
-        height: 64px;
-        padding: 15px;
+    .icono-instagram {
+        width: 56px;
+        height: 56px;
+        padding: 14px;
     }
-   }
+}
+/* ==================================================
+   18. PIE DE PÁGINA
+   ================================================== */
+
+.pie-pagina {
+    width: calc(100% - 32px);
+    margin: 0 auto 24px;
+    padding: 10px 28px;
+    box-sizing: border-box;
+
+    color: var(--blanco);
+
+    background: linear-gradient(
+        90deg,
+        #061a12,
+        #0a281c,
+        #061a12
+    );
+
+    isolation: isolate;
+    border-radius: 0 0 24px 24px;
+}
+
+/* Distribuye la marca y la frase bíblica */
+.contenido-pie {
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* Logo, separador y nombre de la organización */
+.marca-pie {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+
+    color: var(--blanco);
+    text-decoration: none;
+}
+
+.marca-pie img {
+    display: block;
+    width: 86px;
+    height: auto;
+    mix-blend-mode: screen;
+}
+
+.nombre-marca-pie {
+    padding-left: 12px;
+    border-left: 1px solid var(--amarillo);
+
+    color: var(--blanco);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Frase ubicada al lado derecho */
+.frase-pie {
+    max-width: 620px;
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-align: right;
+}
+
+.frase-pie strong {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Indicador para navegación con teclado */
+.marca-pie:focus-visible {
+    outline: 3px solid var(--amarillo);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+
+/* ==================================================
+   ADAPTACIÓN DEL PIE DE PÁGINA
+   ================================================== */
+
+@media (max-width: 760px) {
+
+    .pie-pagina {
+        width: calc(100vw - 20px);
+        padding: 14px 20px;
+        border-radius: 0 0 18px 18px;
+    }
+
+    .contenido-pie {
+        min-height: auto;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .marca-pie {
+        justify-content: center;
+    }
+
+    .marca-pie img {
+        width: 78px;
+    }
+
+    .nombre-marca-pie {
+        padding-left: 10px;
+        font-size: 0.72rem;
+    }
+
+    .frase-pie {
+        max-width: 520px;
+        font-size: 0.82rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 430px) {
+
+    .pie-pagina {
+        padding: 12px 16px;
+    }
+
+    .marca-pie img {
+        width: 72px;
+    }
+
+    .frase-pie {
+        font-size: 0.78rem;
+    }
+
+    .frase-pie strong {
+        display: block;
+        margin-top: 3px;
+    }
+}
