@@ -26,20 +26,20 @@ public class Usuario {
     private String correo;
 
     //Aqui se guardara la contraseña protegida, nunca con texto original. 
-    @column(name = "contrasena_hash", nullable = false, length = 255)
+    @Column(name = "contrasena_hash", nullable = false, length = 255)
     private String contrasenaHash;
 
     //indica si la cuenta pertenece a un participante o adminsitrador
     @Enumerated(EnumType.STRING)
-    @column(nullable = false, length= 20)
+    @Column(nullable = false, length= 20)
     private RolUsuario rol = RolUsuario.PARTICIPANTE;
 
     //Permite habilitar o deshabilitar una cuenta
-    @Colum(nullable = false)
+    @Column(nullable = false)
     private boolean activo = true;
 
     //Fecha en que secreo la cuenta
-    @column(name = "fecha_creacion", nullable = false, updatable = false)
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
 
     /*Constructor vacio requerido por JPA */
