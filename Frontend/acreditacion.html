@@ -11,28 +11,39 @@
 
     <title>Acreditación | Elegidos ICEC Juvenil</title>
 
-    <!-- Archivo de estilos -->
+    <!-- Archivo principal de estilos -->
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="pagina-acreditacion">
 
-    <!-- Encabezado y menú principal -->
+    <!-- ==================================================
+         ENCABEZADO Y MENÚ PRINCIPAL
+         ================================================== -->
+
     <header class="encabezado">
 
+        <!-- Logo y nombre de la organización -->
         <a href="index.html" class="marca">
+
             <img
                 src="Logos/logo-elegidos.png"
                 alt="Logo Elegidos ICEC Juvenil">
 
-            <span>Elegidos ICEC Juvenil</span>
+            <span class="nombre-marca">
+                @ICECJUVENIL
+            </span>
+
         </a>
 
+        <!-- Navegación principal -->
         <nav
             class="menu-principal"
             aria-label="Navegación principal">
 
-            <a href="index.html">Inicio</a>
+            <a href="index.html">
+                Inicio
+            </a>
 
             <a href="index.html#informacion">
                 Información
@@ -52,7 +63,39 @@
 
     </header>
 
-    <!-- Contenido principal de acreditación -->
+
+    <!-- ==================================================
+         BANNER DE ACREDITACIÓN
+         ================================================== -->
+
+    <section
+        class="banner-acreditacion"
+        aria-labelledby="titulo-banner-acreditacion">
+
+        <!-- Imagen decorativa del campamento -->
+        <img
+            src="Logos/imagen.png"
+            alt="">
+
+        <!-- Texto ubicado sobre la imagen -->
+        <div class="contenido-banner-acreditacion">
+
+            <h1 id="titulo-banner-acreditacion">
+                <span>Reconciliado</span>
+                <strong>A la Cruz</strong>
+            </h1>
+
+            <p>Campamento ICEC 2027</p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         CONTENIDO PRINCIPAL
+         ================================================== -->
+
     <main class="contenido-acreditacion">
 
         <section
@@ -66,326 +109,667 @@
 
                 <p>
                     Completa tu perfil para inscribirte en
-                    Reconectados con la Cruz.
-                </p>
-
-                <p>
-                    ¿Ya tienes un perfil?
-                    <a href="#inicio-sesion">
-                        Inicia sesión aquí
-                    </a>
+                    Reconciliado a la Cruz.
                 </p>
 
             </div>
 
-            <!-- Formulario para crear el perfil -->
+
+            <!-- ==================================================
+                 FORMULARIO DE ACREDITACIÓN
+                 ================================================== -->
+
             <form
                 id="formulario-acreditacion"
                 class="formulario-acreditacion">
 
-                <!-- Datos para futuros ingresos -->
-                <fieldset class="grupo-formulario">
 
-                    <legend>Datos de la cuenta</legend>
+                <!-- ==============================================
+                     DATOS DE LA CUENTA
+                     ============================================== -->
+
+                <fieldset class="grupo-formulario tarjeta-formulario">
+
+                    <!-- Título semántico para lectores de pantalla -->
+                    <legend class="titulo-oculto">
+                        Datos de la cuenta
+                    </legend>
+
+                    <!-- Encabezado visual de la tarjeta -->
+                    <div class="cabecera-grupo-formulario">
+
+                        <span
+                            class="icono-grupo-formulario"
+                            aria-hidden="true">
+                            ♙
+                        </span>
+
+                        <div class="texto-grupo-formulario">
+
+                            <h2>Datos de la cuenta</h2>
+
+                            <p>
+                                Usa un correo válido y crea una contraseña segura.
+                            </p>
+
+                        </div>
+
+                    </div>
 
                     <div class="campos-grid">
 
+                        <!-- Correo electrónico -->
                         <div class="campo">
+
                             <label for="correo">
                                 Correo electrónico
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
-                            <input
-                                type="email"
-                                id="correo"
-                                name="correo"
-                                autocomplete="email"
-                                required>
+                            <div class="control-campo">
+
+                                <span
+                                    class="icono-campo"
+                                    aria-hidden="true">
+                                    ✉
+                                </span>
+
+                                <input
+                                    type="email"
+                                    id="correo"
+                                    name="correo"
+                                    autocomplete="email"
+                                    placeholder="tucorreo@ejemplo.cl"
+                                    required>
+
+                            </div>
+
                         </div>
 
+                        <!-- Contraseña -->
                         <div class="campo">
+
                             <label for="contrasena">
                                 Crear contraseña
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
-                            <input
-                                type="password"
-                                id="contrasena"
-                                name="contrasena"
-                                minlength="8"
-                                autocomplete="new-password"
-                                required>
+                            <div class="control-campo">
+
+                                <span
+                                    class="icono-campo"
+                                    aria-hidden="true">
+                                    ♙
+                                </span>
+
+                                <input
+                                    type="password"
+                                    id="contrasena"
+                                    name="contrasena"
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                    placeholder="Mínimo 8 caracteres"
+                                    required>
+
+                            </div>
 
                             <small>
-                                Mínimo 8 caracteres.
+                                Utiliza como mínimo 8 caracteres.
                             </small>
+
                         </div>
 
                     </div>
 
                 </fieldset>
 
-                <!-- Datos personales del participante -->
-                <fieldset class="grupo-formulario">
 
-                    <legend>Datos personales</legend>
+                <!-- ==============================================
+                     DATOS PERSONALES
+                     ============================================== -->
+
+                <fieldset class="grupo-formulario tarjeta-formulario">
+
+                    <legend class="titulo-oculto">
+                        Datos personales
+                    </legend>
+
+                    <div class="cabecera-grupo-formulario">
+
+                        <span
+                            class="icono-grupo-formulario"
+                            aria-hidden="true">
+                            ▣
+                        </span>
+
+                        <div class="texto-grupo-formulario">
+
+                            <h2>Datos personales</h2>
+
+                            <p>
+                                Ingresa tus datos tal como aparecen en tu
+                                documento de identidad.
+                            </p>
+
+                        </div>
+
+                    </div>
 
                     <div class="campos-grid">
 
+                        <!-- Nombre completo -->
                         <div class="campo">
+
                             <label for="nombre-completo">
                                 Nombre completo
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
-                            <input
-                                type="text"
-                                id="nombre-completo"
-                                name="nombreCompleto"
-                                autocomplete="name"
-                                required>
+                            <div class="control-campo">
+
+                                <span
+                                    class="icono-campo"
+                                    aria-hidden="true">
+                                    ♙
+                                </span>
+
+                                <input
+                                    type="text"
+                                    id="nombre-completo"
+                                    name="nombreCompleto"
+                                    autocomplete="name"
+                                    placeholder="Nombre y apellidos"
+                                    required>
+
+                            </div>
+
                         </div>
 
+                        <!-- Alias -->
                         <div class="campo">
+
+                            <label for="alias">
+                                Alias
+                                <span class="texto-opcional">(opcional)</span>
+                            </label>
+
+                            <div class="control-campo">
+
+                                <span
+                                    class="icono-campo"
+                                    aria-hidden="true">
+                                    ♙
+                                </span>
+
+                                <input
+                                    type="text"
+                                    id="alias"
+                                    name="alias"
+                                    autocomplete="nickname"
+                                    maxlength="40"
+                                    placeholder="¿Cómo quieres que te llamemos?">
+
+                            </div>
+
+                        </div>
+
+                        <!-- RUT -->
+                        <div class="campo">
+
                             <label for="rut">
                                 RUT
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
-                            <input
-                                type="text"
-                                id="rut"
-                                name="rut"
-                                placeholder="12.345.678-9"
-                                required>
+                            <div class="control-campo">
+
+                                <span
+                                    class="icono-campo"
+                                    aria-hidden="true">
+                                    ▤
+                                </span>
+
+                                <input
+                                    type="text"
+                                    id="rut"
+                                    name="rut"
+                                    placeholder="12.345.678-9"
+                                    required>
+
+                            </div>
+
                         </div>
 
+                        <!-- Género -->
                         <div class="campo">
+
+                            <label for="genero">
+                                Género
+                                <span class="obligatorio" aria-hidden="true">*</span>
+                            </label>
+
+                            <select
+                                id="genero"
+                                name="genero"
+                                autocomplete="sex"
+                                required>
+
+                                <option value="">
+                                    Seleccione una opción
+                                </option>
+
+                                <option value="femenino">
+                                    Femenino
+                                </option>
+
+                                <option value="masculino">
+                                    Masculino
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Fecha de nacimiento -->
+                        <div class="campo">
+
                             <label for="fecha-nacimiento">
                                 Fecha de nacimiento
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
-                            <input
-                                type="date"
-                                id="fecha-nacimiento"
-                                name="fechaNacimiento"
-                                max="2027-01-08"
-                                autocomplete="bday"
-                                required>
+                            <div class="control-campo">
+
+                                <span
+                                    class="icono-campo"
+                                    aria-hidden="true">
+                                    ▦
+                                </span>
+
+                                <input
+                                    type="date"
+                                    id="fecha-nacimiento"
+                                    name="fechaNacimiento"
+                                    max="2027-01-08"
+                                    autocomplete="bday"
+                                    required>
+
+                            </div>
+
                         </div>
 
+                        <!-- Teléfono -->
                         <div class="campo">
+
                             <label for="telefono">
                                 Teléfono
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
-                            <input
-                                type="tel"
-                                id="telefono"
-                                name="telefono"
-                                autocomplete="tel"
-                                placeholder="+56 9 1234 5678"
-                                required>
+                            <div class="control-campo">
+
+                                <span
+                                    class="icono-campo"
+                                    aria-hidden="true">
+                                    ☎
+                                </span>
+
+                                <input
+                                    type="tel"
+                                    id="telefono"
+                                    name="telefono"
+                                    autocomplete="tel"
+                                    placeholder="+56 9 1234 5678"
+                                    required>
+
+                            </div>
+
                         </div>
 
-                        <div class="campo campo-valor-acreditacion">
-                            <label for="valor-acreditacion">
-                                Valor de acreditación
-                            </label>
+                    </div>
 
-                            <output id="valor-acreditacion">
-                                Seleccione la fecha de nacimiento
-                            </output>
+
+                    <!-- Valor calculado según la edad -->
+                    <div class="resumen-valor-acreditacion">
+
+                        <span
+                            class="icono-valor-acreditacion"
+                            aria-hidden="true">
+                            🎟
+                        </span>
+
+                        <div class="texto-valor-acreditacion">
+
+                            <strong>Valor de acreditación</strong>
+
+                            <span>
+                                Incluye alojamiento, alimentación,
+                                materiales y actividades.
+                            </span>
+
                         </div>
+
+                        <output
+                            id="valor-acreditacion"
+                            class="valor-acreditacion">
+
+                            Seleccione su fecha de nacimiento
+
+                        </output>
 
                     </div>
 
                 </fieldset>
 
-                <!-- Información de salud -->
-                <fieldset class="grupo-formulario">
+                <!-- ==============================================
+     INFORMACIÓN DE SALUD
+     ============================================== -->
 
-                    <legend>Información de salud</legend>
+<fieldset class="grupo-formulario tarjeta-formulario">
 
-                    <div class="campos-grid">
+    <legend class="titulo-oculto">
+        Información de salud
+    </legend>
 
-                        <div class="campo">
-                            <label for="tiene-alergias">
-                                ¿Tiene algún tipo de alergia?
-                            </label>
+    <div class="cabecera-grupo-formulario">
 
-                            <select
-                                id="tiene-alergias"
-                                name="tieneAlergias"
-                                required>
+        <span
+            class="icono-grupo-formulario"
+            aria-hidden="true">
+            ♡
+        </span>
 
-                                <option value="">
-                                    Seleccione una opción
-                                </option>
+        <div class="texto-grupo-formulario">
 
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
-                            </select>
-                        </div>
+            <h2>Información de salud</h2>
 
-                        <div
-                            class="campo"
-                            id="campo-detalle-alergias"
-                            hidden>
+            <p>
+                Cuéntanos sobre tu estado de salud para tu
+                seguridad y la de todos.
+            </p>
 
-                            <label for="detalle-alergias">
-                                Escriba sus alergias
-                            </label>
+        </div>
 
-                            <input
-                                type="text"
-                                id="detalle-alergias"
-                                name="detalleAlergias"
-                                placeholder="Ejemplo: penicilina o frutos secos">
-                        </div>
+    </div>
 
-                        <div class="campo">
-                            <label for="tiene-enfermedad">
-                                ¿Tiene alguna enfermedad o condición médica?
-                            </label>
+    <div class="campos-salud">
 
-                            <select
-                                id="tiene-enfermedad"
-                                name="tieneEnfermedad"
-                                required>
+        <!-- Alergias y detalle -->
+        <div class="fila-salud">
 
-                                <option value="">
-                                    Seleccione una opción
-                                </option>
+            <div class="campo">
 
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
-                            </select>
-                        </div>
+                <label for="tiene-alergias">
+                    ¿Tienes algún tipo de alergia?
+                    <span class="obligatorio" aria-hidden="true">*</span>
+                </label>
 
-                        <div
-                            class="campo"
-                            id="campo-detalle-enfermedad"
-                            hidden>
+                <select
+                    id="tiene-alergias"
+                    name="tieneAlergias"
+                    required>
 
-                            <label for="detalle-enfermedad">
-                                Indique cuál
-                            </label>
+                    <option value="">
+                        Seleccione una opción
+                    </option>
 
-                            <input
-                                type="text"
-                                id="detalle-enfermedad"
-                                name="detalleEnfermedad"
-                                placeholder="Describa la condición médica">
-                        </div>
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
 
-                        <div class="campo">
-                            <label for="toma-medicamentos">
-                                ¿Toma medicamentos?
-                            </label>
+                </select>
 
-                            <select
-                                id="toma-medicamentos"
-                                name="tomaMedicamentos"
-                                required>
+            </div>
 
-                                <option value="">
-                                    Seleccione una opción
-                                </option>
+            <!-- Aparece al seleccionar Sí -->
+            <div
+                class="campo campo-condicional"
+                id="campo-detalle-alergias"
+                hidden>
 
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
-                            </select>
-                        </div>
+                <label for="detalle-alergias">
+                    Escribe tus alergias
+                </label>
 
-                        <div
-                            class="campo"
-                            id="campo-detalle-medicamentos"
-                            hidden>
+                <input
+                    type="text"
+                    id="detalle-alergias"
+                    name="detalleAlergias"
+                    placeholder="Ejemplo: penicilina o frutos secos">
 
-                            <label for="detalle-medicamentos">
-                                Medicamento, dosis y horario
-                            </label>
+            </div>
 
-                            <input
-                                type="text"
-                                id="detalle-medicamentos"
-                                name="detalleMedicamentos"
-                                placeholder="Nombre, dosis y horario">
-                        </div>
+        </div>
 
-                        <div class="campo">
-                            <label for="restriccion-alimentaria">
-                                ¿Tiene alguna restricción alimentaria?
-                            </label>
 
-                            <select
-                                id="restriccion-alimentaria"
-                                name="restriccionAlimentaria"
-                                required>
+        <!-- Condición médica y detalle -->
+        <div class="fila-salud">
 
-                                <option value="">
-                                    Seleccione una opción
-                                </option>
+            <div class="campo">
 
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
-                            </select>
-                        </div>
+                <label for="tiene-enfermedad">
+                    ¿Tienes alguna enfermedad o condición médica?
+                    <span class="obligatorio" aria-hidden="true">*</span>
+                </label>
 
-                        <div
-                            class="campo"
-                            id="campo-detalle-alimentacion"
-                            hidden>
+                <select
+                    id="tiene-enfermedad"
+                    name="tieneEnfermedad"
+                    required>
 
-                            <label for="detalle-alimentacion">
-                                Indique cuál
-                            </label>
+                    <option value="">
+                        Seleccione una opción
+                    </option>
 
-                            <input
-                                type="text"
-                                id="detalle-alimentacion"
-                                name="detalleAlimentacion"
-                                placeholder="Ejemplo: sin gluten o sin lactosa">
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+
+                </select>
+
+            </div>
+
+            <!-- Aparece al seleccionar Sí -->
+            <div
+                class="campo campo-condicional"
+                id="campo-detalle-enfermedad"
+                hidden>
+
+                <label for="detalle-enfermedad">
+                    Indica cuál
+                </label>
+
+                <input
+                    type="text"
+                    id="detalle-enfermedad"
+                    name="detalleEnfermedad"
+                    placeholder="Describe la condición médica">
+
+            </div>
+
+        </div>
+
+
+        <!-- Medicamentos y detalle -->
+        <div class="fila-salud">
+
+            <div class="campo">
+
+                <label for="toma-medicamentos">
+                    ¿Tomas medicamentos de forma regular?
+                    <span class="obligatorio" aria-hidden="true">*</span>
+                </label>
+
+                <select
+                    id="toma-medicamentos"
+                    name="tomaMedicamentos"
+                    required>
+
+                    <option value="">
+                        Seleccione una opción
+                    </option>
+
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+
+                </select>
+
+            </div>
+
+            <!-- Aparece al seleccionar Sí -->
+            <div
+                class="campo campo-condicional"
+                id="campo-detalle-medicamentos"
+                hidden>
+
+                <label for="detalle-medicamentos">
+                    Medicamento, dosis y horario
+                </label>
+
+                <input
+                    type="text"
+                    id="detalle-medicamentos"
+                    name="detalleMedicamentos"
+                    placeholder="Nombre, dosis y horario">
+
+            </div>
+
+        </div>
+
+
+        <!-- Restricción alimentaria y detalle -->
+        <div class="fila-salud">
+
+            <div class="campo">
+
+                <label for="restriccion-alimentaria">
+                    ¿Tienes alguna restricción alimentaria?
+                    <span class="obligatorio" aria-hidden="true">*</span>
+                </label>
+
+                <select
+                    id="restriccion-alimentaria"
+                    name="restriccionAlimentaria"
+                    required>
+
+                    <option value="">
+                        Seleccione una opción
+                    </option>
+
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+
+                </select>
+
+            </div>
+
+            <!-- Aparece al seleccionar Sí -->
+            <div
+                class="campo campo-condicional"
+                id="campo-detalle-alimentacion"
+                hidden>
+
+                <label for="detalle-alimentacion">
+                    Indica cuál
+                </label>
+
+                <input
+                    type="text"
+                    id="detalle-alimentacion"
+                    name="detalleAlimentacion"
+                    placeholder="Ejemplo: sin gluten o sin lactosa">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</fieldset>
+
+
+                
+
+                <!-- ==============================================
+                     CONTACTO DE EMERGENCIA
+                     ============================================== -->
+
+                <fieldset class="grupo-formulario tarjeta-formulario">
+
+                    <legend class="titulo-oculto">
+                        Contacto de emergencia
+                    </legend>
+
+                    <div class="cabecera-grupo-formulario">
+
+                        <span
+                            class="icono-grupo-formulario"
+                            aria-hidden="true">
+                            ☎
+                        </span>
+
+                        <div class="texto-grupo-formulario">
+
+                            <h2>Contacto de emergencia</h2>
+
+                            <p>
+                                Persona a quien contactaremos en caso de emergencia.
+                            </p>
+
                         </div>
 
                     </div>
 
-                </fieldset>
+                    <div class="campos-grid campos-grid-emergencia">
 
-                <!-- Persona a contactar en una emergencia -->
-                <fieldset class="grupo-formulario">
-
-                    <legend>Contacto de emergencia</legend>
-
-                    <div class="campos-grid">
-
+                        <!-- Nombre del contacto -->
                         <div class="campo">
+
                             <label for="nombre-emergencia">
-                                Nombre completo del contacto
+                                Nombre completo
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
                             <input
                                 type="text"
                                 id="nombre-emergencia"
                                 name="nombreEmergencia"
+                                placeholder="Nombre y apellidos"
                                 required>
+
                         </div>
 
+                        <!-- Parentesco -->
                         <div class="campo">
+
                             <label for="parentesco">
-                                Parentesco o relación
+                                Parentesco
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
-                            <input
-                                type="text"
+                            <select
                                 id="parentesco"
                                 name="parentesco"
-                                placeholder="Ejemplo: madre, padre o tutor"
                                 required>
+
+                                <option value="">
+                                    Seleccione una opción
+                                </option>
+
+                                <option value="madre-padre">Madre o Padre</option>
+                                <option value="tutor">Tutor o tutora</option>
+                                <option value="hermano">Hermano o hermana</option>
+                                <option value="pareja">Pareja</option>
+                                <option value="otro">Otro</option>
+
+                            </select>
+
                         </div>
 
+                        <!-- Teléfono principal -->
                         <div class="campo">
+
                             <label for="telefono-emergencia">
-                                Teléfono principal
+                                Teléfono de contacto
+                                <span class="obligatorio" aria-hidden="true">*</span>
                             </label>
 
                             <input
@@ -394,11 +778,15 @@
                                 name="telefonoEmergencia"
                                 placeholder="+56 9 1234 5678"
                                 required>
+
                         </div>
 
+                        <!-- Teléfono alternativo -->
                         <div class="campo">
+
                             <label for="telefono-alternativo">
                                 Teléfono alternativo
+                                <span class="texto-opcional">(opcional)</span>
                             </label>
 
                             <input
@@ -406,20 +794,49 @@
                                 id="telefono-alternativo"
                                 name="telefonoAlternativo"
                                 placeholder="+56 9 1234 5678">
+
                         </div>
 
                     </div>
 
                 </fieldset>
 
-                <!-- Opción para acreditar a otras personas -->
-                <fieldset class="grupo-formulario">
 
-                    <legend>Acompañantes</legend>
+                <!-- ==============================================
+                     ACOMPAÑANTES
+                     ============================================== -->
 
-                    <div class="campo">
+                <fieldset class="grupo-formulario tarjeta-formulario">
+
+                    <legend class="titulo-oculto">
+                        Acompañantes
+                    </legend>
+
+                    <div class="cabecera-grupo-formulario">
+
+                        <span
+                            class="icono-grupo-formulario"
+                            aria-hidden="true">
+                            ♟
+                        </span>
+
+                        <div class="texto-grupo-formulario">
+
+                            <h2>Acompañantes</h2>
+
+                            <p>
+                                Indica si vienes con un grupo o con acompañantes.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="campo campo-acompanantes">
+
                         <label for="tiene-acompanantes">
-                            ¿Vas a acreditar a otras personas contigo?
+                            ¿Vienes con acompañantes?
+                            <span class="obligatorio" aria-hidden="true">*</span>
                         </label>
 
                         <select
@@ -440,24 +857,30 @@
                             </option>
 
                         </select>
+
                     </div>
 
+                    <!-- Mensaje mostrado mediante JavaScript -->
                     <div
                         id="seccion-acompanantes"
+                        class="mensaje-acompanantes"
                         hidden>
 
                         <p>
-                            Después de guardar tus datos continuarás
-                            a una página separada para agregar a tus
-                            acompañantes.
+                            Después de guardar tus datos continuarás a una
+                            página separada para agregar a tus acompañantes.
                         </p>
 
                     </div>
 
                 </fieldset>
 
-                <!-- Confirmación y envío -->
-                <div class="confirmacion-formulario">
+
+                <!-- ==============================================
+                     CONFIRMACIÓN Y ENVÍO
+                     ============================================== -->
+
+                <div class="confirmacion-formulario tarjeta-confirmacion">
 
                     <label class="casilla-confirmacion">
 
@@ -468,8 +891,9 @@
                             required>
 
                         <span>
-                            Confirmo que la información ingresada
-                            es correcta.
+                            Confirmo que la información ingresada es verídica
+                            y autorizo su uso con fines de acreditación al
+                            Campamento ICEC 2027.
                         </span>
 
                     </label>
@@ -478,7 +902,10 @@
                         type="submit"
                         class="boton boton-guardar">
 
-                        Guardar perfil y continuar
+                        <span>Guardar perfil y continuar</span>
+
+                        <span aria-hidden="true">→</span>
+
                     </button>
 
                 </div>
@@ -488,6 +915,7 @@
         </section>
 
     </main>
+
 
     <!-- Funciones del formulario -->
     <script src="scrip.js"></script>

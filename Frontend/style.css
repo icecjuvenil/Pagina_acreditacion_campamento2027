@@ -1,16 +1,26 @@
+/* Tipografías oficiales */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;600;700&display=swap");
+
+
 /* ==================================================
    1. COLORES PRINCIPALES
    ================================================== */
 
 :root {
-    --verde-bosque: #31451f;
-    --verde-oscuro: #102e20;
-    --verde-medio: #173f2b;
-    --cafe-tierra: #5a2f1e;
-    --amarillo: #f2b844;
+    /* Paleta oficial entregada por la diseñadora */
+    --color-oscuro: #251e17;
+    --dorado-claro: #e4c674;
+    --dorado-medio: #ab8141;
+    --verde-principal: #3b9833;
+
+    /* Tonalidades de apoyo */
+    --verde-profundo: #163a16;
+    --verde-intermedio: #245f21;
+
+    /* Colores funcionales */
     --crema: #f7ecd4;
     --blanco: #ffffff;
-    --texto: #25251f;
+    --texto: #251e17;
     --gris-borde: #9b9b91;
     --color-eliminar-hover: #7a3623;
     --color-fondo-tarjeta: #fffdf8;
@@ -21,31 +31,50 @@
    2. CONFIGURACIÓN GENERAL
    ================================================== */
 
-/* Elimina los espacios automáticos del navegador */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Permite desplazamiento suave al usar el menú */
 html {
     scroll-behavior: smooth;
 }
 
-/* Apariencia general de todas las páginas */
 body {
     min-height: 100vh;
+
     color: var(--texto);
     background-color: var(--crema);
-    font-family: Arial, sans-serif;
+
+    font-family: "Roboto", Arial, sans-serif;
     line-height: 1.5;
+
+    overflow-x: hidden;
 }
 
-/* Limita el ancho del contenido principal */
+/* Fuente oficial para los títulos */
+h1,
+h2,
+h3,
+.grupo-formulario legend,
+.subgrupo-acompanante legend {
+    font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+/*
+ * El contenido principal ocupa todo el ancho.
+ * Cada formulario controla su propio ancho más adelante.
+ */
 main {
-    width: calc(100% - 32px);
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
+}
+
+img {
+    max-width: 100%;
 }
 
 
@@ -53,81 +82,114 @@ main {
    3. ENCABEZADO Y MENÚ PRINCIPAL
    ================================================== */
 
-/* Barra superior de navegación */
+/* Franja superior de ancho completo */
 .encabezado {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    gap: 32px;
 
-    width: calc(100% - 32px);
-    margin: 24px auto 0;
-    padding: 14px 24px;
+    width: 100%;
+    min-height: 88px;
+    margin: 0;
+    padding: 12px clamp(24px, 4vw, 64px);
 
-    background-color: var(--blanco);
-    border: 2px solid var(--verde-bosque);
-    border-radius: 18px;
-    box-shadow: 0 8px 24px rgba(49, 69, 31, 0.12);
+    background-color: var(--color-fondo-tarjeta);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
 
-/* Agrupa el logo y el nombre */
+/* Agrupa el logo, el separador y el nombre */
 .marca {
     display: flex;
     align-items: center;
-    gap: 12px;
+    flex-shrink: 0;
+    gap: 14px;
 
-    color: var(--verde-bosque);
+    color: var(--color-oscuro);
     text-decoration: none;
 }
 
-/* Tamaño del logo */
+/* Ajuste del espacio interno del archivo del logo */
 .marca img {
-    width: 170px;
-    height: 90px;
+    display: block;
+    flex-shrink: 0;
+
+    width: 190px;
+    height: auto;
+    max-width: none;
+    margin: -27px -57px -26px;
+
     object-fit: contain;
+    clip-path: inset(25% 30% 24% 30%);
 }
 
-/* Texto Elegidos ICEC Juvenil */
+/* Nombre ubicado al lado del logo */
+.marca .nombre-marca,
 .marca span {
-    max-width: 140px;
+    max-width: none;
+    padding: 7px 0 7px 18px;
 
-    font-size: 16px;
-    font-weight: bold;
+    color: var(--color-oscuro);
+    border-left: 1px solid var(--dorado-medio);
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     line-height: 1.2;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
-/* Organiza los enlaces del menú */
+/* Distribución horizontal del menú */
 .menu-principal {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 8px;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 24px;
+
+    width: clamp(360px, 34vw, 680px);
+    margin-left: auto;
 }
 
-/* Apariencia de cada enlace */
+/* Enlaces del menú */
 .menu-principal a {
-    padding: 10px 12px;
+    position: relative;
+    padding: 10px 0;
 
-    color: var(--cafe-tierra);
-    border-radius: 999px;
+    color: var(--color-oscuro);
+    background-color: transparent;
 
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: 500;
     text-decoration: none;
+    white-space: nowrap;
 
-    transition:
-        color 0.2s,
-        background-color 0.2s;
+    transition: color 0.2s;
 }
 
-/* Cambio visual al usar el menú */
 .menu-principal a:hover,
 .menu-principal a:focus-visible {
-    color: var(--blanco);
-    background-color: var(--verde-bosque);
+    color: var(--dorado-medio);
     outline: none;
+}
+
+/* Línea bajo el enlace de la página actual */
+.menu-principal a[aria-current="page"]::after {
+    content: "";
+
+    position: absolute;
+    right: 0;
+    bottom: 3px;
+    left: 0;
+
+    height: 2px;
+
+    background-color: var(--dorado-medio);
+    border-radius: 999px;
 }
 
 
@@ -135,7 +197,6 @@ main {
    4. BOTONES GENERALES
    ================================================== */
 
-/* Diseño compartido por los botones */
 .boton {
     display: inline-flex;
     align-items: center;
@@ -148,39 +209,39 @@ main {
     border-radius: 12px;
 
     cursor: pointer;
+
     font: inherit;
-    font-weight: bold;
+    font-weight: 700;
     text-decoration: none;
 
     transition:
         transform 0.2s,
         color 0.2s,
-        background-color 0.2s;
+        background-color 0.2s,
+        border-color 0.2s;
 }
 
-/* Movimiento al pasar el mouse */
 .boton:hover {
     transform: translateY(-2px);
 }
 
-/* Ayuda visual para navegación con teclado */
 .boton:focus-visible {
-    outline: 3px solid var(--amarillo);
+    outline: 3px solid var(--dorado-claro);
     outline-offset: 3px;
 }
 
-/* Botón amarillo utilizado en la portada */
+/* Botón de acreditación */
 .boton-secundario {
-    color: var(--verde-bosque);
-    background-color: var(--amarillo);
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
+
     border-color: var(--crema);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.20);
+    box-shadow: 0 8px 18px rgba(37, 30, 23, 0.2);
 }
 
-/* Cambio del botón amarillo */
 .boton-secundario:hover {
     color: var(--blanco);
-    background-color: var(--cafe-tierra);
+    background-color: var(--color-oscuro);
     border-color: var(--blanco);
 }
 
@@ -189,20 +250,19 @@ main {
    5. PORTADA DEL CAMPAMENTO
    ================================================== */
 
-/* Contenedor general de la portada */
 .portada {
-    margin: 24px 0 12px;
+    width: 100%;
+    margin: 0;
 
     color: var(--blanco);
-    background-color: var(--verde-bosque);
+    background-color: var(--verde-profundo);
 
-    border-radius: 28px;
-    box-shadow: 0 20px 45px rgba(49, 69, 31, 0.20);
+    border-radius: 0;
+    box-shadow: none;
     overflow: hidden;
 }
 
-/* Oculta el título visualmente, pero mantiene
-   su contenido para accesibilidad y buscadores */
+/* Título disponible para lectores de pantalla */
 .titulo-oculto {
     position: absolute;
 
@@ -217,11 +277,14 @@ main {
     border: 0;
 }
 
-/* Afiche oficial completo */
-.afiche-oficial {
+/* Imagen principal del campamento */
+.portada .afiche-oficial {
     display: block;
+
     width: 100%;
+    max-width: none;
     height: auto;
+    margin: 0;
 }
 
 
@@ -229,7 +292,6 @@ main {
    6. INFORMACIÓN INFERIOR DE LA PORTADA
    ================================================== */
 
-/* Distribuye la fecha, el contador y el botón */
 .portada-informacion {
     display: grid;
     grid-template-columns:
@@ -239,24 +301,25 @@ main {
     align-items: center;
     gap: 24px;
 
+    width: 100%;
     padding: 22px 28px;
+
     color: var(--blanco);
 
     background: linear-gradient(
         90deg,
-        var(--verde-oscuro),
-        var(--verde-medio)
+        var(--verde-profundo),
+        var(--verde-intermedio)
     );
 }
 
-/* Agrupa el calendario y la fecha */
+/* Fecha del campamento */
 .fecha-destacada {
     display: flex;
     align-items: center;
     gap: 16px;
 }
 
-/* Icono de calendario */
 .icono-fecha {
     display: grid;
     place-items: center;
@@ -265,13 +328,12 @@ main {
     width: 54px;
     height: 54px;
 
-    border: 2px solid var(--amarillo);
+    border: 2px solid var(--dorado-claro);
     border-radius: 12px;
 
     font-size: 28px;
 }
 
-/* Texto de la fecha */
 .portada-informacion .fecha-campamento {
     margin: 0;
 
@@ -280,14 +342,13 @@ main {
     font-weight: 700;
 }
 
-/* Contenedor de las cuatro unidades del contador */
+/* Contador */
 .contador-detallado {
     display: grid;
     grid-template-columns: repeat(4, minmax(68px, 1fr));
     gap: 6px;
 }
 
-/* Cada cuadro del contador */
 .unidad-contador {
     min-width: 68px;
     padding: 9px 7px;
@@ -298,7 +359,6 @@ main {
     text-align: center;
 }
 
-/* Número del contador */
 .unidad-contador strong {
     display: block;
 
@@ -307,51 +367,49 @@ main {
     line-height: 1.1;
 }
 
-/* Texto: días, horas, minutos y segundos */
 .unidad-contador span {
     display: block;
     margin-top: 4px;
+
     font-size: 0.85rem;
 }
 
-/* Contenedor del botón de acreditación */
 .portada-informacion .acciones-portada {
     display: flex;
     margin: 0;
 }
 
-/* Tamaño mínimo del botón de acreditación */
 .portada-informacion .boton-secundario {
     min-width: 160px;
 }
 
 
 /* ==================================================
-   7. PROPÓSITO DEL CAMPAMENTO
+   7. INFORMACIÓN DEL CAMPAMENTO
    ================================================== */
 
-/* Fondo general de la sección */
 .informacion-campamento {
-    margin-bottom: 48px;
+    width: 100%;
+    margin: 0;
     padding: 55px 5%;
 
     color: var(--blanco);
-    border-radius: 28px;
-    overflow: hidden;
 
     background:
         linear-gradient(
-            rgba(10, 35, 24, 0.78),
-            rgba(10, 35, 24, 0.78)
+            rgba(22, 58, 22, 0.82),
+            rgba(22, 58, 22, 0.82)
         ),
         url("Logos/imagen.png");
 
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+
+    border-radius: 0;
+    overflow: hidden;
 }
 
-/* Título de la sección */
 .titulo-seccion {
     margin: 0;
 
@@ -360,20 +418,19 @@ main {
     font-size: clamp(2rem, 5vw, 3rem);
 }
 
-/* Línea amarilla debajo del título */
 .titulo-seccion::after {
     content: "";
 
     display: block;
+
     width: 48px;
     height: 4px;
     margin: 12px auto 30px;
 
+    background-color: var(--dorado-claro);
     border-radius: 999px;
-    background-color: var(--amarillo);
 }
 
-/* Distribuye las tres tarjetas */
 .tarjetas-informacion {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -383,18 +440,17 @@ main {
     margin: 0 auto;
 }
 
-/* Diseño individual de cada tarjeta */
 .tarjeta-informacion {
     padding: 28px;
+
+    background-color: rgba(22, 58, 22, 0.84);
 
     border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 16px;
 
-    background-color: rgba(8, 30, 21, 0.82);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 12px 28px rgba(37, 30, 23, 0.22);
 }
 
-/* Círculo que contiene el icono */
 .icono-informacion {
     display: grid;
     place-items: center;
@@ -403,14 +459,13 @@ main {
     height: 58px;
     margin-bottom: 18px;
 
-    color: var(--amarillo);
-    border: 2px solid var(--amarillo);
+    color: var(--dorado-claro);
+    border: 2px solid var(--dorado-claro);
     border-radius: 50%;
 
     font-size: 28px;
 }
 
-/* Título de cada tarjeta */
 .tarjeta-informacion h3 {
     margin: 0 0 10px;
 
@@ -418,7 +473,6 @@ main {
     font-size: 1.5rem;
 }
 
-/* Texto de cada tarjeta */
 .tarjeta-informacion p {
     margin: 0;
 
@@ -429,183 +483,678 @@ main {
 
 
 /* ==================================================
-   8. PÁGINAS DE ACREDITACIÓN Y PAGO
+   8. BANNER DE ACREDITACIÓN
    ================================================== */
 
-/* Contenedor principal de los formularios */
-.contenido-acreditacion {
-    width: min(1100px, calc(100% - 32px));
-    margin: 32px auto;
+.banner-acreditacion {
+    position: relative;
+
+    width: 100%;
+    height: clamp(250px, 25vw, 350px);
+    margin: 0;
+
+    background-color: var(--verde-profundo);
+    overflow: hidden;
 }
 
-/* Tarjeta blanca que contiene el formulario */
-.acreditacion {
-    padding: 32px;
+.banner-acreditacion > img {
+    display: block;
 
-    background-color: var(--blanco);
-    border: 2px solid var(--verde-bosque);
-    border-radius: 24px;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center 66%;
+    filter: brightness(0.76);
 }
 
-/* Encabezado del formulario */
-.cabecera-formulario {
-    margin-bottom: 32px;
+.contenido-banner-acreditacion {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px 20px 25px;
+
+    color: var(--blanco);
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 3px 12px rgba(37, 30, 23, 0.7);
+}
+
+.contenido-banner-acreditacion h1 {
+    margin: 0;
+    line-height: 0.9;
+}
+
+.contenido-banner-acreditacion h1 span,
+.contenido-banner-acreditacion h1 strong {
+    display: block;
+}
+
+.contenido-banner-acreditacion h1 span {
+    color: var(--dorado-claro);
+    font-size: clamp(2.1rem, 4.4vw, 4.4rem);
+    font-weight: 800;
+}
+
+.contenido-banner-acreditacion h1 strong {
+    margin-top: 10px;
+
+    color: var(--blanco);
+    font-size: clamp(2.8rem, 5.6vw, 5.8rem);
+    font-weight: 900;
+}
+
+.contenido-banner-acreditacion p {
+    margin: 18px 0 0;
+
+    color: var(--blanco);
+    font-size: clamp(0.9rem, 1.4vw, 1.25rem);
+    font-weight: 700;
+}
+
+/* Terminación irregular debajo del banner */
+.banner-acreditacion::after {
+    content: "";
+
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    z-index: 2;
+
+    height: 25px;
+    background-color: var(--crema);
+
+    clip-path: polygon(
+        0 55%,
+        5% 30%,
+        10% 65%,
+        16% 38%,
+        22% 67%,
+        29% 42%,
+        36% 64%,
+        44% 40%,
+        52% 65%,
+        60% 38%,
+        68% 64%,
+        76% 40%,
+        84% 66%,
+        92% 35%,
+        100% 58%,
+        100% 100%,
+        0 100%
+    );
+}
+
+/* ==================================================
+   9. FORMULARIO DE ACREDITACIÓN
+   ================================================== */
+
+/* Limita el ancho del formulario y lo centra */
+.pagina-acreditacion .contenido-acreditacion {
+    width: min(1040px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 34px 0 80px;
+}
+
+/*
+ * Elimina la antigua caja exterior.
+ * Ahora cada sección del formulario funciona como una tarjeta.
+ */
+.pagina-acreditacion .acreditacion {
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+/* Encabezado principal del formulario */
+.pagina-acreditacion .cabecera-formulario {
+    margin-bottom: 26px;
     text-align: center;
 }
 
-/* Textos del encabezado */
-.cabecera-formulario p {
-    margin: 8px 0;
+.pagina-acreditacion .cabecera-formulario h1 {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    line-height: 1;
 }
 
-/* Enlaces del encabezado */
-.cabecera-formulario a {
-    color: var(--cafe-tierra);
-    font-weight: 700;
+.pagina-acreditacion .cabecera-formulario h1::after {
+    content: "";
+
+    display: block;
+
+    width: 56px;
+    height: 4px;
+    margin: 12px auto 14px;
+
+    background-color: var(--dorado-claro);
+    border-radius: 999px;
 }
 
-/* Cada sección interna del formulario */
-.grupo-formulario {
-    margin-bottom: 24px;
-    padding: 24px;
+.pagina-acreditacion .cabecera-formulario p {
+    margin: 0;
 
-    border: 1px solid var(--verde-bosque);
-    border-radius: 16px;
+    color: var(--texto);
+    font-size: 1.05rem;
+    line-height: 1.5;
 }
 
-/* Título de cada grupo */
-.grupo-formulario legend {
-    padding: 0 10px;
+/* Distribución vertical de las tarjetas */
+.pagina-acreditacion .formulario-acreditacion {
+    display: grid;
+    gap: 18px;
+}
 
-    color: var(--verde-bosque);
+/* Tarjeta correspondiente a cada grupo del formulario */
+.pagina-acreditacion .grupo-formulario,
+.pagina-acreditacion .tarjeta-formulario {
+    min-width: 0;
+    margin: 0;
+    padding: 20px 24px;
+
+    background-color: rgba(255, 255, 255, 0.96);
+    border: 0;
+    border-radius: 14px;
+
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
+}
+
+/*
+ * Los títulos ahora se muestran dentro de las tarjetas.
+ * Por eso el legend tradicional queda oculto visualmente.
+ */
+.pagina-acreditacion .grupo-formulario > legend {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Encabezado interior de cada tarjeta */
+.pagina-acreditacion .cabecera-grupo-formulario {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 18px;
+}
+
+/* Círculo dorado que contiene el icono */
+.pagina-acreditacion .icono-grupo-formulario {
+    display: grid;
+    place-items: center;
+    flex: 0 0 50px;
+
+    width: 50px;
+    height: 50px;
+
+    color: #85610f;
+    background-color: #fbefd0;
+    border-radius: 50%;
+
+    font-size: 1.45rem;
+    line-height: 1;
+}
+
+/* Textos del encabezado de cada tarjeta */
+.pagina-acreditacion .texto-grupo-formulario {
+    min-width: 0;
+}
+
+.pagina-acreditacion .texto-grupo-formulario h2,
+.pagina-acreditacion .texto-grupo-formulario h3 {
+    margin: 0 0 3px;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: 800;
+    line-height: 1.2;
 }
 
-/* Distribución de los campos */
-.campos-grid {
+.pagina-acreditacion .texto-grupo-formulario p {
+    margin: 0;
+
+    color: #65655e;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Organiza los campos en dos columnas */
+.pagina-acreditacion .campos-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
+    gap: 16px 26px;
 }
 
-/* Organización de cada campo */
-.campo {
+/* Campos del contacto de emergencia */
+.pagina-acreditacion .campos-grid-emergencia {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 18px;
+}
+
+/* Estructura general de cada campo */
+.pagina-acreditacion .campo {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 7px;
+    min-width: 0;
 }
 
-/* Nombre de cada campo */
-.campo label {
+.pagina-acreditacion .campo label {
     color: var(--texto);
+    font-size: 0.9rem;
     font-weight: 700;
+    line-height: 1.3;
 }
 
-/* Apariencia de los controles */
-.campo input,
-.campo select,
-.campo textarea {
+/* Asterisco de campos obligatorios */
+.pagina-acreditacion .obligatorio {
+    color: #b63a2e;
+}
+
+/* Texto que identifica un campo opcional */
+.pagina-acreditacion .texto-opcional {
+    color: #73736d;
+    font-size: 0.82rem;
+    font-weight: 400;
+}
+
+/* Contenedor que permite colocar iconos dentro de los controles */
+.pagina-acreditacion .control-campo {
+    position: relative;
+}
+
+/* Iconos interiores */
+.pagina-acreditacion .control-campo .icono-campo {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    z-index: 1;
+
+    color: #747a74;
+    font-size: 1rem;
+    line-height: 1;
+
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+/* Apariencia compartida por todos los controles */
+.pagina-acreditacion .campo input,
+.pagina-acreditacion .campo select,
+.pagina-acreditacion .campo textarea {
     width: 100%;
-    padding: 12px 14px;
+    min-height: 48px;
+    padding: 11px 14px;
 
     color: var(--texto);
     background-color: var(--blanco);
 
-    border: 1px solid var(--gris-borde);
-    border-radius: 10px;
+    border: 1px solid #c8cbc6;
+    border-radius: 8px;
 
     font: inherit;
 }
 
-/* Permite cambiar el alto del área de texto */
-.campo textarea {
-    min-height: 110px;
+/* Espacio para los iconos ubicados dentro de inputs */
+.pagina-acreditacion .control-campo input {
+    padding-left: 46px;
+}
+
+/* Área de texto */
+.pagina-acreditacion .campo textarea {
+    min-height: 100px;
     resize: vertical;
 }
 
-/* Cambio visual al seleccionar un campo */
-.campo input:focus,
-.campo select:focus,
-.campo textarea:focus {
-    border-color: var(--verde-bosque);
-    outline: 3px solid rgba(49, 69, 31, 0.18);
+/* Texto de ayuda situado debajo de un campo */
+.pagina-acreditacion .campo small {
+    color: #6a6a63;
+    font-size: 0.8rem;
+    line-height: 1.35;
 }
 
-/* Texto de ayuda */
-.campo small {
-    color: #66665f;
-    font-size: 0.85rem;
+/* Estado activo de inputs, select y textarea */
+.pagina-acreditacion .campo input:focus,
+.pagina-acreditacion .campo select:focus,
+.pagina-acreditacion .campo textarea:focus {
+    border-color: var(--dorado-medio);
+    outline: 3px solid rgba(228, 198, 116, 0.3);
 }
 
-/* Valor calculado de la acreditación */
-.campo output {
-    color: var(--verde-bosque);
-    font-size: 1.25rem;
-    font-weight: 700;
-}
+/* ==================================================
+   VALOR DE LA ACREDITACIÓN
+   ================================================== */
 
-/* Confirmación y botones finales */
-.confirmacion-formulario {
+/* Franja dorada ubicada dentro de Datos personales */
+.pagina-acreditacion .resumen-valor-acreditacion {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    gap: 20px;
+    grid-column: 1 / -1;
 
-    margin-top: 28px;
+    margin-top: 2px;
+    padding: 14px 18px;
+
+    background: linear-gradient(
+        90deg,
+        rgba(228, 198, 116, 0.22),
+        rgba(228, 198, 116, 0.42),
+        rgba(228, 198, 116, 0.22)
+    );
+
+    border-radius: 10px;
 }
 
-/* Casilla de confirmación */
-.casilla-confirmacion {
+/* Agrupa el icono y la explicación del valor */
+.pagina-acreditacion .texto-valor-acreditacion {
     display: flex;
     align-items: center;
-    gap: 10px;
-
-    cursor: pointer;
+    gap: 13px;
+    min-width: 0;
 }
 
-/* Tamaño de la casilla */
-.casilla-confirmacion input {
+/* Icono de la franja de valor */
+.pagina-acreditacion .icono-valor-acreditacion {
+    display: grid;
+    place-items: center;
+    flex: 0 0 42px;
+
+    width: 42px;
+    height: 42px;
+
+    color: #85610f;
+    font-size: 1.45rem;
+}
+
+/* Título y descripción del valor */
+.pagina-acreditacion .texto-valor-acreditacion strong {
+    display: block;
+    margin-bottom: 2px;
+
+    color: #74540d;
+    font-size: 0.95rem;
+}
+
+.pagina-acreditacion .texto-valor-acreditacion p {
+    margin: 0;
+
+    color: #666158;
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+/* Monto calculado de la acreditación */
+.pagina-acreditacion .valor-acreditacion,
+.pagina-acreditacion #valor-acreditacion {
     flex-shrink: 0;
 
-    width: 20px;
-    height: 20px;
-
-    accent-color: var(--verde-bosque);
+    color: #74540d;
+    font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    font-weight: 400;
+    line-height: 1;
+    text-align: right;
 }
 
-/* Botón para guardar y continuar */
-.boton-guardar {
-    padding: 14px 22px;
+/* ==================================================
+   INFORMACIÓN DE SALUD
+   ================================================== */
 
-    color: var(--verde-bosque);
-    background-color: var(--amarillo);
+/* Distribuye verticalmente las preguntas de salud */
+.pagina-acreditacion .campos-salud {
+    display: grid;
+    gap: 18px;
+}
 
-    border: 2px solid var(--crema);
-    border-radius: 12px;
+/*
+ * Una pregunta utiliza una columna.
+ * Cuando aparece su campo adicional, ambos se muestran lado a lado.
+ */
+.pagina-acreditacion .fila-salud {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    align-items: end;
+}
 
-    cursor: pointer;
-    font: inherit;
+.pagina-acreditacion
+.fila-salud:has(> .campo-condicional:not([hidden])) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ==================================================
+   ACOMPAÑANTES
+   ================================================== */
+
+.pagina-acreditacion .campo-acompanantes {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+    gap: 24px;
+    align-items: end;
+}
+/* Pregunta principal de la sección Acompañantes */
+.pagina-acreditacion .campo-acompanantes label {
+    font-size: 1.05rem;
     font-weight: 700;
 }
 
-/* Cambio del botón para guardar */
-.boton-guardar:hover {
-    color: var(--blanco);
-    background-color: var(--cafe-tierra);
+.pagina-acreditacion .mensaje-acompanantes {
+    margin: 0;
+
+    color: #666158;
+    font-size: 0.88rem;
+    line-height: 1.45;
 }
 
-/* Mantiene ocultos los campos condicionales */
+/* ==================================================
+   CONFIRMACIÓN Y BOTÓN FINAL
+   ================================================== */
+
+/* Tarjeta final de autorización */
+.pagina-acreditacion .tarjeta-confirmacion {
+    padding: 18px 24px;
+
+    background-color: rgba(255, 255, 255, 0.96);
+    border-radius: 14px;
+
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
+}
+
+/* Coloca la autorización sobre el botón */
+.pagina-acreditacion .confirmacion-formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    margin: 0;
+}
+
+/* Casilla de autorización */
+.pagina-acreditacion .casilla-confirmacion {
+    display: flex;
+    align-items: flex-start;
+    align-self: stretch;
+    gap: 10px;
+
+    color: #55554f;
+    font-size: 0.85rem;
+    line-height: 1.4;
+
+    cursor: pointer;
+}
+
+.pagina-acreditacion .casilla-confirmacion input {
+    flex-shrink: 0;
+
+    width: 19px;
+    height: 19px;
+    margin-top: 1px;
+
+    accent-color: var(--dorado-medio);
+}
+
+/* Botón para guardar el perfil */
+.pagina-acreditacion .boton-guardar {
+    width: min(360px, 100%);
+    padding: 13px 22px;
+
+    color: var(--blanco);
+    background-color: #c98e11;
+
+    border: 0;
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font: inherit;
+    font-weight: 700;
+
+    box-shadow: 0 5px 12px rgba(37, 30, 23, 0.14);
+
+    transition:
+        background-color 0.2s,
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.pagina-acreditacion .boton-guardar:hover {
+    background-color: var(--color-oscuro);
+    transform: translateY(-1px);
+    box-shadow: 0 7px 16px rgba(37, 30, 23, 0.2);
+}
+
+/* Indicador visible para navegación mediante teclado */
+.pagina-acreditacion .boton-guardar:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+}
+
+/* Elementos mostrados u ocultados mediante JavaScript */
 [hidden] {
     display: none !important;
 }
 
-
 /* ==================================================
-   9. RESUMEN Y DATOS DEL PAGO
+   ADAPTACIÓN PARA TABLETAS
    ================================================== */
 
-/* Recuadro que contiene los datos bancarios */
+@media (max-width: 850px) {
+
+    .pagina-acreditacion .contenido-acreditacion {
+        width: min(720px, calc(100% - 24px));
+        padding: 28px 0 60px;
+    }
+
+    .pagina-acreditacion .campos-grid-emergencia {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pagina-acreditacion .campo-acompanantes {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+/* ==================================================
+   ADAPTACIÓN PARA CELULARES
+   ================================================== */
+
+@media (max-width: 600px) {
+
+    .pagina-acreditacion .contenido-acreditacion {
+        width: calc(100% - 20px);
+        padding: 24px 0 46px;
+    }
+
+    .pagina-acreditacion .cabecera-formulario {
+        margin-bottom: 22px;
+    }
+
+    .pagina-acreditacion .cabecera-formulario h1 {
+        font-size: 2.25rem;
+    }
+
+    .pagina-acreditacion .cabecera-formulario p {
+        font-size: 0.95rem;
+    }
+
+    .pagina-acreditacion .grupo-formulario,
+    .pagina-acreditacion .tarjeta-formulario,
+    .pagina-acreditacion .tarjeta-confirmacion {
+        padding: 18px 16px;
+        border-radius: 12px;
+    }
+
+    .pagina-acreditacion .cabecera-grupo-formulario {
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .pagina-acreditacion .icono-grupo-formulario {
+        flex-basis: 44px;
+
+        width: 44px;
+        height: 44px;
+
+        font-size: 1.25rem;
+    }
+
+    .pagina-acreditacion .texto-grupo-formulario h2,
+    .pagina-acreditacion .texto-grupo-formulario h3 {
+        font-size: 1.1rem;
+    }
+
+    .pagina-acreditacion .campos-grid,
+    .pagina-acreditacion .campos-grid-emergencia,
+    .pagina-acreditacion .fila-salud,
+    .pagina-acreditacion
+    .fila-salud:has(> .campo-condicional:not([hidden])) {
+        grid-template-columns: 1fr;
+    }
+
+    .pagina-acreditacion .resumen-valor-acreditacion {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pagina-acreditacion .valor-acreditacion,
+    .pagina-acreditacion #valor-acreditacion {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+
+
+
+
+/* ==================================================
+   10. RESUMEN Y DATOS DEL PAGO
+   ================================================== */
+
 .datos-bancarios {
     padding: 20px;
 
@@ -613,58 +1162,53 @@ main {
     border-radius: 12px;
 }
 
-/* Separación entre los datos bancarios */
 .datos-bancarios p {
     margin: 6px 0;
 }
 
-/* Total calculado de la acreditación */
 .total-acreditacion {
     display: block;
     margin-top: 10px;
 
-    color: var(--verde-bosque);
+    color: var(--verde-principal);
     font-size: 1.5rem;
     font-weight: 700;
 }
 
 
 /* ==================================================
-   10. ACOMPAÑANTES
+   11. ACOMPAÑANTES
    ================================================== */
 
-/* Botón para agregar acompañantes */
 .boton-agregar {
     margin-top: 12px;
     padding: 13px 20px;
 
     color: var(--blanco);
-    background-color: var(--verde-bosque);
+    background-color: var(--verde-principal);
 
     border: 0;
     border-radius: 12px;
 
     cursor: pointer;
+
     font: inherit;
     font-weight: 700;
 }
 
-/* Cambio del botón para agregar */
 .boton-agregar:hover {
-    background-color: var(--cafe-tierra);
+    background-color: var(--color-oscuro);
 }
 
-/* Tarjeta creada para cada acompañante */
 .tarjeta-acompanante {
     margin-top: 24px;
     padding: 24px;
 
     background-color: var(--color-fondo-tarjeta);
-    border: 2px solid var(--verde-bosque);
+    border: 2px solid var(--verde-principal);
     border-radius: 16px;
 }
 
-/* Encabezado de la tarjeta del acompañante */
 .encabezado-acompanante {
     display: flex;
     align-items: center;
@@ -674,120 +1218,841 @@ main {
     margin-bottom: 20px;
 }
 
-/* Nombre del acompañante */
 .encabezado-acompanante h3 {
     margin: 0;
 
-    color: var(--verde-bosque);
+    color: var(--verde-principal);
     font-size: 1.4rem;
 }
 
-/* Secciones internas del acompañante */
 .subgrupo-acompanante {
     margin-top: 20px;
     padding: 20px;
 
-    border: 1px solid var(--verde-bosque);
+    border: 1px solid var(--verde-principal);
     border-radius: 12px;
 }
 
-/* Título de cada sección interna */
 .subgrupo-acompanante legend {
     padding: 0 10px;
 
-    color: var(--verde-bosque);
+    color: var(--verde-principal);
     font-size: 1.1rem;
     font-weight: 700;
 }
 
-/* Botón para eliminar un acompañante */
 .boton-eliminar-acompanante {
     padding: 10px 16px;
 
     color: var(--blanco);
-    background-color: var(--cafe-tierra);
+    background-color: var(--color-oscuro);
 
     border: 0;
     border-radius: 10px;
 
     cursor: pointer;
+
     font: inherit;
     font-weight: 700;
 }
 
-/* Cambio del botón para eliminar */
 .boton-eliminar-acompanante:hover {
     background-color: var(--color-eliminar-hover);
 }
 
 
 /* ==================================================
-   11. ADAPTACIÓN PARA TABLETS
+   12. CARRUSEL DEL CAMPAMENTO ANTERIOR
+   ================================================== */
+
+.galeria-campamento {
+    width: 100%;
+    margin: 0;
+    padding: 48px 32px;
+
+    background-color: var(--blanco);
+    border-radius: 0;
+}
+
+.titulo-galeria {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    text-align: center;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+}
+
+.titulo-galeria::after {
+    content: "";
+
+    display: block;
+
+    width: 48px;
+    height: 4px;
+    margin: 12px auto 30px;
+
+    background-color: var(--dorado-claro);
+    border-radius: 999px;
+}
+
+.carrusel {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+}
+
+.carrusel-ventana {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.carrusel-pista {
+    display: flex;
+    gap: 16px;
+
+    transition: transform 0.45s ease;
+}
+
+.diapositiva-carrusel {
+    flex: 0 0 calc((100% - 32px) / 3);
+    aspect-ratio: 4 / 3;
+
+    background-color: var(--crema);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.diapositiva-carrusel img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    cursor: zoom-in;
+
+    transition:
+        transform 0.25s,
+        filter 0.25s;
+}
+
+.diapositiva-carrusel:hover img {
+    transform: scale(1.03);
+    filter: brightness(0.9);
+}
+
+.boton-carrusel {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+
+    width: 46px;
+    height: 46px;
+
+    color: var(--verde-profundo);
+    background-color: var(--blanco);
+
+    border: 1px solid var(--verde-principal);
+    border-radius: 50%;
+
+    box-shadow: 0 5px 14px rgba(37, 30, 23, 0.16);
+
+    cursor: pointer;
+    font-size: 1.5rem;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        transform 0.2s;
+}
+
+.boton-carrusel:hover {
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+    transform: scale(1.06);
+}
+
+.boton-carrusel:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+}
+
+.indicadores-carrusel {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+.indicador-carrusel {
+    width: 12px;
+    height: 12px;
+    padding: 0;
+
+    background-color: #d8cfbb;
+
+    border: 0;
+    border-radius: 50%;
+
+    cursor: pointer;
+}
+
+.indicador-carrusel.activo {
+    background-color: var(--dorado-claro);
+}
+
+
+/* ==================================================
+   13. VISOR DE FOTOGRAFÍAS
+   ================================================== */
+
+.visor-fotografia {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 35px 70px;
+
+    background-color: transparent;
+
+    border: 0;
+    overflow: hidden;
+}
+
+.visor-fotografia[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.visor-fotografia::backdrop {
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(4px);
+}
+
+.imagen-ampliada {
+    display: block;
+
+    width: auto;
+    height: auto;
+    max-width: min(1200px, calc(100vw - 160px));
+    max-height: calc(100dvh - 70px);
+
+    object-fit: contain;
+
+    background-color: #000000;
+    border-radius: 14px;
+
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+}
+
+.cerrar-visor {
+    position: fixed;
+    top: 20px;
+    right: 22px;
+    z-index: 3;
+
+    display: grid;
+    place-items: center;
+
+    width: 46px;
+    height: 46px;
+    padding: 0;
+
+    color: var(--verde-profundo);
+    background-color: var(--blanco);
+
+    border: 2px solid var(--verde-profundo);
+    border-radius: 50%;
+
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        transform 0.2s;
+}
+
+.flecha-visor {
+    position: fixed;
+    top: 50%;
+    z-index: 2;
+
+    display: grid;
+    place-items: center;
+
+    width: 52px;
+    height: 52px;
+    padding: 0;
+
+    color: var(--verde-profundo);
+    background-color: rgba(255, 255, 255, 0.94);
+
+    border: 2px solid var(--verde-profundo);
+    border-radius: 50%;
+
+    cursor: pointer;
+    font-size: 1.7rem;
+    line-height: 1;
+
+    transform: translateY(-50%);
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        transform 0.2s;
+}
+
+.flecha-visor-anterior {
+    left: 22px;
+}
+
+.flecha-visor-siguiente {
+    right: 22px;
+}
+
+.cerrar-visor:hover,
+.flecha-visor:hover {
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+}
+
+.cerrar-visor:hover {
+    transform: scale(1.08);
+}
+
+.flecha-visor:hover {
+    transform: translateY(-50%) scale(1.08);
+}
+
+.cerrar-visor:focus-visible,
+.flecha-visor:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+}
+
+
+/* ==================================================
+   14. SECCIÓN DE CONTACTO
+   ================================================== */
+
+.contacto {
+    width: 100%;
+    margin: 0;
+    padding: 24px 20px 28px;
+
+    color: var(--blanco);
+    text-align: center;
+
+    background:
+        linear-gradient(
+            rgba(22, 58, 22, 0.94),
+            rgba(12, 42, 15, 0.97)
+        ),
+        url("Logos/imagen.png") center 20% / cover no-repeat;
+
+    border-radius: 0;
+}
+
+.contacto h2 {
+    margin: 0;
+
+    color: var(--blanco);
+    font-size: clamp(1.8rem, 3vw, 2.35rem);
+}
+
+.contacto h2::after {
+    content: "";
+
+    display: block;
+
+    width: 44px;
+    height: 4px;
+    margin: 10px auto 20px;
+
+    background-color: var(--dorado-claro);
+    border-radius: 20px;
+}
+
+.enlace-instagram {
+    display: inline-grid;
+    place-items: center;
+
+    color: var(--dorado-claro);
+    text-decoration: none;
+
+    transition: transform 0.2s;
+}
+
+.icono-instagram {
+    width: 60px;
+    height: 60px;
+    padding: 15px;
+
+    color: var(--dorado-claro);
+    background-color: rgba(255, 255, 255, 0.1);
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        transform 0.2s;
+}
+
+.icono-instagram circle:last-of-type {
+    fill: currentColor;
+    stroke: none;
+}
+
+.enlace-instagram:hover {
+    transform: translateY(-3px);
+}
+
+.enlace-instagram:hover .icono-instagram {
+    color: var(--verde-profundo);
+    background-color: var(--dorado-claro);
+
+    transform: scale(1.06);
+}
+
+.enlace-instagram:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 6px;
+    border-radius: 50%;
+}
+
+
+/* ==================================================
+   15. PIE DE PÁGINA
+   ================================================== */
+
+.pie-pagina {
+    width: 100%;
+    margin: 0;
+    padding: 10px 28px;
+
+    color: var(--blanco);
+
+    background: linear-gradient(
+        90deg,
+        var(--verde-profundo),
+        var(--verde-intermedio),
+        var(--verde-profundo)
+    );
+
+    border-radius: 0;
+}
+
+.contenido-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+
+    min-height: 72px;
+}
+
+.marca-pie {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+
+    color: var(--blanco);
+    text-decoration: none;
+}
+
+.marca-pie img {
+    display: block;
+
+    width: 86px;
+    height: auto;
+
+    mix-blend-mode: screen;
+}
+
+.nombre-marca-pie {
+    padding-left: 12px;
+
+    color: var(--blanco);
+    border-left: 1px solid var(--dorado-claro);
+
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.frase-pie {
+    max-width: 620px;
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.9);
+
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-align: right;
+}
+
+.frase-pie strong {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.marca-pie:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+
+/* ==================================================
+   16. PÁGINA DE INICIO DE SESIÓN
+   ================================================== */
+
+.pagina-login .contenido-login {
+    width: min(600px, calc(100% - 32px));
+    margin: 0 auto 50px;
+}
+
+.pagina-login .seccion-login {
+    padding: 24px 0 0;
+}
+
+.pagina-login .cabecera-login {
+    margin-bottom: 22px;
+    text-align: center;
+}
+
+.pagina-login .cabecera-login h2 {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-size: clamp(2.4rem, 4vw, 3rem);
+    line-height: 1.1;
+}
+
+.pagina-login .cabecera-login h2::after {
+    content: "";
+
+    display: block;
+
+    width: 46px;
+    height: 3px;
+    margin: 12px auto 14px;
+
+    background-color: var(--dorado-claro);
+    border-radius: 20px;
+}
+
+.pagina-login .cabecera-login p {
+    margin: 0;
+
+    color: var(--texto);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.pagina-login .tarjeta-login {
+    padding: 24px 28px;
+
+    background-color: rgba(255, 255, 255, 0.97);
+
+    border: 1px solid rgba(37, 30, 23, 0.1);
+    border-radius: 14px;
+
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
+}
+
+.pagina-login .formulario-login {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pagina-login .campo-login {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.pagina-login .campo-login label {
+    color: var(--verde-profundo);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.pagina-login .control-login {
+    position: relative;
+}
+
+.pagina-login .control-login svg {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+
+    width: 20px;
+    height: 20px;
+
+    fill: none;
+    stroke: #737973;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.pagina-login .control-login input {
+    width: 100%;
+    height: 48px;
+    padding: 0 15px 0 48px;
+
+    color: var(--texto);
+    background-color: var(--blanco);
+
+    border: 1px solid #c9cec9;
+    border-radius: 8px;
+
+    font: inherit;
+}
+
+.pagina-login .control-login input:focus {
+    border-color: var(--verde-principal);
+    outline: 3px solid rgba(59, 152, 51, 0.14);
+}
+
+.pagina-login .opciones-login {
+    margin-top: -6px;
+    text-align: right;
+}
+
+.pagina-login .enlace-recuperacion {
+    color: var(--color-oscuro);
+
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition: color 0.2s;
+}
+
+.pagina-login .enlace-recuperacion:hover {
+    color: var(--verde-profundo);
+    text-decoration: underline;
+}
+
+.pagina-login .enlace-recuperacion:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+
+
+/* ==================================================
+   BOTÓN PARA INICIAR SESIÓN
+   ================================================== */
+
+/* Estado normal: dorado claro */
+body.pagina-login .boton-login {
+    width: 100%;
+    height: 50px;
+    margin-top: 2px;
+
+    color: #251e17;
+    background-color: #e4c674;
+    background-image: none;
+
+    border: 2px solid #ab8141;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font: inherit;
+    font-weight: 700;
+
+    transition:
+        color 0.25s,
+        background-color 0.25s,
+        border-color 0.25s,
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+/* Estado al pasar el cursor: café oscuro */
+body.pagina-login .boton-login:hover {
+    color: #ffffff;
+    background-color: #251e17;
+    background-image: none;
+    border-color: #251e17;
+
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 8px 18px rgba(37, 30, 23, 0.32);
+}
+
+/* Estado al presionar el botón */
+body.pagina-login .boton-login:active {
+    transform: translateY(0) scale(0.99);
+    box-shadow: 0 3px 8px rgba(37, 30, 23, 0.24);
+}
+
+/* Acceso al formulario para crear una cuenta */
+.pagina-login .crear-cuenta-login {
+    margin-top: 20px;
+    padding-top: 18px;
+
+    text-align: center;
+    border-top: 1px solid #d8ddd8;
+}
+
+.pagina-login .crear-cuenta-login p {
+    margin: 0 0 10px;
+
+    color: var(--texto);
+    font-size: 0.95rem;
+}
+
+.pagina-login .boton-crear-cuenta {
+    display: block;
+
+    width: 100%;
+    padding: 11px 18px;
+
+    color: var(--verde-profundo);
+    background-color: transparent;
+
+    border: 2px solid var(--verde-profundo);
+    border-radius: 8px;
+
+    font-weight: 700;
+    text-decoration: none;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s;
+}
+
+.pagina-login .boton-crear-cuenta:hover {
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+}
+
+body.pagina-login .boton-login:focus-visible,
+.pagina-login .boton-crear-cuenta:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+}
+
+
+/* ==================================================
+   17. RECUPERACIÓN DE CONTRASEÑA
+   ================================================== */
+
+.pagina-recuperacion .volver-login {
+    margin-top: 20px;
+    padding-top: 18px;
+
+    text-align: center;
+    border-top: 1px solid #d8ddd8;
+}
+
+.pagina-recuperacion .volver-login a {
+    color: var(--verde-profundo);
+
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.pagina-recuperacion .volver-login a:hover {
+    color: var(--color-oscuro);
+    text-decoration: underline;
+}
+
+.pagina-recuperacion .volver-login a:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+
+
+/* ==================================================
+   18. ADAPTACIÓN PARA TABLETS
    ================================================== */
 
 @media (max-width: 900px) {
 
-    /* Encabezado */
     .encabezado {
         flex-direction: column;
-        align-items: stretch;
-        padding: 16px;
+        justify-content: center;
+        gap: 6px;
+
+        padding: 10px 18px;
     }
 
     .marca {
         justify-content: center;
     }
 
-    .marca img {
-        width: 130px;
-        height: 72px;
-    }
-
-    .marca span {
-        max-width: none;
-    }
-
-    /* Menú */
     .menu-principal {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
         width: 100%;
+        margin-left: 0;
+
+        justify-content: space-around;
+        gap: 14px;
     }
 
     .menu-principal a {
-        background-color: var(--crema);
-        text-align: center;
+        font-size: 0.86rem;
     }
 
-    /* Información inferior de la portada */
+    /* Portada */
+    .portada .afiche-oficial {
+        width: 100%;
+        height: 230px;
+
+        object-fit: cover;
+        object-position: center 22%;
+    }
+
     .portada-informacion {
         grid-template-columns: 1fr;
     }
 
-    .fecha-destacada {
+    .fecha-destacada,
+    .portada-informacion .acciones-portada {
         justify-content: center;
     }
 
     .contador-detallado {
-        width: 100%;
+        justify-content: center;
     }
 
-    .portada-informacion .acciones-portada {
-        width: 100%;
-    }
-
-    .portada-informacion .boton {
-        width: 100%;
-    }
-
-    /* Tarjetas de información */
     .tarjetas-informacion {
         grid-template-columns: 1fr;
     }
 
-    /* Formularios */
     .contenido-acreditacion {
-        width: min(100% - 24px, 650px);
+        width: min(calc(100% - 24px), 650px);
         margin: 20px auto;
     }
 
@@ -807,39 +2072,41 @@ main {
     .boton-guardar {
         width: 100%;
     }
+
+    .diapositiva-carrusel {
+        flex-basis: calc((100% - 16px) / 2);
+    }
 }
 
 
 /* ==================================================
-   12. ADAPTACIÓN PARA CELULARES
+   19. ADAPTACIÓN PARA CELULARES
    ================================================== */
 
-@media (max-width: 520px) {
+@media (max-width: 600px) {
 
-    /* Ancho principal */
-    main {
-        width: calc(100% - 20px);
+    .banner-acreditacion {
+        height: 220px;
     }
 
-    /* Encabezado */
-    .encabezado {
-        width: calc(100% - 20px);
-        margin-top: 10px;
-        padding: 14px;
+    .contenido-banner-acreditacion {
+        padding: 20px 16px 30px;
     }
 
-    .marca {
-        flex-direction: column;
-        text-align: center;
+    .contenido-banner-acreditacion h1 strong {
+        margin-top: 7px;
     }
 
-    .menu-principal {
-        grid-template-columns: 1fr;
+    .contenido-banner-acreditacion p {
+        margin-top: 12px;
     }
 
     /* Portada */
-    .portada {
-        border-radius: 20px;
+    .portada .afiche-oficial {
+        height: clamp(300px, 92vw, 390px);
+
+        object-fit: cover;
+        object-position: center;
     }
 
     .portada-informacion {
@@ -850,209 +2117,22 @@ main {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    /* Información */
     .informacion-campamento {
         padding: 40px 18px;
-        border-radius: 20px;
     }
 
     .tarjeta-informacion {
         padding: 22px;
     }
 
-    /* Formularios */
-    .acreditacion {
-        padding: 16px;
-        border-radius: 18px;
-    }
-
-    .grupo-formulario {
-        padding: 18px 14px;
-    }
-
-    /* Acompañantes */
-    .tarjeta-acompanante {
-        padding: 16px;
-    }
-
-    .encabezado-acompanante {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .boton-eliminar-acompanante {
-        width: 100%;
-    }
-}
-/* ==================================================
-   13. CARRUSEL DEL CAMPAMENTO ANTERIOR
-   ================================================== */
-   /*seccion completa de la galeria */
-   .galeria-campamento{
-    margin-bottom: 48px;
-    padding: 48px 32px;
-
-    background-color: var(--blanco);
-    border-radius: 28px;
-   }
-
-   /*Titulo de la galeria*/
-   .titulo-galeria{
-    margin: 0;
-
-    color: var(--verde-oscuro);
-    text-align: center;
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-   }
-
-   /*linea amarilla debajo del titulo*/
-   .titulo-galeria::after{
-    content: "";
-
-    display: block;
-    width: 48px;
-    height: 4px;
-    margin: 12px auto 30px;
-
-    background-color: var(--amarillo);
-    border-radius: 999px;
-   }
-
-   /* Organiza las flechas y las fotografias */
-   .carrusel {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 16px;
-   }
-
-   .carrusel-ventana{
-    min-width: 0;
-    overflow: hidden;
-   }
-
-   /*Pista que se desplazara mediante JavaScript*/
-   .carrusel-pista{
-        display: flex;
-        gap: 16px;
-
-        transition: transform 0.45s ease;
-   }
-
-   /* Cada fotografía ocupa un tercio del carrusel */
-    .diapositiva-carrusel {
-        flex: 0 0 calc((100% - 32px) / 3);
-        aspect-ratio: 4 / 3;
-
-        background-color: var(--crema);
-        border-radius: 14px;
-        overflow: hidden;
-    }
-
-   /*Fotografia interior*/
-   .diapositiva-carrusel img {
-        display: block;
-        width: 100%;
-        height: 100%;
-
-        object-fit: cover;
-   }
-
-   /*flechas del carrusel*/
-   .boton-carrusel{
-
-        display: grid;
-        place-items: center;
-        flex-shrink: 0;
-
-        width: 46px;
-        height: 46px;
-
-        color: var(--verde-oscuro);
-        background-color: var(--blanco);
-
-        border: 1px solid var(--verde-bosque);
-        border-radius: 50%;
-        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
-
-        cursor: pointer;
-        font-size: 1.5rem;
-
-        transition: 
-            color 0.2s,
-            background-color 0.2s,
-            transform 0.2s;
-   }
-
-   /*cambio de las flechas la pasar el mouse*/
-   .boton-carrusel:hover {
-        color: var(--blanco);
-        background-color: var(--verde-bosque);
-        transform: scale(1.06);
-   }
-
-   /*ayuda visual para navegacion con teclado*/
-   .boton-carrusel:focus-visible{
-        outline: 3px solid var(--amarillo);
-        outline-offset: 3px;
-   }
-
-   /*contenedor de lso puntos inferiores*/
-   .indicadores-carrusel{
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-
-        margin-top: 20px;
-    }
-
-    /*cada punto del carrusel*/
-    .indicador-carrusel{
-        width: 12px;
-        height: 12px;
-        padding: 0;
-
-        background-color: #d8cfbb;
-        border: 0;
-        border-radius: 50%;
-
-        cursor: pointer;
-    }
-
-    /* Punto correspondiente al grupo visible*/
-    .indicador-carrusel.activo{
-        background-color: var(--amarillo);
-    }
-
-    /* ==================================================
-   14. ADAPTACIÓN DEL CARRUSEL PARA TABLETS
-   ================================================== */
-
-    @media (max-width: 900px) {
-
-    /* Muestra dos fotografías */
-    .diapositiva-carrusel {
-        flex-basis: calc((100% - 16px) / 2);
-    }
-}
-
-
-/* ==================================================
-   15. ADAPTACIÓN DEL CARRUSEL PARA CELULARES
-   ================================================== */
-
-    @media (max-width: 600px) {
-
     .galeria-campamento {
         padding: 38px 14px;
-        border-radius: 20px;
     }
 
     .carrusel {
         gap: 8px;
     }
 
-    /* Muestra una fotografía */
     .diapositiva-carrusel {
         flex-basis: 100%;
     }
@@ -1060,207 +2140,20 @@ main {
     .boton-carrusel {
         width: 38px;
         height: 38px;
+
         font-size: 1.2rem;
     }
-}
-/* ==================================================
-   16. VISOR DE FOTOGRAFÍAS AMPLIADAS
-   ================================================== */
-
-/*Indica que las fotografías se pueden ampliar*/
-.diapositiva-carrusel img {
-    cursor: zoom-in;
-    transition:
-        transform 0.25s,
-        filter 0.25s;
-}
-
-/*Efecto al pasar sobre una fotografía*/
-.diapositiva-carrusel:hover img {
-    transform: scale(1.03);
-    filter: brightness(0.9);
-}
-
-/*Ventana completa del visor*/
-.visor-fotografia {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    max-width: none;
-    max-height: none;
-    margin: 0;
-    padding: 35px 70px;
-    box-sizing: border-box;
-    background-color: transparent;
-    border: 0;
-    overflow: hidden;
-}
-
-/*Centra la fotografía dentro de la pantalla*/
-.visor-fotografia[open] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/*Fondo oscuro detrás de la fotografía*/
-.visor-fotografia::backdrop {
-    background-color: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(4px);
-}
-
-/*Fotografía ampliada*/
-.imagen-ampliada {
-    display: block;
-    width: auto;
-    height: auto;
-    max-width: min(1200px, calc(100vw - 160px));
-    max-height: calc(100dvh - 70px);
-    object-fit: contain;
-    background-color: #000000;
-    border-radius: 14px;
-    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
-}
-
-/*Botón para cerrar el visor*/
-.cerrar-visor {
-    position: fixed;
-    top: 20px;
-    right: 22px;
-    z-index: 3;
-
-    display: grid;
-    place-items: center;
-
-    width: 46px;
-    height: 46px;
-    padding: 0;
-
-    color: var(--verde-oscuro);
-    background-color: var(--blanco);
-    border: 2px solid var(--verde-oscuro);
-    border-radius: 50%;
-
-    cursor: pointer;
-    font-size: 2rem;
-    line-height: 1;
-
-    transition:
-        color 0.2s,
-        background-color 0.2s,
-        transform 0.2s;
-}
-
-/*Flechas del visor*/
-.flecha-visor {
-    position: fixed;
-    top: 50%;
-    z-index: 2;
-
-    display: grid;
-    place-items: center;
-
-    width: 52px;
-    height: 52px;
-    padding: 0;
-
-    color: var(--verde-oscuro);
-    background-color: rgba(255, 255, 255, 0.94);
-    border: 2px solid var(--verde-oscuro);
-    border-radius: 50%;
-
-    cursor: pointer;
-    font-size: 1.7rem;
-    line-height: 1;
-
-    transform: translateY(-50%);
-
-    transition:
-        color 0.2s,
-        background-color 0.2s,
-        transform 0.2s;
-}
-
-/*Ubicación de la flecha anterior*/
-.flecha-visor-anterior {
-    left: 22px;
-}
-
-/*Ubicación de la flecha siguiente*/
-.flecha-visor-siguiente {
-    right: 22px;
-}
-
-/*Efectos de los botones*/
-.cerrar-visor:hover,
-.flecha-visor:hover {
-    color: var(--blanco);
-    background-color: var(--verde-oscuro);
-}
-
-/*Efecto especial de las flechas*/
-.flecha-visor:hover {
-    transform: translateY(-50%) scale(1.08);
-}
-
-/*Accesibilidad mediante teclado*/
-.cerrar-visor:focus-visible,
-.flecha-visor:focus-visible {
-    outline: 3px solid var(--amarillo);
-    outline-offset: 3px;
-}
-
-/*Adaptación del visor para celulares*/
-@media (max-width: 600px) {
 
     .visor-fotografia {
+        width: 100vw;
+        max-width: 100vw;
         padding: 16px 12px;
     }
 
     .imagen-ampliada {
         max-width: calc(100vw - 24px);
-        max-height: calc(100dvh - 80px);
-        border-radius: 10px;
-    }
-
-    .cerrar-visor {
-        top: 12px;
-        right: 12px;
-        width: 42px;
-        height: 42px;
-        font-size: 1.7rem;
-    }
-
-    .flecha-visor {
-        width: 44px;
-        height: 44px;
-        font-size: 1.4rem;
-    }
-
-    .flecha-visor-anterior {
-        left: 8px;
-    }
-
-    .flecha-visor-siguiente {
-        right: 8px;
-    }
-}
-
-/* ==================================================
-   17. VISOR EN CELULARES
-   ================================================== */
-
-@media (max-width: 600px) {
-
-    .visor-fotografia {
-        width: 96vw;
-        max-width: 96vw;
-    }
-
-    .imagen-ampliada {
         max-height: 82vh;
+
         border-radius: 10px;
     }
 
@@ -1273,118 +2166,24 @@ main {
 
         font-size: 1.7rem;
     }
-}
 
-/* ==================================================
-   17. SECCIÓN DE CONTACTO
-   ================================================== */
+    .flecha-visor {
+        width: 44px;
+        height: 44px;
 
-/*Contenedor principal de contacto*/
-.contacto {
-    width: 100%;
-    margin: 16px auto 0;
-    padding: 10px 10px 15px;
-    box-sizing: border-box;
+        font-size: 1.4rem;
+    }
 
-    color: var(--blanco);
-    text-align: center;
+    .flecha-visor-anterior {
+        left: 8px;
+    }
 
-    background:
-        linear-gradient(
-            rgba(7, 45, 30, 0.94),
-            rgba(5, 34, 23, 0.97)
-        ),
-        url("Logos/imagen.png") center 20% / cover no-repeat;
-
-    border-radius: 24px 24px 0 0;
-}
-
-/*Título de contacto*/
-.contacto h2 {
-    margin: 0;
-    color: var(--blanco);
-    font-size: clamp(1.8rem, 3vw, 2.35rem);
-}
-
-/*Línea amarilla bajo el título*/
-.contacto h2::after {
-    content: "";
-    display: block;
-
-    width: 44px;
-    height: 4px;
-    margin: 10px auto 20px;
-
-    background-color: var(--amarillo);
-    border-radius: 20px;
-}
-
-/*Enlace oficial de Instagram*/
-.enlace-instagram {
-    display: inline-grid;
-    place-items: center;
-
-    color: var(--amarillo);
-    text-decoration: none;
-
-    transition: transform 0.2s;
-}
-
-/*Círculo e icono de Instagram*/
-.icono-instagram {
-    width: 60px;
-    height: 60px;
-    padding: 15px;
-    box-sizing: border-box;
-
-    color: var(--amarillo);
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-
-    transition:
-        color 0.2s,
-        background-color 0.2s,
-        transform 0.2s;
-}
-
-/*Punto pequeño del icono de Instagram*/
-.icono-instagram circle:last-of-type {
-    fill: currentColor;
-    stroke: none;
-}
-
-/*Efecto al pasar sobre Instagram*/
-.enlace-instagram:hover {
-    transform: translateY(-3px);
-}
-
-.enlace-instagram:hover .icono-instagram {
-    color: var(--verde-oscuro);
-    background-color: var(--amarillo);
-    transform: scale(1.06);
-}
-
-/*Accesibilidad mediante teclado*/
-.enlace-instagram:focus-visible {
-    outline: 3px solid var(--amarillo);
-    outline-offset: 6px;
-    border-radius: 50%;
-}
-
-/*Adaptación para celulares*/
-@media (max-width: 600px) {
+    .flecha-visor-siguiente {
+        right: 8px;
+    }
 
     .contacto {
-        width: 100%;
         padding: 24px 18px 28px;
-        border-radius: 18px 18px 0 0;
     }
 
     .icono-instagram {
@@ -1392,111 +2191,100 @@ main {
         height: 56px;
         padding: 14px;
     }
+
+    /* Login */
+    .pagina-login .contenido-login {
+        width: calc(100% - 24px);
+        margin-bottom: 32px;
+    }
+
+    .pagina-login .seccion-login {
+        padding-top: 20px;
+    }
+
+    .pagina-login .tarjeta-login {
+        padding: 22px 18px;
+    }
+
+    .pagina-login .cabecera-login p {
+        font-size: 0.93rem;
+    }
+
+    /* Campos condicionales de salud en celulares */
+    .fila-salud,
+    .fila-salud:has(> .campo-condicional:not([hidden])) {
+        grid-template-columns: 1fr;
 }
-/* ==================================================
-   18. PIE DE PÁGINA
-   ================================================== */
-
-.pie-pagina {
-    width: calc(100% - 32px);
-    margin: 0 auto 24px;
-    padding: 10px 28px;
-    box-sizing: border-box;
-
-    color: var(--blanco);
-
-    background: linear-gradient(
-        90deg,
-        #061a12,
-        #0a281c,
-        #061a12
-    );
-
-    isolation: isolate;
-    border-radius: 0 0 24px 24px;
-}
-
-/* Distribuye la marca y la frase bíblica */
-.contenido-pie {
-    min-height: 72px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-}
-
-/* Logo, separador y nombre de la organización */
-.marca-pie {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    gap: 12px;
-
-    color: var(--blanco);
-    text-decoration: none;
-}
-
-.marca-pie img {
-    display: block;
-    width: 86px;
-    height: auto;
-    mix-blend-mode: screen;
-}
-
-.nombre-marca-pie {
-    padding-left: 12px;
-    border-left: 1px solid var(--amarillo);
-
-    color: var(--blanco);
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-/* Frase ubicada al lado derecho */
-.frase-pie {
-    max-width: 620px;
-    margin: 0;
-
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.9rem;
-    line-height: 1.4;
-    text-align: right;
-}
-
-.frase-pie strong {
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-/* Indicador para navegación con teclado */
-.marca-pie:focus-visible {
-    outline: 3px solid var(--amarillo);
-    outline-offset: 4px;
-    border-radius: 4px;
 }
 
 
 /* ==================================================
-   ADAPTACIÓN DEL PIE DE PÁGINA
+   20. ADAPTACIÓN PARA CELULARES PEQUEÑOS
    ================================================== */
 
-@media (max-width: 760px) {
+@media (max-width: 520px) {
+
+    .encabezado {
+        min-height: auto;
+        padding: 8px 10px 10px;
+    }
+
+    .marca img {
+        width: 170px;
+        margin: -24px -51px -23px;
+    }
+
+    .marca .nombre-marca,
+    .marca span {
+        padding-left: 12px;
+        font-size: 0.78rem;
+    }
+
+    .menu-principal {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px 14px;
+    }
+
+    .menu-principal a {
+        padding: 8px 4px;
+
+        font-size: 0.78rem;
+        text-align: center;
+    }
+
+    .acreditacion {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .grupo-formulario {
+        padding: 18px 14px;
+    }
+
+    .tarjeta-acompanante {
+        padding: 16px;
+    }
+
+    .encabezado-acompanante {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .boton-eliminar-acompanante {
+        width: 100%;
+    }
 
     .pie-pagina {
-        width: calc(100vw - 20px);
-        padding: 14px 20px;
-        border-radius: 0 0 18px 18px;
+        padding: 14px 16px;
     }
 
     .contenido-pie {
         min-height: auto;
+
         flex-direction: column;
         justify-content: center;
-        gap: 10px;
+        gap: 12px;
     }
 
     .marca-pie {
@@ -1513,16 +2301,23 @@ main {
     }
 
     .frase-pie {
+        width: 100%;
         max-width: 520px;
+
         font-size: 0.82rem;
         text-align: center;
     }
 }
 
-@media (max-width: 430px) {
 
-    .pie-pagina {
-        padding: 12px 16px;
+/* ==================================================
+   21. ADAPTACIÓN PARA PANTALLAS MUY PEQUEÑAS
+   ================================================== */
+
+@media (max-width: 380px) {
+
+    .portada .afiche-oficial {
+        height: 320px;
     }
 
     .marca-pie img {
