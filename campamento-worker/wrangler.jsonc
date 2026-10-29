@@ -1,0 +1,13 @@
+
+{
+  "name": "icec-campamento-2027-api",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-29",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "icec-campamento-2027",
+      "database_id": "c038d4bc-89f5-463a-951c-22d69c3b4956"
+    }
+  ]
+}
