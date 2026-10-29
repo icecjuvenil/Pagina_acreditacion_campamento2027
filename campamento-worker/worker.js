@@ -536,13 +536,19 @@ export default {
 
       try {
         return await registrarParticipante(datos, env);
-      } catch (error) {
-        console.error("Fallo inesperado en el registro");
+      
+} catch (error) {
+  console.error(
+    "Fallo inesperado en el registro:",
+    error?.name,
+    error?.message
+  );
 
-        return responder({
-          mensaje: "Error interno del registro."
-        }, 500);
-      }
+  return responder({
+    mensaje: "Error interno del registro."
+  }, 500);
+}
+
     }
 
     return responder({
