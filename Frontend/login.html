@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Configuración general de la página -->
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Iniciar sesión | Elegidos ICEC Juvenil</title>
+
+    <!-- Estilos generales del sitio -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="pagina-acreditacion pagina-login">
+
+    <!-- ==================================================
+         ENCABEZADO PRINCIPAL
+         ================================================== -->
+    <header class="encabezado">
+
+        <!-- Logo y nombre de Instagram -->
+        <a href="index.html" class="marca">
+
+            <img
+                src="Logos/logo-elegidos.png"
+                alt="Logo Elegidos ICEC Juvenil">
+
+            <span>@ICECJUVENIL</span>
+
+        </a>
+
+        <!-- Navegación principal -->
+        <nav
+            class="menu-principal"
+            aria-label="Navegación principal">
+
+            <a href="index.html">
+                Inicio
+            </a>
+
+            <a href="index.html#informacion">
+                Información
+            </a>
+
+            <a
+                href="login.html"
+                aria-current="page">
+                Acreditación
+            </a>
+
+            <a href="index.html#contacto">
+                Contacto
+            </a>
+
+        </nav>
+
+    </header>
+
+    <!-- ==================================================
+         BANNER DEL CAMPAMENTO
+         ================================================== -->
+    <section
+        class="banner-acreditacion"
+        aria-labelledby="titulo-banner-login">
+
+        <!-- Fotografía del campamento -->
+        <img
+            src="Logos/imagen.png"
+            alt="Jóvenes reunidos alrededor de una fogata">
+
+        <!-- Título central del banner -->
+        <div class="contenido-banner-acreditacion">
+
+            <h1 id="titulo-banner-login">
+
+                <span>Reconciliado</span>
+
+                <strong>A la Cruz</strong>
+
+            </h1>
+
+            <p>Campamento ICEC 2027</p>
+
+        </div>
+
+    </section>
+
+    <!-- ==================================================
+         INICIO DE SESIÓN
+         ================================================== -->
+    <main class="contenido-login">
+
+        <section
+            class="seccion-login"
+            aria-labelledby="titulo-login">
+
+            <!-- Presentación de la sección -->
+            <div class="cabecera-login">
+
+                <h2 id="titulo-login">
+                    Acreditación
+                </h2>
+
+                <p>
+                    Ingresa a tu cuenta para continuar con tu acreditación.
+                </p>
+
+            </div>
+
+            <!-- Tarjeta del formulario -->
+            <div class="tarjeta-login">
+
+                <form
+                    id="formulario-login"
+                    class="formulario-login">
+
+                    <!-- Campo de correo electrónico -->
+                    <div class="campo-login">
+
+                        <label for="correo-login">
+                            Correo electrónico
+                        </label>
+
+                        <div class="control-login">
+
+                            <!-- Icono de correo -->
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true">
+
+                                <rect
+                                    x="3"
+                                    y="5"
+                                    width="18"
+                                    height="14"
+                                    rx="2">
+                                </rect>
+
+                                <path d="m3 7 9 6 9-6"></path>
+
+                            </svg>
+
+                            <input
+                                type="email"
+                                id="correo-login"
+                                name="correo"
+                                autocomplete="email"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Campo de contraseña -->
+                    <div class="campo-login">
+
+                        <label for="contrasena-login">
+                            Contraseña
+                        </label>
+
+                        <div class="control-login">
+
+                            <!-- Icono de candado -->
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true">
+
+                                <rect
+                                    x="5"
+                                    y="10"
+                                    width="14"
+                                    height="11"
+                                    rx="2">
+                                </rect>
+
+                                <path
+                                    d="M8 10V7a4 4 0 0 1 8 0v3">
+                                </path>
+
+                            </svg>
+
+                            <input
+                                type="password"
+                                id="contrasena-login"
+                                name="contrasena"
+                                autocomplete="current-password"
+                                required>
+
+                        </div>
+
+                    </div>
+                    <!-- Enlace para recuperar la contraseña -->
+                    <div class="opciones-login">
+
+                        <a
+                            href="recuperar-contrasena.html"
+                            class="enlace-recuperacion">
+
+                            ¿Olvidaste tu contraseña?
+                        </a>
+
+                    </div>
+
+                    <!-- Se conectará al sistema de cuentas posteriormente -->
+                    <button
+                        type="button"
+                        class="boton-login">
+
+                        Iniciar sesión
+                    </button>
+
+                </form>
+
+                <!-- Acceso para personas que todavía no tienen cuenta -->
+                <div class="crear-cuenta-login">
+
+                    <p>¿Aún no tienes una cuenta?</p>
+
+                    <a
+                        href="acreditacion.html"
+                        class="boton-crear-cuenta">
+
+                        Crear perfil y acreditarme
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

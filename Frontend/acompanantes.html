@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <!-- Configuración general de la página -->
     <meta charset="UTF-8">
 
     <meta
@@ -10,23 +11,30 @@
 
     <title>Acompañantes | Elegidos ICEC Juvenil</title>
 
-    <!-- Archivo de estilos -->
+    <!-- Archivo general de estilos -->
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="pagina-acompanantes">
 
-    <!-- Encabezado y menú principal -->
+    <!-- ==================================================
+         ENCABEZADO Y MENÚ PRINCIPAL
+         ================================================== -->
+
     <header class="encabezado">
 
+        <!-- Identidad de ICEC Juvenil -->
         <a href="index.html" class="marca">
+
             <img
                 src="Logos/logo-elegidos.png"
                 alt="Logo Elegidos ICEC Juvenil">
 
-            <span>Elegidos ICEC Juvenil</span>
+            <span>ICEC Juvenil</span>
+
         </a>
 
+        <!-- Navegación principal -->
         <nav
             class="menu-principal"
             aria-label="Navegación principal">
@@ -35,18 +43,17 @@
                 Inicio
             </a>
 
-            <a href="informacion.html#informacion">
+            <a href="index.html#informacion">
                 Información
             </a>
 
             <a
-                href="acreditacion.html"
+                href="login.html"
                 aria-current="page">
-
                 Acreditación
             </a>
 
-            <a href="contacto.html#contacto">
+            <a href="index.html#contacto">
                 Contacto
             </a>
 
@@ -54,177 +61,297 @@
 
     </header>
 
-    <!-- Contenido principal de acompañantes -->
-    <main class="contenido-acreditacion">
 
-        <section class="acreditacion">
+    <!-- ==================================================
+         IMAGEN DEL CAMPAMENTO
+         ================================================== -->
 
-            <!-- Presentación de la página -->
-            <div class="cabecera-formulario">
+    <section
+        class="banner-acreditacion banner-acompanantes"
+        aria-label="Campamento ICEC Juvenil">
 
-                <h1>Agregar acompañantes</h1>
+        <!-- La imagen es decorativa porque el título aparece más abajo -->
+        <img
+            src="Logos/imagen.png"
+            alt="">
 
-                <p>
-                    Completa los datos de cada acompañante
-                    por separado.
-                </p>
+    </section>
 
-                <p>
-                    Cuando guardes un acompañante podrás
-                    agregar otro o continuar al resumen.
-                </p>
 
-                <a href="acreditacion.html">
-                    Volver a mis datos
-                </a>
+    <!-- ==================================================
+         CONTENIDO PRINCIPAL
+         ================================================== -->
 
-            </div>
+    <main class="contenido-acompanantes">
 
-            <!-- Acompañantes guardados -->
-            <section
-                class="grupo-formulario"
-                aria-labelledby="titulo-acompanantes-guardados">
+        <!-- Presentación de la página -->
+        <header class="cabecera-acompanantes">
+
+            <h1>Agregar acompañantes</h1>
+
+            <p>
+                Registra aquí a las personas que te acompañarán al campamento.
+            </p>
+
+            <p>
+                Completa sus datos, información de salud y un contacto
+                de emergencia.
+            </p>
+
+        </header>
+
+
+        <!-- ==================================================
+             ACOMPAÑANTES AGREGADOS
+             ================================================== -->
+
+        <section
+            class="tarjeta-acompanantes tarjeta-lista-acompanantes"
+            aria-labelledby="titulo-acompanantes-guardados">
+
+            <!-- Encabezado de la lista -->
+            <div class="cabecera-tarjeta-acompanantes">
+
+                <div
+                    class="icono-tarjeta-acompanantes"
+                    aria-hidden="true">
+                    👥
+                </div>
 
                 <h2 id="titulo-acompanantes-guardados">
                     Acompañantes agregados
                 </h2>
 
-                <div id="lista-acompanantes-guardados">
+                <!-- El JavaScript actualizará esta cantidad -->
+                <span
+                    id="cantidad-acompanantes"
+                    class="cantidad-acompanantes">
+                    0 acompañantes
+                </span>
 
-                    <p id="mensaje-sin-acompanantes">
-                        Todavía no has agregado acompañantes.
-                    </p>
+            </div>
+
+            <!-- Lista generada mediante JavaScript -->
+            <div
+                id="lista-acompanantes-guardados"
+                class="lista-acompanantes-guardados">
+
+                <p
+                    id="mensaje-sin-acompanantes"
+                    class="mensaje-sin-acompanantes">
+
+                    Todavía no has agregado acompañantes.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             FORMULARIO DEL ACOMPAÑANTE
+             ================================================== -->
+
+        <form
+            id="formulario-acompanante"
+            class="formulario-acompanante">
+
+            <!-- ==================================================
+                 DATOS PERSONALES
+                 ================================================== -->
+
+            <fieldset
+                class="tarjeta-acompanantes"
+                aria-labelledby="titulo-datos-acompanante">
+
+                <legend class="texto-oculto">
+                    Datos personales del acompañante
+                </legend>
+
+                <!-- Encabezado de la tarjeta -->
+                <div class="cabecera-tarjeta-acompanantes">
+
+                    <div
+                        class="icono-tarjeta-acompanantes"
+                        aria-hidden="true">
+                        👤
+                    </div>
+
+                    <h2 id="titulo-datos-acompanante">
+                        Datos personales del acompañante
+                    </h2>
 
                 </div>
 
-            </section>
+                <!-- Campos de identificación -->
+                <div class="campos-grid-acompanante">
 
-            <!-- Formulario para ingresar un acompañante -->
-            <form
-                id="formulario-acompanante"
-                class="formulario-acreditacion">
+                    <div class="campo">
 
-                <!-- Datos personales del acompañante -->
-                <fieldset class="grupo-formulario">
+                        <label for="nombre-acompanante">
+                            Nombre completo
+                            <span class="obligatorio">*</span>
+                        </label>
 
-                    <legend>
-                        Datos personales del acompañante
-                    </legend>
+                        <input
+                            type="text"
+                            id="nombre-acompanante"
+                            name="nombre"
+                            autocomplete="name"
+                            placeholder="Ejemplo: Ana Sofía Morales Díaz"
+                            required>
 
-                    <div class="campos-grid">
+                    </div>
 
-                        <div class="campo">
+                    <div class="campo">
 
-                            <label for="nombre-acompanante">
-                                Nombre completo
-                            </label>
+                        <label for="rut-acompanante">
+                            RUT
+                            <span class="obligatorio">*</span>
+                        </label>
 
-                            <input
-                                type="text"
-                                id="nombre-acompanante"
-                                name="nombre"
-                                autocomplete="name"
-                                required>
+                        <input
+                            type="text"
+                            id="rut-acompanante"
+                            name="rut"
+                            class="rut-acompanante"
+                            placeholder="Ejemplo: 20.123.456-7"
+                            required>
 
+                    </div>
+
+                    <div class="campo">
+
+                        <label for="fecha-acompanante">
+                            Fecha de nacimiento
+                            <span class="obligatorio">*</span>
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fecha-acompanante"
+                            name="fechaNacimiento"
+                            class="fecha-acompanante"
+                            max="2027-01-08"
+                            autocomplete="bday"
+                            required>
+
+                    </div>
+
+                    <div class="campo">
+
+                        <label for="telefono-acompanante">
+                            Teléfono
+                            <span class="obligatorio">*</span>
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="telefono-acompanante"
+                            name="telefono"
+                            autocomplete="tel"
+                            placeholder="Ejemplo: +56 9 1234 5678"
+                            required>
+
+                    </div>
+
+                    <div class="campo">
+
+                        <label for="correo-acompanante">
+                            Correo electrónico
+                            <span class="texto-opcional">(opcional)</span>
+                        </label>
+
+                        <input
+                            type="email"
+                            id="correo-acompanante"
+                            name="correo"
+                            class="correo-acompanante"
+                            autocomplete="email"
+                            placeholder="Ejemplo: correo@ejemplo.cl">
+
+                        <small>
+                            Debe ser un correo personal. Si no tiene uno,
+                            puede dejarlo vacío.
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <!-- Valor calculado según la edad -->
+                <div class="resumen-valor-acompanante">
+
+                    <div class="descripcion-valor-acompanante">
+
+                        <div
+                            class="icono-valor-acompanante"
+                            aria-hidden="true">
+                            🪙
                         </div>
 
-                        <div class="campo">
+                        <div>
 
-                            <label for="rut-acompanante">
-                                RUT
-                            </label>
+                            <strong>Valor de acreditación</strong>
 
-                            <input
-                                type="text"
-                                id="rut-acompanante"
-                                name="rut"
-                                class="rut-acompanante"
-                                placeholder="12.345.678-9"
-                                required>
-
-                        </div>
-
-                        <div class="campo">
-
-                            <label for="fecha-acompanante">
-                                Fecha de nacimiento
-                            </label>
-
-                            <input
-                                type="date"
-                                id="fecha-acompanante"
-                                name="fechaNacimiento"
-                                class="fecha-acompanante"
-                                max="2027-01-08"
-                                autocomplete="bday"
-                                required>
-
-                        </div>
-
-                        <div class="campo">
-
-                            <label for="telefono-acompanante">
-                                Teléfono
-                            </label>
-
-                            <input
-                                type="tel"
-                                id="telefono-acompanante"
-                                name="telefono"
-                                autocomplete="tel"
-                                placeholder="+56 9 1234 5678"
-                                required>
-
-                        </div>
-
-                        <div class="campo">
-
-                            <label for="correo-acompanante">
-                                Correo electrónico (opcional)
-                            </label>
-
-                            <input
-                                type="email"
-                                id="correo-acompanante"
-                                name="correo"
-                                class="correo-acompanante"
-                                autocomplete="email"
-                                placeholder="correo@ejemplo.cl">
-
-                            <small>
-                                Debe ser un correo personal.
-                                Si no tiene uno, puede dejarlo vacío.
-                            </small>
-
-                        </div>
-
-                        <div class="campo campo-valor-acreditacion">
-
-                            <label for="valor-acompanante">
-                                Valor de acreditación
-                            </label>
-
-                            <output id="valor-acompanante">
-                                Seleccione la fecha de nacimiento
-                            </output>
+                            <p>
+                                Este es el valor por acompañante para
+                                el Campamento ICEC 2027.
+                            </p>
 
                         </div>
 
                     </div>
 
-                </fieldset>
+                    <output
+                        id="valor-acompanante"
+                        class="valor-acompanante">
 
-                <!-- Información de salud del acompañante -->
-                <fieldset class="grupo-formulario">
+                        Seleccione la fecha de nacimiento
+                    </output>
 
-                    <legend>Información de salud</legend>
+                </div>
 
-                    <div class="campos-grid">
+            </fieldset>
+
+
+            <!-- ==================================================
+                 INFORMACIÓN DE SALUD
+                 ================================================== -->
+
+            <fieldset
+                class="tarjeta-acompanantes"
+                aria-labelledby="titulo-salud-acompanante">
+
+                <legend class="texto-oculto">
+                    Información de salud
+                </legend>
+
+                <!-- Encabezado de la tarjeta -->
+                <div class="cabecera-tarjeta-acompanantes">
+
+                    <div
+                        class="icono-tarjeta-acompanantes"
+                        aria-hidden="true">
+                        ♥
+                    </div>
+
+                    <h2 id="titulo-salud-acompanante">
+                        Información de salud
+                    </h2>
+
+                </div>
+
+                <div class="campos-salud-acompanante">
+
+                    <!-- Alergias -->
+                    <div class="fila-salud-acompanante">
 
                         <div class="campo">
 
                             <label for="tiene-alergias-acompanante">
                                 ¿Tiene algún tipo de alergia?
+                                <span class="obligatorio">*</span>
                             </label>
 
                             <select
@@ -247,7 +374,7 @@
                         </div>
 
                         <div
-                            class="campo"
+                            class="campo campo-condicional-acompanante"
                             id="campo-detalle-alergias-acompanante"
                             hidden>
 
@@ -263,10 +390,16 @@
 
                         </div>
 
+                    </div>
+
+                    <!-- Enfermedad o condición médica -->
+                    <div class="fila-salud-acompanante">
+
                         <div class="campo">
 
                             <label for="tiene-enfermedad-acompanante">
                                 ¿Tiene alguna enfermedad o condición médica?
+                                <span class="obligatorio">*</span>
                             </label>
 
                             <select
@@ -289,7 +422,7 @@
                         </div>
 
                         <div
-                            class="campo"
+                            class="campo campo-condicional-acompanante"
                             id="campo-detalle-enfermedad-acompanante"
                             hidden>
 
@@ -305,10 +438,16 @@
 
                         </div>
 
+                    </div>
+
+                    <!-- Medicamentos -->
+                    <div class="fila-salud-acompanante">
+
                         <div class="campo">
 
                             <label for="toma-medicamentos-acompanante">
-                                ¿Toma medicamentos?
+                                ¿Toma medicamentos regularmente?
+                                <span class="obligatorio">*</span>
                             </label>
 
                             <select
@@ -331,7 +470,7 @@
                         </div>
 
                         <div
-                            class="campo"
+                            class="campo campo-condicional-acompanante"
                             id="campo-detalle-medicamentos-acompanante"
                             hidden>
 
@@ -347,10 +486,16 @@
 
                         </div>
 
+                    </div>
+
+                    <!-- Restricción alimentaria -->
+                    <div class="fila-salud-acompanante">
+
                         <div class="campo">
 
                             <label for="restriccion-alimentaria-acompanante">
                                 ¿Tiene alguna restricción alimentaria?
+                                <span class="obligatorio">*</span>
                             </label>
 
                             <select
@@ -373,7 +518,7 @@
                         </div>
 
                         <div
-                            class="campo"
+                            class="campo campo-condicional-acompanante"
                             id="campo-detalle-alimentacion-acompanante"
                             hidden>
 
@@ -391,108 +536,162 @@
 
                     </div>
 
-                </fieldset>
+                </div>
 
-                <!-- Contacto de emergencia del acompañante -->
-                <fieldset class="grupo-formulario">
+            </fieldset>
 
-                    <legend>Contacto de emergencia</legend>
 
-                    <div class="campos-grid">
+            <!-- ==================================================
+                 CONTACTO DE EMERGENCIA
+                 ================================================== -->
 
-                        <div class="campo">
+            <fieldset
+                class="tarjeta-acompanantes"
+                aria-labelledby="titulo-emergencia-acompanante">
 
-                            <label for="nombre-emergencia-acompanante">
-                                Nombre completo del contacto
-                            </label>
+                <legend class="texto-oculto">
+                    Contacto de emergencia
+                </legend>
 
-                            <input
-                                type="text"
-                                id="nombre-emergencia-acompanante"
-                                name="nombreEmergencia"
-                                required>
+                <!-- Encabezado de la tarjeta -->
+                <div class="cabecera-tarjeta-acompanantes">
 
-                        </div>
-
-                        <div class="campo">
-
-                            <label for="relacion-emergencia-acompanante">
-                                Parentesco o relación
-                            </label>
-
-                            <input
-                                type="text"
-                                id="relacion-emergencia-acompanante"
-                                name="relacionEmergencia"
-                                placeholder="Ejemplo: madre, padre o tutor"
-                                required>
-
-                        </div>
-
-                        <div class="campo">
-
-                            <label for="telefono-emergencia-acompanante">
-                                Teléfono principal
-                            </label>
-
-                            <input
-                                type="tel"
-                                id="telefono-emergencia-acompanante"
-                                name="telefonoEmergencia"
-                                placeholder="+56 9 1234 5678"
-                                required>
-
-                        </div>
-
-                        <div class="campo">
-
-                            <label for="telefono-alternativo-acompanante">
-                                Teléfono alternativo
-                            </label>
-
-                            <input
-                                type="tel"
-                                id="telefono-alternativo-acompanante"
-                                name="telefonoAlternativo"
-                                placeholder="+56 9 1234 5678">
-
-                        </div>
-
+                    <div
+                        class="icono-tarjeta-acompanantes"
+                        aria-hidden="true">
+                        ☎
                     </div>
 
-                </fieldset>
-
-                <!-- Botón para guardar el acompañante ingresado -->
-                <div class="confirmacion-formulario">
-
-                    <button
-                        type="submit"
-                        id="guardar-acompanante"
-                        class="boton boton-guardar">
-
-                        Guardar acompañante
-                    </button>
+                    <h2 id="titulo-emergencia-acompanante">
+                        Contacto de emergencia
+                    </h2>
 
                 </div>
 
-            </form>
+                <div class="campos-emergencia-acompanante">
 
-            <!-- Navegación hacia el resumen y pago -->
-            <div class="confirmacion-formulario">
+                    <div class="campo">
+
+                        <label for="nombre-emergencia-acompanante">
+                            Nombre completo
+                            <span class="obligatorio">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre-emergencia-acompanante"
+                            name="nombreEmergencia"
+                            placeholder="Ejemplo: Carlos Morales Díaz"
+                            required>
+
+                    </div>
+
+                    <div class="campo">
+
+                        <label for="relacion-emergencia-acompanante">
+                            Parentesco
+                            <span class="obligatorio">*</span>
+                        </label>
+
+                        <select
+                            id="relacion-emergencia-acompanante"
+                            name="relacionEmergencia"
+                            required>
+
+                            <option value="">
+                                Seleccione una opción
+                            </option>
+
+                            <option value="madre-padre">
+                                Madre o padre
+                            </option>
+
+                            <option value="tutor-tutora">
+                                Tutor o tutora
+                            </option>
+
+                            <option value="hermano-hermana">
+                                Hermano o hermana
+                            </option>
+
+                            <option value="pareja">
+                                Pareja
+                            </option>
+
+                            <option value="otro">
+                                Otro
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="campo">
+
+                        <label for="telefono-emergencia-acompanante">
+                            Teléfono principal
+                            <span class="obligatorio">*</span>
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="telefono-emergencia-acompanante"
+                            name="telefonoEmergencia"
+                            placeholder="Ejemplo: +56 9 1234 5678"
+                            required>
+
+                    </div>
+
+                    <div class="campo">
+
+                        <label for="telefono-alternativo-acompanante">
+                            Teléfono alternativo
+                            <span class="texto-opcional">(opcional)</span>
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="telefono-alternativo-acompanante"
+                            name="telefonoAlternativo"
+                            placeholder="Ejemplo: +56 9 8765 4321">
+
+                    </div>
+
+                </div>
+
+            </fieldset>
+
+
+            <!-- ==================================================
+                 ACCIONES DEL FORMULARIO
+                 ================================================== -->
+
+            <div class="acciones-acompanantes">
+
+                <button
+                    type="submit"
+                    id="guardar-acompanante"
+                    class="boton-guardar-acompanante">
+
+                    <span aria-hidden="true">♟</span>
+                    Guardar acompañante
+                </button>
 
                 <button
                     type="button"
                     id="continuar-resumen"
-                    class="boton boton-guardar">
+                    class="boton-continuar-resumen">
 
                     Continuar al resumen y pago
+                    <span aria-hidden="true"></span>
                 </button>
 
             </div>
 
-        </section>
+        </form>
 
     </main>
+
 
     <!-- Funciones de la página de acompañantes -->
     <script src="acompanantes.js"></script>
