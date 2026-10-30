@@ -131,15 +131,13 @@ function validarDatos(datos) {
     return "Correo electrónico no válido.";
   }
 
-  
-if (
-  typeof datos.contrasena !== "string" ||
-  datos.contrasena.length < 8 ||
-  datos.contrasena.length > 128
-) {
-  return "La contraseña debe tener entre 8 y 128 caracteres.";
-}
-
+  if (
+    typeof datos.contrasena !== "string" ||
+    datos.contrasena.length < 8 ||
+    datos.contrasena.length > 128
+  ) {
+    return "La contraseña debe tener entre 8 y 128 caracteres.";
+  }
 
   if (!textoValido(datos.nombreCompleto, 150)) {
     return "Nombre completo no válido.";
@@ -228,13 +226,9 @@ if (
   return null;
 }
 
->>>>>>> 2ada3b262e5a642b4995470ac1b7b81dc93021c3
 async function crearHashContrasena(contrasena) {
   const encoder = new TextEncoder();
-
-  const salt = crypto.getRandomValues(
-    new Uint8Array(16)
-  );
+  const salt = crypto.getRandomValues(new Uint8Array(16));
 
   const clave = await crypto.subtle.importKey(
     "raw",
@@ -257,46 +251,308 @@ async function crearHashContrasena(contrasena) {
     256
   );
 
-  const convertirHex = (bytes) =>
-    Array.from(bytes)
-      .map(byte => byte.toString(16).padStart(2, "0"))
-      .join("");
+  const hex = (bytes) => Array.from(bytes)
+    .map(n => n.toString(16).padStart(2, "0"))
+    .join("");
 
   return [
     "pbkdf2_sha256",
     iteraciones,
-    convertirHex(salt),
-    convertirHex(new Uint8Array(hash))
+    hex(salt),
+    hex(new Uint8Array(hash))
   ].join("$");
 }
+
+async function registrarParticipante(datos, env) {
+  const error = validarDatos(datos);
+
+  if (error) {
+    return responder({ mensaje: error }, 400);
+  }
+
+  const correo = limpiar(datos.correo).toLowerCase();
+  const rut = normalizarRut(datos.rut);
+  const genero = limpiar(datos.genero).toUpperCase();
+
+  // Evitar duplicados conocidos.
+  const duplicado = await env.DB.prepare(
+    `SELECT
+      (SELECT COUNT(*) FROM usuarios
+       WHERE correo = ?) AS correos,
+      (SELECT COUNT(*) FROM participantes
+       WHERE rut = ?) AS participantes,
+      (SELECT COUNT(*) FROM acompanantes
+       WHERE rut = ?) AS acompanantes`
+  ).bind(correo, rut, rut).first();
+
+  if (
+    duplicado.correos > 0 ||
+    duplicado.participantes > 0 ||
+    duplicado.acompanantes > 0
+  ) {
+    return responder({
+      mensaje: "El correo o RUT ya está registrado."
+    }, 409);
+  }
+
+  const hash = await crearHashContrasena(
+    datos.contrasena
+  );
+
+  const monto = calcularAcreditacion(
+    datos.fechaNacimiento
+  );
+
+  const bandera = (valor) => valor === "si" ? 1 : 0;
+
+  const detalle = (pregunta, campo) =>
+    datos[pregunta] === "si"
+      ? limpiar(datos[campo])
+      : null;
+
+  const idParticipante = `
+    SELECT p.id
+    FROM participantes p
+    JOIN usuarios u ON u.id = p.usuario_id
+    WHERE u.correo = ?
+  `;
+
+  /*
+   * El lote es atómico: se completan todas
+   * las inserciones o no se guarda ninguna.
+   */
+  try {
+    await env.DB.batch([
+      env.DB.prepare(
+        `INSERT INTO usuarios
+         (correo, contrasena_hash, rol, genero)
+         VALUES (?, ?, 'PARTICIPANTE', ?)`
+      ).bind(correo, hash, genero),
+
+      env.DB.prepare(
+        `INSERT INTO participantes
+         (
+           usuario_id, nombre_completo, alias, rut,
+           fecha_nacimiento, genero, telefono,
+           valor_acreditacion
+         )
+         SELECT
+           id, ?, ?, ?, ?, ?, ?, ?
+         FROM usuarios WHERE correo = ?`
+      ).bind(
+        limpiar(datos.nombreCompleto),
+        limpiar(datos.alias) || null,
+        rut,
+        datos.fechaNacimiento,
+        genero,
+        limpiar(datos.telefono),
+        monto,
+        correo
+      ),
+
+      env.DB.prepare(
+        `INSERT INTO informacion_medica
+         (
+           participante_id,
+           tiene_alergias, detalle_alergias,
+           tiene_enfermedad, detalle_enfermedad,
+           toma_medicamentos, detalle_medicamentos,
+           restriccion_alimentaria, detalle_alimentacion
+         )
+         SELECT
+           (${idParticipante}),
+           ?, ?, ?, ?, ?, ?, ?, ?`
+      ).bind(
+        correo,
+        bandera(datos.tieneAlergias),
+        detalle("tieneAlergias", "detalleAlergias"),
+        bandera(datos.tieneEnfermedad),
+        detalle("tieneEnfermedad", "detalleEnfermedad"),
+        bandera(datos.tomaMedicamentos),
+        detalle("tomaMedicamentos", "detalleMedicamentos"),
+        bandera(datos.restriccionAlimentaria),
+        detalle(
+          "restriccionAlimentaria",
+          "detalleAlimentacion"
+        )
+      ),
+
+      env.DB.prepare(
+        `INSERT INTO contactos_emergencia
+         (
+           participante_id, nombre_completo,
+           parentesco, telefono_principal,
+           telefono_alternativo
+         )
+         SELECT (${idParticipante}), ?, ?, ?, ?`
+      ).bind(
+        correo,
+        limpiar(datos.nombreEmergencia),
+        datos.parentesco,
+        limpiar(datos.telefonoEmergencia),
+        limpiar(datos.telefonoAlternativo) || null
+      ),
+
+      env.DB.prepare(
+        `INSERT INTO pagos
+         (participante_id, monto_total, monto_pagado, estado)
+         SELECT id, ?, 0, 'PENDIENTE'
+         FROM participantes
+         WHERE usuario_id = (
+           SELECT id FROM usuarios WHERE correo = ?
+         )`
+      ).bind(monto, correo)
+    ]);
+
+    return responder({
+      mensaje: "Inscripción de prueba registrada correctamente.",
+      estado: "REGISTRADA",
+      montoTotal: monto,
+      pago: "PENDIENTE",
+      acompanantesPendientes:
+        datos.tieneAcompanantes === "si"
+    }, 201);
+
+  } catch (error) {
+    console.error("Error al registrar participante");
+
+    const mensaje = String(error?.message || "");
+
+    if (
+      mensaje.includes("UNIQUE constraint") ||
+      mensaje.includes("SQLITE_CONSTRAINT_UNIQUE")
+    ) {
+      return responder({
+        mensaje: "El correo o RUT ya está registrado."
+      }, 409);
+    }
+
+    return responder({
+      mensaje: "No se pudo completar la inscripción."
+    }, 500);
+  }
+}
+
+// ==========================================
+// RUTAS
+// ==========================================
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname !== "/api/estado") {
-      return new Response("Ruta no encontrada", {
-        status: 404
-      });
+    // Comprobación de conexión D1.
+    if (url.pathname === "/api/estado") {
+      if (request.method !== "GET") {
+        return responder({
+          mensaje: "Método no permitido."
+        }, 405);
+      }
+
+      try {
+        const resultado = await env.DB.prepare(
+          `SELECT COUNT(*) AS total
+           FROM sqlite_master
+           WHERE type = 'table'
+           AND name NOT LIKE 'sqlite_%'`
+        ).first();
+
+        return responder({
+          estado: "OK",
+          baseDatos: "Conectada",
+          tablas: resultado.total
+        });
+
+      } catch (error) {
+        return responder({
+          estado: "ERROR",
+          baseDatos: "No disponible"
+        }, 500);
+      }
     }
 
-    try {
-      const resultado = await env.DB.prepare(
-        "SELECT COUNT(*) AS total FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
-      ).first();
+    // Registro privado para pruebas.
+    if (url.pathname === "/api/registro") {
+      if (request.method !== "POST") {
+        return responder({
+          mensaje: "Método no permitido."
+        }, 405);
+      }
 
-      return Response.json({
-        estado: "OK",
-        baseDatos: "Conectada",
-        tablas: resultado.total
-      });
-    } catch (error) {
-      console.error("Error al consultar D1:", error);
+      // Sin secreto configurado, no se registra nadie.
+      if (!env.REGISTRO_PRUEBA_TOKEN) {
+        return responder({
+          mensaje: "Registro deshabilitado."
+        }, 503);
+      }
 
-      return Response.json({
-        estado: "ERROR",
-        baseDatos: "No disponible"
-      }, { status: 500 });
+      const token = request.headers.get(
+        "X-Registro-Prueba"
+      );
+
+      if (!token || token !== env.REGISTRO_PRUEBA_TOKEN) {
+        return responder({
+          mensaje: "Acceso no autorizado."
+        }, 403);
+      }
+
+      if (
+        !request.headers.get("content-type")
+          ?.toLowerCase()
+          .startsWith("application/json")
+      ) {
+        return responder({
+          mensaje: "Se requiere JSON."
+        }, 415);
+      }
+
+      const tamano = Number(
+        request.headers.get("content-length") || 0
+      );
+
+      if (tamano > 16384) {
+        return responder({
+          mensaje: "Solicitud demasiado grande."
+        }, 413);
+      }
+
+      let datos;
+
+      try {
+        const cuerpo = await request.text();
+
+        if (cuerpo.length > 16384) {
+          return responder({
+            mensaje: "Solicitud demasiado grande."
+          }, 413);
+        }
+
+        datos = JSON.parse(cuerpo);
+      } catch {
+        return responder({
+          mensaje: "JSON no válido."
+        }, 400);
+      }
+
+      try {
+        return await registrarParticipante(datos, env);
+      
+} catch (error) {
+  console.error(
+    "Fallo inesperado en el registro:",
+    error?.name,
+    error?.message
+  );
+
+  return responder({
+    mensaje: "Error interno del registro."
+  }, 500);
+}
+
     }
+
+    return responder({
+      mensaje: "Ruta no encontrada."
+    }, 404);
   }
 };
