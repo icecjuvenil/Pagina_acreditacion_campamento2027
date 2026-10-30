@@ -1849,42 +1849,64 @@ img {
     background-color: #b72c32;
 }
 
+/* Distribución de los datos personales del acompañante */
 .pagina-acompanantes .campos-grid-acompanante {
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 16px 20px;
+    align-items: start;
 }
 
+/* Nombre completo */
 .pagina-acompanantes
 .campos-grid-acompanante
-.campo:nth-child(1) {
+> .campo:nth-child(1) {
     grid-column: span 4;
 }
 
+/* RUT */
 .pagina-acompanantes
 .campos-grid-acompanante
-.campo:nth-child(2) {
+> .campo:nth-child(2) {
     grid-column: span 2;
 }
 
+/* Género */
 .pagina-acompanantes
 .campos-grid-acompanante
-.campo:nth-child(3),
-.pagina-acompanantes
-.campos-grid-acompanante
-.campo:nth-child(4),
-.pagina-acompanantes
-.campos-grid-acompanante
-.campo:nth-child(5) {
+> .campo:nth-child(3) {
     grid-column: span 2;
 }
 
-.pagina-acompanantes .campo {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    min-width: 0;
+/* Fecha de nacimiento */
+.pagina-acompanantes
+.campos-grid-acompanante
+> .campo:nth-child(4) {
+    grid-column: span 2;
 }
+
+/* Teléfono */
+.pagina-acompanantes
+.campos-grid-acompanante
+> .campo:nth-child(5) {
+    grid-column: span 2;
+}
+
+/* Correo electrónico */
+.pagina-acompanantes
+.campos-grid-acompanante
+> .campo:nth-child(6) {
+    grid-column: 1 / -1;
+}
+
+/* La franja del valor utiliza todo el ancho disponible */
+.pagina-acompanantes
+.campos-grid-acompanante
+> .resumen-valor-acompanante {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
 
 .pagina-acompanantes .campo label {
     color: var(--texto);
@@ -1932,12 +1954,15 @@ img {
     outline: 3px solid rgba(228, 198, 116, 0.3);
 }
 
+/* Resumen del valor de acreditación del acompañante */
 .pagina-acompanantes .resumen-valor-acompanante {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
 
+    grid-column: 1 / -1;
+    width: 100%;
     margin-top: 17px;
     padding: 14px 18px;
 
