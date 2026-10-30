@@ -1,4 +1,7 @@
-// Preguntas que muestran un campo adicional al responder "Sí"
+/* ==================================================
+   1. CAMPOS CONDICIONALES DE SALUD
+   ================================================== */
+
 const preguntasCondicionales = [
     {
         selectId: "tiene-alergias",
@@ -22,56 +25,69 @@ const preguntasCondicionales = [
     }
 ];
 
-// Activa los campos adicionales de información de salud
-preguntasCondicionales.forEach((pregunta) => {
-    const seleccion = document.getElementById(
-        pregunta.selectId
-    );
+preguntasCondicionales.forEach(
+    (pregunta) => {
+        const seleccion =
+            document.getElementById(
+                pregunta.selectId
+            );
 
-    const campoDetalle = document.getElementById(
-        pregunta.campoId
-    );
+        const campoDetalle =
+            document.getElementById(
+                pregunta.campoId
+            );
 
-    const entradaDetalle = document.getElementById(
-        pregunta.inputId
-    );
+        const entradaDetalle =
+            document.getElementById(
+                pregunta.inputId
+            );
 
-    if (
-        !seleccion ||
-        !campoDetalle ||
-        !entradaDetalle
-    ) {
-        return;
-    }
-
-    function actualizarCampo() {
-        const respondioSi =
-            seleccion.value === "si";
-
-        campoDetalle.hidden = !respondioSi;
-        entradaDetalle.required = respondioSi;
-
-        if (!respondioSi) {
-            entradaDetalle.value = "";
+        if (
+            !seleccion ||
+            !campoDetalle ||
+            !entradaDetalle
+        ) {
+            return;
         }
-    }
 
-    seleccion.addEventListener(
-        "change",
-        actualizarCampo
+        function actualizarCampo() {
+            const respondioSi =
+                seleccion.value === "si";
+
+            campoDetalle.hidden =
+                !respondioSi;
+
+            entradaDetalle.required =
+                respondioSi;
+
+            if (!respondioSi) {
+                entradaDetalle.value = "";
+            }
+        }
+
+        seleccion.addEventListener(
+            "change",
+            actualizarCampo
+        );
+
+        actualizarCampo();
+    }
+);
+
+
+/* ==================================================
+   2. SECCIÓN DE ACOMPAÑANTES
+   ================================================== */
+
+const seleccionAcompanantes =
+    document.getElementById(
+        "tiene-acompanantes"
     );
 
-    actualizarCampo();
-});
-
-// Muestra el mensaje relacionado con los acompañantes
-const seleccionAcompanantes = document.getElementById(
-    "tiene-acompanantes"
-);
-
-const seccionAcompanantes = document.getElementById(
-    "seccion-acompanantes"
-);
+const seccionAcompanantes =
+    document.getElementById(
+        "seccion-acompanantes"
+    );
 
 function actualizarSeccionAcompanantes() {
     if (
@@ -100,21 +116,147 @@ if (
     actualizarSeccionAcompanantes();
 }
 
-// Calcula el valor de la acreditación principal
-const entradaFechaNacimiento = document.getElementById(
-    "fecha-nacimiento"
-);
 
-const salidaValorAcreditacion = document.getElementById(
-    "valor-acreditacion"
-);
+/* ==================================================
+   3. FECHA, EDAD, TELÉFONO Y VALOR
+   ================================================== */
 
-const fechaInicioCampamento = new Date(
-    2027,
-    0,
-    8
-);
+const entradaFechaNacimiento =
+    document.getElementById(
+        "fecha-nacimiento"
+    );
 
+const salidaValorAcreditacion =
+    document.getElementById(
+        "valor-acreditacion"
+    );
+
+const entradaTelefonoPrincipal =
+    document.getElementById(
+        "telefono"
+    );
+
+const estadoTelefonoPrincipal =
+    document.getElementById(
+        "estado-telefono-principal"
+    );
+
+/* Inicio del campamento: 8 de enero de 2027 */
+const fechaInicioCampamento =
+    new Date(2027, 0, 8);
+
+
+/*
+ * Convierte el valor YYYY-MM-DD del input
+ * en una fecha local válida.
+ */
+function obtenerFechaDesdeInput(valorFecha) {
+    if (!valorFecha) {
+        return null;
+    }
+
+    const partesFecha =
+        valorFecha
+            .split("-")
+            .map(Number);
+
+    if (partesFecha.length !== 3) {
+        return null;
+    }
+
+    const [anio, mes, dia] =
+        partesFecha;
+
+    if (
+        !Number.isInteger(anio) ||
+        !Number.isInteger(mes) ||
+        !Number.isInteger(dia)
+    ) {
+        return null;
+    }
+
+    const fecha =
+        new Date(
+            anio,
+            mes - 1,
+            dia
+        );
+
+    const fechaCoincide =
+        fecha.getFullYear() === anio &&
+        fecha.getMonth() === mes - 1 &&
+        fecha.getDate() === dia;
+
+    return fechaCoincide
+        ? fecha
+        : null;
+}
+
+
+/* Calcula la edad al inicio del campamento */
+function calcularEdadEnCampamento(
+    fechaNacimiento
+) {
+    let edad =
+        fechaInicioCampamento.getFullYear() -
+        fechaNacimiento.getFullYear();
+
+    const aunNoCumple =
+        fechaInicioCampamento.getMonth() <
+            fechaNacimiento.getMonth() ||
+        (
+            fechaInicioCampamento.getMonth() ===
+                fechaNacimiento.getMonth() &&
+            fechaInicioCampamento.getDate() <
+                fechaNacimiento.getDate()
+        );
+
+    if (aunNoCumple) {
+        edad--;
+    }
+
+    return edad;
+}
+
+
+/*
+ * El teléfono personal es opcional
+ * para menores de 6 años.
+ */
+function actualizarRequisitoTelefonoPrincipal(
+    edad = null
+) {
+    if (!entradaTelefonoPrincipal) {
+        return;
+    }
+
+    const esMenorDeSeis =
+        Number.isInteger(edad) &&
+        edad >= 0 &&
+        edad < 6;
+
+    entradaTelefonoPrincipal.required =
+        !esMenorDeSeis;
+
+    entradaTelefonoPrincipal.setCustomValidity(
+        ""
+    );
+
+    if (estadoTelefonoPrincipal) {
+        estadoTelefonoPrincipal.textContent =
+            esMenorDeSeis
+                ? "(opcional para menores de 6 años)"
+                : "*";
+    }
+}
+
+
+/*
+ * Valores:
+ * 0 a 5 años: sin costo.
+ * 6 a 10 años: $10.000.
+ * Desde 11 años: $20.000.
+ */
 function actualizarValorAcreditacion() {
     if (
         !entradaFechaNacimiento ||
@@ -123,74 +265,111 @@ function actualizarValorAcreditacion() {
         return;
     }
 
-    if (!entradaFechaNacimiento.value) {
-        salidaValorAcreditacion.textContent =
-            "Seleccione la fecha de nacimiento";
+    const valorFecha =
+        entradaFechaNacimiento.value;
 
-        salidaValorAcreditacion.dataset.valor = "0";
+    if (!valorFecha) {
+        salidaValorAcreditacion.textContent =
+            "Seleccione su fecha de nacimiento";
+
+        salidaValorAcreditacion.dataset.valor =
+            "0";
+
+        salidaValorAcreditacion.dataset.fechaValida =
+            "false";
+
+        actualizarRequisitoTelefonoPrincipal(
+            null
+        );
+
         return;
     }
 
-    const partesFecha = entradaFechaNacimiento.value
-        .split("-")
-        .map(Number);
+    const nacimiento =
+        obtenerFechaDesdeInput(
+            valorFecha
+        );
 
-    const nacimiento = new Date(
-        partesFecha[0],
-        partesFecha[1] - 1,
-        partesFecha[2]
-    );
-
-    if (nacimiento > fechaInicioCampamento) {
+    if (
+        !nacimiento ||
+        nacimiento > fechaInicioCampamento
+    ) {
         salidaValorAcreditacion.textContent =
             "Fecha de nacimiento no válida";
 
-        salidaValorAcreditacion.dataset.valor = "0";
+        salidaValorAcreditacion.dataset.valor =
+            "0";
+
+        salidaValorAcreditacion.dataset.fechaValida =
+            "false";
+
+        actualizarRequisitoTelefonoPrincipal(
+            null
+        );
+
         return;
     }
 
-    let edad =
-        fechaInicioCampamento.getFullYear() -
-        nacimiento.getFullYear();
-
-    const aunNoCumple =
-        fechaInicioCampamento.getMonth() <
-            nacimiento.getMonth() ||
-        (
-            fechaInicioCampamento.getMonth() ===
-                nacimiento.getMonth() &&
-            fechaInicioCampamento.getDate() <
-                nacimiento.getDate()
+    const edad =
+        calcularEdadEnCampamento(
+            nacimiento
         );
 
-    if (aunNoCumple) {
-        edad--;
+    if (edad < 0) {
+        salidaValorAcreditacion.textContent =
+            "Fecha de nacimiento no válida";
+
+        salidaValorAcreditacion.dataset.valor =
+            "0";
+
+        salidaValorAcreditacion.dataset.fechaValida =
+            "false";
+
+        actualizarRequisitoTelefonoPrincipal(
+            null
+        );
+
+        return;
     }
 
-    // Determina el valor según la edad al inicio del campamento
-    let valor;
-    let categoria;
+    actualizarRequisitoTelefonoPrincipal(
+        edad
+    );
 
-    if (edad >= 0 && edad <= 5) {
+    let valor = 0;
+    let detalleValor = "";
+
+    if (edad < 6) {
         valor = 0;
-        categoria = "Sin costo";
-    } else if (edad >= 6 && edad <= 10) {
+        detalleValor =
+            `${edad} años - sin costo`;
+    } else if (edad <= 10) {
         valor = 10000;
-        categoria = "Tarifa niño";
+        detalleValor =
+            `${edad} años - valor niño`;
     } else {
         valor = 20000;
-        categoria = "Tarifa general";
+        detalleValor =
+            `${edad} años`;
     }
 
-    // Muestra el valor, la edad y la categoría correspondiente
     salidaValorAcreditacion.textContent =
-        `$${valor.toLocaleString("es-CL")} (${edad} años - ${categoria})`;
+        `$${valor.toLocaleString("es-CL")} ` +
+        `(${detalleValor})`;
 
-    // Guarda el valor numérico para utilizarlo en el resumen y pago
     salidaValorAcreditacion.dataset.valor =
         String(valor);
+
+    /*
+     * Permite que una tarifa de $0
+     * corresponda a una fecha válida.
+     */
+    salidaValorAcreditacion.dataset.fechaValida =
+        "true";
 }
 
+
+/* Escucha los cambios del campo de fecha */
 if (
     entradaFechaNacimiento &&
     salidaValorAcreditacion
@@ -208,10 +387,15 @@ if (
     actualizarValorAcreditacion();
 }
 
-// Guarda el perfil y decide cuál es la siguiente página
-const formularioAcreditacion = document.getElementById(
-    "formulario-acreditacion"
-);
+
+/* ==================================================
+   4. GUARDAR ACREDITACIÓN PRINCIPAL
+   ================================================== */
+
+const formularioAcreditacion =
+    document.getElementById(
+        "formulario-acreditacion"
+    );
 
 if (formularioAcreditacion) {
     formularioAcreditacion.addEventListener(
@@ -219,92 +403,135 @@ if (formularioAcreditacion) {
         (evento) => {
             evento.preventDefault();
 
-            const valorAcreditacion = Number(
-                salidaValorAcreditacion?.dataset.valor ||
-                "0"
-            );
+            const fechaNacimientoValida =
+                salidaValorAcreditacion
+                    ?.dataset.fechaValida ===
+                "true";
 
-            if (valorAcreditacion === 0) {
+            if (!fechaNacimientoValida) {
                 alert(
                     "Selecciona una fecha de nacimiento válida."
                 );
 
+                entradaFechaNacimiento?.focus();
                 return;
             }
 
-            const datosFormulario = new FormData(
-                formularioAcreditacion
-            );
+            const valorAcreditacion =
+                Number(
+                    salidaValorAcreditacion
+                        ?.dataset.valor || "0"
+                );
+
+            const datosFormulario =
+                new FormData(
+                    formularioAcreditacion
+                );
 
             const datosPersonaPrincipal =
                 Object.fromEntries(
                     datosFormulario.entries()
                 );
 
-            // La contraseña no se guarda en el navegador
+            /*
+             * La contraseña no se guarda
+             * en sessionStorage.
+             */
             delete datosPersonaPrincipal.contrasena;
 
             datosPersonaPrincipal.valorAcreditacion =
                 valorAcreditacion;
 
+            /*
+             * Si el teléfono es opcional y está vacío,
+             * se guarda como una cadena vacía.
+             */
+            datosPersonaPrincipal.telefono =
+                String(
+                    datosPersonaPrincipal.telefono ||
+                    ""
+                ).trim();
+
             sessionStorage.setItem(
                 "personaPrincipalCampamento",
-                JSON.stringify(datosPersonaPrincipal)
+                JSON.stringify(
+                    datosPersonaPrincipal
+                )
             );
 
-            // Continúa al formulario de acompañantes
-            if (
-                datosPersonaPrincipal.tieneAcompanantes ===
-                "si"
-            ) {
-                const parametrosActuales =
-                    new URLSearchParams(
+            const parametrosActuales =
+                new URLSearchParams(
                     window.location.search
                 );
 
-                const estaEnModoQA =
-                    parametrosActuales.get("qa") === "1";
+            const estaEnModoQA =
+                parametrosActuales.get("qa") ===
+                "1";
 
-                    window.location.href =
+            /*
+             * Si llevará acompañantes, continúa
+             * al formulario correspondiente.
+             */
+            if (
+                datosPersonaPrincipal
+                    .tieneAcompanantes === "si"
+            ) {
+                window.location.href =
                     estaEnModoQA
-                    ? "acompanantes.html?qa=1"
-                    : "acompanantes.html";
+                        ? "acompanantes.html?qa=1"
+                        : "acompanantes.html";
 
                 return;
             }
-            // Elimina acompañantes de pruebas anteriores
+
+            /*
+             * Si no llevará acompañantes,
+             * elimina datos antiguos.
+             */
             sessionStorage.removeItem(
                 "acompanantesCampamento"
             );
 
-            // Continúa directamente al resumen y pago
             window.location.href =
-                "pago.html";
+                estaEnModoQA
+                    ? "pago.html?qa=1"
+                    : "pago.html";
         }
     );
 }
 
-// Completa datos ficticios solamente en modo QA local
+
+/* ==================================================
+   5. DATOS AUTOMÁTICOS PARA PRUEBAS QA
+   ================================================== */
+
 (() => {
-    const parametrosPagina = new URLSearchParams(
-        window.location.search
-    );
+    const parametrosPagina =
+        new URLSearchParams(
+            window.location.search
+        );
 
     const sitioLocal = [
         "localhost",
         "127.0.0.1",
         "::1"
-    ].includes(window.location.hostname);
+    ].includes(
+        window.location.hostname
+    );
 
     const modoQA =
         sitioLocal &&
-        parametrosPagina.get("qa") === "1";
+        parametrosPagina.get("qa") ===
+            "1";
 
     if (!modoQA) {
         return;
     }
 
-    // Elimina los datos temporales de pruebas anteriores
+    /*
+     * Elimina información temporal
+     * de pruebas anteriores.
+     */
     sessionStorage.removeItem(
         "personaPrincipalCampamento"
     );
@@ -317,9 +544,12 @@ if (formularioAcreditacion) {
         "pagoCampamento"
     );
 
-    // Completa un campo y activa sus validaciones
-    function asignarValorPrueba(id, valor) {
-        const elemento = document.getElementById(id);
+    function asignarValorPrueba(
+        id,
+        valor
+    ) {
+        const elemento =
+            document.getElementById(id);
 
         if (!elemento) {
             console.warn(
@@ -344,7 +574,7 @@ if (formularioAcreditacion) {
         );
     }
 
-    // Datos de la cuenta
+    /* Datos de la cuenta */
     asignarValorPrueba(
         "correo",
         "qa@ejemplo.test"
@@ -355,15 +585,25 @@ if (formularioAcreditacion) {
         "PruebaQA2027!"
     );
 
-    // Datos personales
+    /* Datos personales */
     asignarValorPrueba(
         "nombre-completo",
         "Usuario de prueba QA"
     );
 
     asignarValorPrueba(
+        "alias",
+        "Usuario QA"
+    );
+
+    asignarValorPrueba(
         "rut",
         "11.111.111-1"
+    );
+
+    asignarValorPrueba(
+        "genero",
+        "femenino"
     );
 
     asignarValorPrueba(
@@ -376,7 +616,7 @@ if (formularioAcreditacion) {
         "+56 9 1111 1111"
     );
 
-    // Información de salud para la demostración
+    /* Información de salud */
     asignarValorPrueba(
         "tiene-alergias",
         "si"
@@ -417,7 +657,7 @@ if (formularioAcreditacion) {
         "Sin lactosa, dato de demostración"
     );
 
-    // Contacto de emergencia
+    /* Contacto de emergencia */
     asignarValorPrueba(
         "nombre-emergencia",
         "Contacto de prueba"
@@ -425,7 +665,7 @@ if (formularioAcreditacion) {
 
     asignarValorPrueba(
         "parentesco",
-        "Familiar"
+        "madre-padre"
     );
 
     asignarValorPrueba(
@@ -438,16 +678,16 @@ if (formularioAcreditacion) {
         "+56 9 3333 3333"
     );
 
-    // Activa el camino con acompañantes
+    /* Activa el flujo con acompañantes */
     asignarValorPrueba(
         "tiene-acompanantes",
         "si"
     );
 
-    // Confirma que la información es correcta
-    const confirmacion = document.getElementById(
-        "confirma-informacion"
-    );
+    const confirmacion =
+        document.getElementById(
+            "confirma-informacion"
+        );
 
     if (confirmacion) {
         confirmacion.checked = true;
