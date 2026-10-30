@@ -14,7 +14,7 @@ async function crearHashContrasena(contrasena) {
     ["deriveBits"]
   );
 
-  const iteraciones = 210000;
+  const iteraciones = 100000;
 
   const hash = await crypto.subtle.deriveBits(
     {
