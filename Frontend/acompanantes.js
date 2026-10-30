@@ -168,20 +168,30 @@ function actualizarValorAcompanante() {
         edad--;
     }
 
-    /*
-     * Valores actuales:
-     * hasta 9 años: $10.000
-     * desde 10 años: $20.000
-     */
-    const valor = edad <= 9
-        ? 10000
-        : 20000;
+    // Determina el valor según la edad al inicio del campamento
 
+    let valor;
+    let categoria;
+
+    if (edad >= 0 && edad <= 5) {
+        valor = 0;
+        categoria = "Sin costo";
+    } else if (edad >= 6 && edad <= 10) {
+        valor = 10000;
+        categoria = "Tarifa niño";
+    } else {
+        valor = 20000;
+        categoria = "Tarifa general";
+    }
+
+    // Muestra el valor, la edad y la categoría correspondiente
     salidaValorAcompanante.textContent =
-        `$${valor.toLocaleString("es-CL")} CLP`;
+        `$${valor.toLocaleString("es-CL")} (${edad} años - ${categoria})`;
 
+    // Guarda el valor numérico para utilizarlo en el resumen y pago
     salidaValorAcompanante.dataset.valor =
         String(valor);
+
 }
 
 if (
