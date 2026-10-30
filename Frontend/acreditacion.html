@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 
+<!-- Cloudflare Turnstile: verificación de seguridad -->
+<script
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+  async
+  defer>
+</script>
+
 <head>
     <!-- Configuración general de la página -->
     <meta charset="UTF-8">
@@ -897,6 +904,12 @@
                         </span>
 
                     </label>
+
+                    <!-- Verificación de seguridad Cloudflare Turnstile -->
+                    <div
+                        class="cf-turnstile"
+                        data-sitekey="0x4AAAAAAFsHJQwPGsRUwZEf">
+                    </div>
 
                     <button
                         type="submit"

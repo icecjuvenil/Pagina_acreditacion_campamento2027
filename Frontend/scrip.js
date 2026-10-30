@@ -9,6 +9,19 @@ const API_CAMPAMENTO =
 
 // Funcion que prepara la comunicacion entre formulario y API    
 async function enviarRegistroCampamento(datos) {
+    
+    // Obtener el token de verificación de Cloudflare Turnstile
+    const tokenTurnstile = window.turnstile?.getResponse();
+
+    if (!tokenTurnstile) {
+        throw new Error(
+            "Debes completar la verificación de seguridad."
+        );
+    }
+
+    // Incluir el token en los datos enviados al backend
+    datos.turnstileToken = tokenTurnstile;
+
     const respuesta = await fetch(
         `${API_CAMPAMENTO}/api/registro`,
         {
@@ -242,7 +255,12 @@ if (
     actualizarValorAcreditacion();
 }
 
-// Guarda el perfil y decide cuál es la siguiente página
+
+/*
+ * REGISTRO DEL PARTICIPANTE PRINCIPAL
+ * Campamento Juvenil ICEC 2027
+ */
+
 const formularioAcreditacion = document.getElementById(
     "formulario-acreditacion"
 );
@@ -250,73 +268,129 @@ const formularioAcreditacion = document.getElementById(
 if (formularioAcreditacion) {
     formularioAcreditacion.addEventListener(
         "submit",
-        (evento) => {
+        async (evento) => {
             evento.preventDefault();
 
+            const botonEnviar =
+                formularioAcreditacion.querySelector(
+                    'button[type="submit"]'
+                );
+
             const valorAcreditacion = Number(
-                salidaValorAcreditacion?.dataset.valor ||
-                "0"
+                salidaValorAcreditacion?.dataset.valor || "0"
             );
 
             if (valorAcreditacion === 0) {
                 alert(
                     "Selecciona una fecha de nacimiento válida."
                 );
-
                 return;
             }
 
+            if (!formularioAcreditacion.reportValidity()) {
+                return;
+            }
+
+            // Obtener los datos del formulario.
             const datosFormulario = new FormData(
                 formularioAcreditacion
             );
 
-            const datosPersonaPrincipal =
-                Object.fromEntries(
-                    datosFormulario.entries()
-                );
-
-            // La contraseña no se guarda en el navegador
-            delete datosPersonaPrincipal.contrasena;
-
-            datosPersonaPrincipal.valorAcreditacion =
-                valorAcreditacion;
-
-            sessionStorage.setItem(
-                "personaPrincipalCampamento",
-                JSON.stringify(datosPersonaPrincipal)
+            const datosRegistro = Object.fromEntries(
+                datosFormulario.entries()
             );
 
-            // Continúa al formulario de acompañantes
-            if (
-                datosPersonaPrincipal.tieneAcompanantes ===
-                "si"
-            ) {
-                const parametrosActuales =
-                    new URLSearchParams(
-                    window.location.search
-                );
+            // El backend espera un valor booleano.
+            datosRegistro.confirmaInformacion =
+                formularioAcreditacion.elements[
+                    "confirmaInformacion"
+                ]?.checked === true;
 
-                const estaEnModoQA =
-                    parametrosActuales.get("qa") === "1";
-
-                    window.location.href =
-                    estaEnModoQA
-                    ? "acompanantes.html?qa=1"
-                    : "acompanantes.html";
-
-                return;
+            if (botonEnviar) {
+                botonEnviar.disabled = true;
+                botonEnviar.textContent = "Guardando inscripción...";
             }
-            // Elimina acompañantes de pruebas anteriores
-            sessionStorage.removeItem(
-                "acompanantesCampamento"
-            );
 
-            // Continúa directamente al resumen y pago
-            window.location.href =
-                "pago.html";
+            try {
+                // El registro se guarda primero en Cloudflare D1.
+                const resultado = await enviarRegistroCampamento(
+                    datosRegistro
+                );
+
+                if (resultado.estado !== "REGISTRADA") {
+                    throw new Error(
+                        "No se pudo confirmar la inscripción."
+                    );
+                }
+
+                // Crear una copia para el resumen de pago.
+                const datosPersonaPrincipal = {
+                    ...datosRegistro,
+                    valorAcreditacion: resultado.montoTotal
+                };
+
+                // Nunca guardar contraseñas ni tokens.
+                delete datosPersonaPrincipal.contrasena;
+                delete datosPersonaPrincipal.turnstileToken;
+                delete datosPersonaPrincipal["cf-turnstile-response"];
+
+                sessionStorage.setItem(
+                    "personaPrincipalCampamento",
+                    JSON.stringify(datosPersonaPrincipal)
+                );
+
+                // Continuar al registro de acompañantes.
+                if (
+                    datosPersonaPrincipal.tieneAcompanantes === "si"
+                ) {
+                    const parametrosActuales =
+                        new URLSearchParams(
+                            window.location.search
+                        );
+
+                    const estaEnModoQA =
+                        parametrosActuales.get("qa") === "1";
+
+                    window.location.href = estaEnModoQA
+                        ? "acompanantes.html?qa=1"
+                        : "acompanantes.html";
+
+                    return;
+                }
+
+                // Eliminar acompañantes de pruebas anteriores.
+                sessionStorage.removeItem(
+                    "acompanantesCampamento"
+                );
+
+                // Continuar al resumen y pago.
+                window.location.href = "pago.html";
+
+            } catch (error) {
+                console.error(
+                    "No se pudo completar el registro:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "Ocurrió un error al guardar la inscripción."
+                );
+
+                // Preparar una nueva verificación si falla.
+                window.turnstile?.reset();
+
+            } finally {
+                if (botonEnviar) {
+                    botonEnviar.disabled = false;
+                    botonEnviar.textContent =
+                        "Guardar perfil y continuar";
+                }
+            }
         }
     );
 }
+
 
 // Completa datos ficticios solamente en modo QA local
 (() => {
