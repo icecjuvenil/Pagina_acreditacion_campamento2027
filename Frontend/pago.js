@@ -695,6 +695,7 @@ if (
                 )
             );
 
+           /* Muestra el estado pendiente en la página de pago */
             if (estadoPago) {
                 estadoPago.hidden = false;
 
@@ -704,11 +705,26 @@ if (
                 });
             }
 
+            /* Informa que el comprobante fue registrado */
             if (mensajeEstadoPago) {
                 mensajeEstadoPago.textContent =
-                    "Comprobante recibido. " +
-                    "El pago está pendiente de revisión.";
+                "Comprobante recibido. " +
+                "El pago está pendiente de revisión.";
             }
+
+            /*
+            * Después de registrar el comprobante,
+            * abre la información privada del campamento.
+            */
+            setTimeout(() => {
+                window.location.href = "informacion.html";
+            }, 1200);
+
+            /*if (mensajeEstadoPago) {
+                mensajeEstadoPago.textContent =
+                    "Comprobante recibido. " +
+                    "El pago está pendiente de revisión.";*/
+            
         }
     );
 }
