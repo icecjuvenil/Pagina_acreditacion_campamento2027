@@ -3,6 +3,13 @@
   "name": "icec-campamento-2027-api",
   "main": "worker.js",
   "compatibility_date": "2026-10-29",
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true
+    }
+  },
   "d1_databases": [
     {
       "binding": "DB",

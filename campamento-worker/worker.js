@@ -1,11 +1,14 @@
 
 /*
  * Campamento Juvenil ICEC 2027
- * Cloudflare Workers + D1
- * Registro de prueba del participante principal
+ * Backend: Cloudflare Workers + D1
+ * Registro de participantes con Turnstile
  */
 
 const FECHA_CAMPAMENTO = "2027-01-08";
+
+const URL_TURNSTILE =
+  "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 // ==========================================
 // RESPUESTAS JSON
@@ -33,9 +36,11 @@ function textoValido(valor, maximo, obligatorio = true) {
     return !obligatorio;
   }
 
-  return typeof valor === "string" &&
+  return (
+    typeof valor === "string" &&
     valor.trim().length <= maximo &&
-    (!obligatorio || valor.trim().length > 0);
+    (!obligatorio || valor.trim().length > 0)
+  );
 }
 
 function validarTelefono(valor, obligatorio = true) {
@@ -45,9 +50,11 @@ function validarTelefono(valor, obligatorio = true) {
   const texto = valor.trim();
   const digitos = texto.replace(/\D/g, "");
 
-  return /^\+?[\d\s()-]{8,20}$/.test(texto) &&
+  return (
+    /^\+?[\d\s()-]{8,20}$/.test(texto) &&
     digitos.length >= 8 &&
-    digitos.length <= 15;
+    digitos.length <= 15
+  );
 }
 
 function normalizarRut(rut) {
@@ -76,11 +83,12 @@ function validarRut(rut) {
 
   const resultado = 11 - (suma % 11);
 
-  const esperado = resultado === 11
-    ? "0"
-    : resultado === 10
-      ? "K"
-      : String(resultado);
+  const esperado =
+    resultado === 11
+      ? "0"
+      : resultado === 10
+        ? "K"
+        : String(resultado);
 
   return verificador === esperado;
 }
@@ -268,9 +276,10 @@ async function crearHashContrasena(contrasena) {
     256
   );
 
-  const hex = (bytes) => Array.from(bytes)
-    .map(n => n.toString(16).padStart(2, "0"))
-    .join("");
+  const hex = (bytes) =>
+    Array.from(bytes)
+      .map(n => n.toString(16).padStart(2, "0"))
+      .join("");
 
   return [
     "pbkdf2_sha256",
@@ -278,6 +287,106 @@ async function crearHashContrasena(contrasena) {
     hex(salt),
     hex(new Uint8Array(hash))
   ].join("$");
+}
+
+// ==========================================
+// VERIFICACIÓN DE CLOUDFARE TURNSTILE
+// ==========================================
+
+async function verificarTurnstile(token, request, env) {
+  if (!env.TURNSTILE_SECRET_KEY) {
+    return {
+      correcto: false,
+      estado: 503,
+      mensaje: "La verificación de seguridad no está configurada."
+    };
+  }
+
+  if (
+    typeof token !== "string" ||
+    token.length === 0 ||
+    token.length > 2048
+  ) {
+    return {
+      correcto: false,
+      estado: 403,
+      mensaje: "Debes completar la verificación de seguridad."
+    };
+  }
+
+  const parametros = new URLSearchParams();
+
+  parametros.set("secret", env.TURNSTILE_SECRET_KEY);
+  parametros.set("response", token);
+
+  const ip = request.headers.get("CF-Connecting-IP");
+
+  if (ip) {
+    parametros.set("remoteip", ip);
+  }
+
+  try {
+    const respuesta = await fetch(URL_TURNSTILE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: parametros.toString(),
+      signal: AbortSignal.timeout(10000)
+    });
+
+    if (!respuesta.ok) {
+      return {
+        correcto: false,
+        estado: 503,
+        mensaje: "No se pudo verificar la seguridad. Intenta nuevamente."
+      };
+    }
+
+    const resultado = await respuesta.json();
+
+    if (resultado.success !== true) {
+      return {
+        correcto: false,
+        estado: 403,
+        mensaje: "La verificación de seguridad falló. Intenta nuevamente."
+      };
+    }
+
+    // Durante las pruebas, el widget solo
+    // está autorizado para localhost.
+    // Al publicar la página agregaremos
+    // su dominio real a esta lista.
+
+    const HOSTNAMES_PERMITIDOS = [
+      "localhost",
+      "127.0.0.1"
+    ];
+
+    if (!HOSTNAMES_PERMITIDOS.includes(resultado.hostname)) {
+      return {
+        correcto: false,
+        estado: 403,
+        mensaje: "El origen de la verificación no está autorizado."
+      };
+    }
+
+    return {
+      correcto: true
+    };
+
+  } catch (error) {
+    console.error(
+      "Error al consultar Turnstile:",
+      error?.name
+    );
+
+    return {
+      correcto: false,
+      estado: 503,
+      mensaje: "No fue posible verificar la seguridad. Intenta nuevamente."
+    };
+  }
 }
 
 // ==========================================
@@ -298,6 +407,7 @@ async function registrarParticipante(datos, env) {
   const genero = limpiar(datos.genero).toUpperCase();
 
   // Comprobar duplicados.
+
   const duplicado = await env.DB.prepare(
     `SELECT
       (SELECT COUNT(*) FROM usuarios
@@ -341,7 +451,8 @@ async function registrarParticipante(datos, env) {
     WHERE u.correo = ?
   `;
 
-  // Las inserciones se ejecutan en un lote atómico.
+  // El lote evita guardar registros incompletos.
+
   try {
     await env.DB.batch([
       env.DB.prepare(
@@ -457,7 +568,7 @@ async function registrarParticipante(datos, env) {
     ]);
 
     return responder({
-      mensaje: "Inscripción de prueba registrada correctamente.",
+      mensaje: "Inscripción registrada correctamente.",
       estado: "REGISTRADA",
       montoTotal: monto,
       pago: "PENDIENTE",
@@ -494,8 +605,8 @@ async function registrarParticipante(datos, env) {
 // CONFIGURACIÓN CORS
 // ==========================================
 
-// Orígenes autorizados para pruebas locales.
-// Agregaremos aquí el dominio público del frontend.
+// Direcciones autorizadas durante desarrollo.
+// Agregar el dominio real antes del lanzamiento.
 
 const ORIGENES_PERMITIDOS = [
   "http://localhost:5500",
@@ -518,17 +629,11 @@ function obtenerHeadersCORS(request) {
   };
 }
 
-// Agrega CORS a todas las respuestas,
-// incluyendo errores de la API.
-
 function aplicarCORS(respuesta, request) {
   const cabeceras = new Headers(respuesta.headers);
-
   const headersCORS = obtenerHeadersCORS(request);
 
-  for (const [clave, valor] of Object.entries(
-    headersCORS
-  )) {
+  for (const [clave, valor] of Object.entries(headersCORS)) {
     cabeceras.set(clave, valor);
   }
 
@@ -547,7 +652,7 @@ async function manejarSolicitud(request, env) {
   const url = new URL(request.url);
 
   // ----------------------------------------
-  // COMPROBAR CONEXIÓN A D1
+  // ESTADO DEL BACKEND Y LA BASE DE DATOS
   // ----------------------------------------
 
   if (url.pathname === "/api/estado") {
@@ -595,29 +700,7 @@ async function manejarSolicitud(request, env) {
       }, 405);
     }
 
-    // Protección temporal para pruebas.
-    // Esta clave NO debe incluirse en el frontend.
-
-    if (!env.REGISTRO_PRUEBA_TOKEN) {
-      return responder({
-        mensaje: "Registro deshabilitado."
-      }, 503);
-    }
-
-    const token = request.headers.get(
-      "X-Registro-Prueba"
-    );
-
-    if (
-      !token ||
-      token !== env.REGISTRO_PRUEBA_TOKEN
-    ) {
-      return responder({
-        mensaje: "Acceso no autorizado."
-      }, 403);
-    }
-
-    // Comprobar que se envía JSON.
+    // Revisar el tipo de contenido.
 
     if (
       !request.headers.get("content-type")
@@ -629,7 +712,7 @@ async function manejarSolicitud(request, env) {
       }, 415);
     }
 
-    // Limitar tamaño de solicitudes.
+    // Revisar tamaño de la solicitud.
 
     const tamano = Number(
       request.headers.get("content-length") || 0
@@ -646,7 +729,9 @@ async function manejarSolicitud(request, env) {
     try {
       const cuerpo = await request.text();
 
-      if (cuerpo.length > 16384) {
+      if (
+        new TextEncoder().encode(cuerpo).length > 16384
+      ) {
         return responder({
           mensaje: "Solicitud demasiado grande."
         }, 413);
@@ -660,7 +745,58 @@ async function manejarSolicitud(request, env) {
       }, 400);
     }
 
-    // Guardar inscripción en Cloudflare D1.
+    if (
+      !datos ||
+      typeof datos !== "object" ||
+      Array.isArray(datos)
+    ) {
+      return responder({
+        mensaje: "Los datos enviados no son válidos."
+      }, 400);
+    }
+
+    // --------------------------------------
+    // VERIFICAR PERMISO PARA REGISTRAR
+    // --------------------------------------
+
+    // Opción 1:
+    // Registro privado desde Postman.
+    // Se conserva para las pruebas internas.
+
+    const tokenPrivado = request.headers.get(
+      "X-Registro-Prueba"
+    );
+
+    const pruebaAutorizada =
+      Boolean(env.REGISTRO_PRUEBA_TOKEN) &&
+      Boolean(tokenPrivado) &&
+      tokenPrivado === env.REGISTRO_PRUEBA_TOKEN;
+
+    // Opción 2:
+    // Registro desde el formulario público,
+    // utilizando Cloudflare Turnstile.
+
+    if (!pruebaAutorizada) {
+      const tokenTurnstile =
+        datos.turnstileToken ||
+        datos["cf-turnstile-response"];
+
+      const verificacion = await verificarTurnstile(
+        tokenTurnstile,
+        request,
+        env
+      );
+
+      if (!verificacion.correcto) {
+        return responder({
+          mensaje: verificacion.mensaje
+        }, verificacion.estado);
+      }
+    }
+
+    // --------------------------------------
+    // GUARDAR PARTICIPANTE EN D1
+    // --------------------------------------
 
     try {
       return await registrarParticipante(
@@ -681,8 +817,6 @@ async function manejarSolicitud(request, env) {
     }
   }
 
-  // Ruta desconocida.
-
   return responder({
     mensaje: "Ruta no encontrada."
   }, 404);
@@ -695,8 +829,7 @@ async function manejarSolicitud(request, env) {
 export default {
   async fetch(request, env) {
 
-    // Responder solicitudes OPTIONS
-    // realizadas automáticamente por el navegador.
+    // Responder a las verificaciones CORS.
 
     if (request.method === "OPTIONS") {
       const origen = request.headers.get("Origin");
@@ -712,8 +845,6 @@ export default {
         headers: obtenerHeadersCORS(request)
       });
     }
-
-    // Ejecutar la solicitud correspondiente.
 
     try {
       const respuesta = await manejarSolicitud(
