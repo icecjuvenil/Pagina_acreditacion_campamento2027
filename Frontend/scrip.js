@@ -7,6 +7,31 @@
 const API_CAMPAMENTO =
     "https://icec-campamento-2027-api.brantemarco777.workers.dev";
 
+// Funcion que prepara la comunicacion entre formulario y API    
+async function enviarRegistroCampamento(datos) {
+    const respuesta = await fetch(
+        `${API_CAMPAMENTO}/api/registro`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(datos)
+        }
+    );
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok) {
+        throw new Error(
+            resultado.mensaje ||
+            "No se pudo completar la inscripción."
+        );
+    }
+
+    return resultado;
+}
+
 // Preguntas que muestran un campo adicional al responder "Sí"
 const preguntasCondicionales = [
     {
