@@ -2,10 +2,14 @@
 /*
  * Campamento Juvenil ICEC 2027
  * Cloudflare Workers + D1
- * Registro privado de prueba del participante principal
+ * Registro de prueba del participante principal
  */
 
 const FECHA_CAMPAMENTO = "2027-01-08";
+
+// ==========================================
+// RESPUESTAS JSON
+// ==========================================
 
 function responder(datos, estado = 200) {
   return Response.json(datos, {
@@ -15,6 +19,10 @@ function responder(datos, estado = 200) {
     }
   });
 }
+
+// ==========================================
+// FUNCIONES DE VALIDACIÓN
+// ==========================================
 
 function limpiar(valor) {
   return typeof valor === "string" ? valor.trim() : "";
@@ -67,6 +75,7 @@ function validarRut(rut) {
   }
 
   const resultado = 11 - (suma % 11);
+
   const esperado = resultado === 11
     ? "0"
     : resultado === 10
@@ -100,6 +109,7 @@ function validarFecha(fecha) {
 
 function calcularAcreditacion(fecha) {
   const [anio, mes, dia] = fecha.split("-").map(Number);
+
   let edad = 2027 - anio;
 
   if (mes > 1 || (mes === 1 && dia > 8)) {
@@ -226,9 +236,16 @@ function validarDatos(datos) {
   return null;
 }
 
+// ==========================================
+// PROTECCIÓN DE CONTRASEÑAS
+// ==========================================
+
 async function crearHashContrasena(contrasena) {
   const encoder = new TextEncoder();
-  const salt = crypto.getRandomValues(new Uint8Array(16));
+
+  const salt = crypto.getRandomValues(
+    new Uint8Array(16)
+  );
 
   const clave = await crypto.subtle.importKey(
     "raw",
@@ -263,18 +280,24 @@ async function crearHashContrasena(contrasena) {
   ].join("$");
 }
 
+// ==========================================
+// REGISTRAR PARTICIPANTE EN D1
+// ==========================================
+
 async function registrarParticipante(datos, env) {
   const error = validarDatos(datos);
 
   if (error) {
-    return responder({ mensaje: error }, 400);
+    return responder({
+      mensaje: error
+    }, 400);
   }
 
   const correo = limpiar(datos.correo).toLowerCase();
   const rut = normalizarRut(datos.rut);
   const genero = limpiar(datos.genero).toUpperCase();
 
-  // Evitar duplicados conocidos.
+  // Comprobar duplicados.
   const duplicado = await env.DB.prepare(
     `SELECT
       (SELECT COUNT(*) FROM usuarios
@@ -303,7 +326,8 @@ async function registrarParticipante(datos, env) {
     datos.fechaNacimiento
   );
 
-  const bandera = (valor) => valor === "si" ? 1 : 0;
+  const bandera = (valor) =>
+    valor === "si" ? 1 : 0;
 
   const detalle = (pregunta, campo) =>
     datos[pregunta] === "si"
@@ -317,10 +341,7 @@ async function registrarParticipante(datos, env) {
     WHERE u.correo = ?
   `;
 
-  /*
-   * El lote es atómico: se completan todas
-   * las inserciones o no se guarda ninguna.
-   */
+  // Las inserciones se ejecutan en un lote atómico.
   try {
     await env.DB.batch([
       env.DB.prepare(
@@ -332,13 +353,19 @@ async function registrarParticipante(datos, env) {
       env.DB.prepare(
         `INSERT INTO participantes
          (
-           usuario_id, nombre_completo, alias, rut,
-           fecha_nacimiento, genero, telefono,
+           usuario_id,
+           nombre_completo,
+           alias,
+           rut,
+           fecha_nacimiento,
+           genero,
+           telefono,
            valor_acreditacion
          )
          SELECT
            id, ?, ?, ?, ?, ?, ?, ?
-         FROM usuarios WHERE correo = ?`
+         FROM usuarios
+         WHERE correo = ?`
       ).bind(
         limpiar(datos.nombreCompleto),
         limpiar(datos.alias) || null,
@@ -354,10 +381,14 @@ async function registrarParticipante(datos, env) {
         `INSERT INTO informacion_medica
          (
            participante_id,
-           tiene_alergias, detalle_alergias,
-           tiene_enfermedad, detalle_enfermedad,
-           toma_medicamentos, detalle_medicamentos,
-           restriccion_alimentaria, detalle_alimentacion
+           tiene_alergias,
+           detalle_alergias,
+           tiene_enfermedad,
+           detalle_enfermedad,
+           toma_medicamentos,
+           detalle_medicamentos,
+           restriccion_alimentaria,
+           detalle_alimentacion
          )
          SELECT
            (${idParticipante}),
@@ -365,11 +396,20 @@ async function registrarParticipante(datos, env) {
       ).bind(
         correo,
         bandera(datos.tieneAlergias),
-        detalle("tieneAlergias", "detalleAlergias"),
+        detalle(
+          "tieneAlergias",
+          "detalleAlergias"
+        ),
         bandera(datos.tieneEnfermedad),
-        detalle("tieneEnfermedad", "detalleEnfermedad"),
+        detalle(
+          "tieneEnfermedad",
+          "detalleEnfermedad"
+        ),
         bandera(datos.tomaMedicamentos),
-        detalle("tomaMedicamentos", "detalleMedicamentos"),
+        detalle(
+          "tomaMedicamentos",
+          "detalleMedicamentos"
+        ),
         bandera(datos.restriccionAlimentaria),
         detalle(
           "restriccionAlimentaria",
@@ -380,11 +420,15 @@ async function registrarParticipante(datos, env) {
       env.DB.prepare(
         `INSERT INTO contactos_emergencia
          (
-           participante_id, nombre_completo,
-           parentesco, telefono_principal,
+           participante_id,
+           nombre_completo,
+           parentesco,
+           telefono_principal,
            telefono_alternativo
          )
-         SELECT (${idParticipante}), ?, ?, ?, ?`
+         SELECT
+           (${idParticipante}),
+           ?, ?, ?, ?`
       ).bind(
         correo,
         limpiar(datos.nombreEmergencia),
@@ -395,11 +439,19 @@ async function registrarParticipante(datos, env) {
 
       env.DB.prepare(
         `INSERT INTO pagos
-         (participante_id, monto_total, monto_pagado, estado)
-         SELECT id, ?, 0, 'PENDIENTE'
+         (
+           participante_id,
+           monto_total,
+           monto_pagado,
+           estado
+         )
+         SELECT
+           id, ?, 0, 'PENDIENTE'
          FROM participantes
          WHERE usuario_id = (
-           SELECT id FROM usuarios WHERE correo = ?
+           SELECT id
+           FROM usuarios
+           WHERE correo = ?
          )`
       ).bind(monto, correo)
     ]);
@@ -414,9 +466,14 @@ async function registrarParticipante(datos, env) {
     }, 201);
 
   } catch (error) {
-    console.error("Error al registrar participante");
+    console.error(
+      "Error al registrar participante:",
+      error?.message
+    );
 
-    const mensaje = String(error?.message || "");
+    const mensaje = String(
+      error?.message || ""
+    );
 
     if (
       mensaje.includes("UNIQUE constraint") ||
@@ -434,125 +491,253 @@ async function registrarParticipante(datos, env) {
 }
 
 // ==========================================
-// RUTAS
+// CONFIGURACIÓN CORS
 // ==========================================
 
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
+// Orígenes autorizados para pruebas locales.
+// Agregaremos aquí el dominio público del frontend.
 
-    // Comprobación de conexión D1.
-    if (url.pathname === "/api/estado") {
-      if (request.method !== "GET") {
-        return responder({
-          mensaje: "Método no permitido."
-        }, 405);
-      }
+const ORIGENES_PERMITIDOS = [
+  "http://localhost:5500",
+  "http://127.0.0.1:5500"
+];
 
-      try {
-        const resultado = await env.DB.prepare(
-          `SELECT COUNT(*) AS total
-           FROM sqlite_master
-           WHERE type = 'table'
-           AND name NOT LIKE 'sqlite_%'`
-        ).first();
+function obtenerHeadersCORS(request) {
+  const origen = request.headers.get("Origin");
 
-        return responder({
-          estado: "OK",
-          baseDatos: "Conectada",
-          tablas: resultado.total
-        });
+  if (!ORIGENES_PERMITIDOS.includes(origen)) {
+    return {};
+  }
 
-      } catch (error) {
-        return responder({
-          estado: "ERROR",
-          baseDatos: "No disponible"
-        }, 500);
-      }
+  return {
+    "Access-Control-Allow-Origin": origen,
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "600",
+    "Vary": "Origin"
+  };
+}
+
+// Agrega CORS a todas las respuestas,
+// incluyendo errores de la API.
+
+function aplicarCORS(respuesta, request) {
+  const cabeceras = new Headers(respuesta.headers);
+
+  const headersCORS = obtenerHeadersCORS(request);
+
+  for (const [clave, valor] of Object.entries(
+    headersCORS
+  )) {
+    cabeceras.set(clave, valor);
+  }
+
+  return new Response(respuesta.body, {
+    status: respuesta.status,
+    statusText: respuesta.statusText,
+    headers: cabeceras
+  });
+}
+
+// ==========================================
+// RUTAS DE LA API
+// ==========================================
+
+async function manejarSolicitud(request, env) {
+  const url = new URL(request.url);
+
+  // ----------------------------------------
+  // COMPROBAR CONEXIÓN A D1
+  // ----------------------------------------
+
+  if (url.pathname === "/api/estado") {
+    if (request.method !== "GET") {
+      return responder({
+        mensaje: "Método no permitido."
+      }, 405);
     }
 
-    // Registro privado para pruebas.
-    if (url.pathname === "/api/registro") {
-      if (request.method !== "POST") {
-        return responder({
-          mensaje: "Método no permitido."
-        }, 405);
-      }
+    try {
+      const resultado = await env.DB.prepare(
+        `SELECT COUNT(*) AS total
+         FROM sqlite_master
+         WHERE type = 'table'
+         AND name NOT LIKE 'sqlite_%'`
+      ).first();
 
-      // Sin secreto configurado, no se registra nadie.
-      if (!env.REGISTRO_PRUEBA_TOKEN) {
-        return responder({
-          mensaje: "Registro deshabilitado."
-        }, 503);
-      }
+      return responder({
+        estado: "OK",
+        baseDatos: "Conectada",
+        tablas: resultado.total
+      });
 
-      const token = request.headers.get(
-        "X-Registro-Prueba"
+    } catch (error) {
+      console.error(
+        "Error de conexión D1:",
+        error?.message
       );
 
-      if (!token || token !== env.REGISTRO_PRUEBA_TOKEN) {
-        return responder({
-          mensaje: "Acceso no autorizado."
-        }, 403);
-      }
+      return responder({
+        estado: "ERROR",
+        baseDatos: "No disponible"
+      }, 500);
+    }
+  }
 
-      if (
-        !request.headers.get("content-type")
-          ?.toLowerCase()
-          .startsWith("application/json")
-      ) {
-        return responder({
-          mensaje: "Se requiere JSON."
-        }, 415);
-      }
+  // ----------------------------------------
+  // REGISTRO DE PARTICIPANTES
+  // ----------------------------------------
 
-      const tamano = Number(
-        request.headers.get("content-length") || 0
-      );
+  if (url.pathname === "/api/registro") {
+    if (request.method !== "POST") {
+      return responder({
+        mensaje: "Método no permitido."
+      }, 405);
+    }
 
-      if (tamano > 16384) {
+    // Protección temporal para pruebas.
+    // Esta clave NO debe incluirse en el frontend.
+
+    if (!env.REGISTRO_PRUEBA_TOKEN) {
+      return responder({
+        mensaje: "Registro deshabilitado."
+      }, 503);
+    }
+
+    const token = request.headers.get(
+      "X-Registro-Prueba"
+    );
+
+    if (
+      !token ||
+      token !== env.REGISTRO_PRUEBA_TOKEN
+    ) {
+      return responder({
+        mensaje: "Acceso no autorizado."
+      }, 403);
+    }
+
+    // Comprobar que se envía JSON.
+
+    if (
+      !request.headers.get("content-type")
+        ?.toLowerCase()
+        .startsWith("application/json")
+    ) {
+      return responder({
+        mensaje: "Se requiere JSON."
+      }, 415);
+    }
+
+    // Limitar tamaño de solicitudes.
+
+    const tamano = Number(
+      request.headers.get("content-length") || 0
+    );
+
+    if (tamano > 16384) {
+      return responder({
+        mensaje: "Solicitud demasiado grande."
+      }, 413);
+    }
+
+    let datos;
+
+    try {
+      const cuerpo = await request.text();
+
+      if (cuerpo.length > 16384) {
         return responder({
           mensaje: "Solicitud demasiado grande."
         }, 413);
       }
 
-      let datos;
+      datos = JSON.parse(cuerpo);
 
-      try {
-        const cuerpo = await request.text();
-
-        if (cuerpo.length > 16384) {
-          return responder({
-            mensaje: "Solicitud demasiado grande."
-          }, 413);
-        }
-
-        datos = JSON.parse(cuerpo);
-      } catch {
-        return responder({
-          mensaje: "JSON no válido."
-        }, 400);
-      }
-
-      try {
-        return await registrarParticipante(datos, env);
-      
-} catch (error) {
-  console.error(
-    "Fallo inesperado en el registro:",
-    error?.name,
-    error?.message
-  );
-
-  return responder({
-    mensaje: "Error interno del registro."
-  }, 500);
-}
-
+    } catch {
+      return responder({
+        mensaje: "JSON no válido."
+      }, 400);
     }
 
-    return responder({
-      mensaje: "Ruta no encontrada."
-    }, 404);
+    // Guardar inscripción en Cloudflare D1.
+
+    try {
+      return await registrarParticipante(
+        datos,
+        env
+      );
+
+    } catch (error) {
+      console.error(
+        "Fallo inesperado en el registro:",
+        error?.name,
+        error?.message
+      );
+
+      return responder({
+        mensaje: "Error interno del registro."
+      }, 500);
+    }
+  }
+
+  // Ruta desconocida.
+
+  return responder({
+    mensaje: "Ruta no encontrada."
+  }, 404);
+}
+
+// ==========================================
+// WORKER PRINCIPAL
+// ==========================================
+
+export default {
+  async fetch(request, env) {
+
+    // Responder solicitudes OPTIONS
+    // realizadas automáticamente por el navegador.
+
+    if (request.method === "OPTIONS") {
+      const origen = request.headers.get("Origin");
+
+      if (!ORIGENES_PERMITIDOS.includes(origen)) {
+        return new Response(null, {
+          status: 403
+        });
+      }
+
+      return new Response(null, {
+        status: 204,
+        headers: obtenerHeadersCORS(request)
+      });
+    }
+
+    // Ejecutar la solicitud correspondiente.
+
+    try {
+      const respuesta = await manejarSolicitud(
+        request,
+        env
+      );
+
+      return aplicarCORS(
+        respuesta,
+        request
+      );
+
+    } catch (error) {
+      console.error(
+        "Error inesperado en el Worker:",
+        error?.message
+      );
+
+      return aplicarCORS(
+        responder({
+          mensaje: "Error interno del servidor."
+        }, 500),
+        request
+      );
+    }
   }
 };
