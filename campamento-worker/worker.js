@@ -608,10 +608,14 @@ async function registrarParticipante(datos, env) {
 // Direcciones autorizadas durante desarrollo.
 // Agregar el dominio real antes del lanzamiento.
 
+
 const ORIGENES_PERMITIDOS = [
   "http://localhost:5500",
-  "http://127.0.0.1:5500"
+  "http://127.0.0.1:5500",
+  "http://localhost:5501",
+  "http://127.0.0.1:5501"
 ];
+
 
 function obtenerHeadersCORS(request) {
   const origen = request.headers.get("Origin");
