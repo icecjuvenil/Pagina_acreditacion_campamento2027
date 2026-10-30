@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información del campamento | Elegidos ICEC Juvenil</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-informacion">
+
+    <!-- ==================================================
+        ENCABEZADO Y MENÚ PRINCIPAL
+        ================================================== -->
+    <header class="encabezado">
+
+        <!--Logo y nombre -->
+        <a href="index.html" class="marca">
+            <img 
+                src="Logos/logo-elegidos.png" 
+                alt="Logo Elegidos ICEC Juvenil">
+
+            <span>
+                Elegidos ICEC Juvenil
+            </span>
+        </a>
+
+        <!--Menu principal-->
+        <nav
+            class="menu-principal"
+            aria-label="Navegación principal">
+
+            <a href="index.html">
+                Inicio
+            </a>
+
+            <a 
+                href="informacion.html"
+                aria-current="page">
+            </a>
+
+            <a href="login.html">
+                Acreditación
+            </a>
+
+            <a href="index.html#contacto">
+                Contacto
+            </a>
+        </nav>
+
+    </header>
+    <!-- ==================================================
+         BANNER DEL CAMPAMENTO
+         ================================================== -->
+
+         <section class="bannner-informacion">
+            <img 
+                src="Logos/Oficial.jpg" 
+                alt="Campamento ICEC Juvenil 2027">
+         </section>
+
+         <!-- ==================================================
+         CONTENIDO PRINCIPAL
+         ================================================== -->
+
+         <main class="contenido-informacion">
+
+            <!--Mensaje mostrando cuando no existe una acreditacion-->
+            <section
+                id="acceso-informacion-denegado"
+                class="mensaje-acceso-informacion"
+                hidden>
+
+                <div
+                    class="icono-mensaje-informacion"
+                    aria-hidden="true">
+                    !
+                </div>
+
+                <h1>
+                    Información para personas acreditadas
+                </h1>
+
+                 <p>
+                    Para acceder a las indicaciones del campamento
+                    primero debes completar tu acreditación y enviar
+                    el comprobante de pago.
+                </p>
+
+                <a 
+                    href="login.html"
+                    class="boton-acceso-acreditacion">
+
+                    Ir a acreditación
+                </a>
+            </section>
+
+            <!--Informacion privada del campamento-->
+            <section
+                id="informacion"
+                class="informacion-acreditado"
+                hidden>
+
+                <!--Presentacion de la pagina-->
+                <header></header>
+            </section>
+
+         </main>
+    
+</body>
+</html>
