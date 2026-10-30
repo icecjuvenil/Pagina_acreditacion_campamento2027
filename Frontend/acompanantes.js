@@ -1,4 +1,7 @@
-// Obtiene los elementos principales de la página
+/* ==================================================
+   1. ELEMENTOS PRINCIPALES DE LA PÁGINA
+   ================================================== */
+
 const formularioAcompanante = document.getElementById(
     "formulario-acompanante"
 );
@@ -7,29 +10,51 @@ const listaAcompanantes = document.getElementById(
     "lista-acompanantes-guardados"
 );
 
+const cantidadAcompanantes = document.getElementById(
+    "cantidad-acompanantes"
+);
+
 const botonContinuar = document.getElementById(
     "continuar-resumen"
 );
 
-// Recupera los acompañantes guardados temporalmente
+const entradaFechaAcompanante = document.getElementById(
+    "fecha-acompanante"
+);
+
+const salidaValorAcompanante = document.getElementById(
+    "valor-acompanante"
+);
+
+
+/* ==================================================
+   2. RECUPERACIÓN DE ACOMPAÑANTES GUARDADOS
+   ================================================== */
+
 let acompanantesGuardados = [];
 
 try {
     const datosGuardados = JSON.parse(
-        sessionStorage.getItem(
-            "acompanantesCampamento"
-        ) || "[]"
+        sessionStorage.getItem("acompanantesCampamento") || "[]"
     );
 
-    acompanantesGuardados =
-        Array.isArray(datosGuardados)
-            ? datosGuardados
-            : [];
+    acompanantesGuardados = Array.isArray(datosGuardados)
+        ? datosGuardados
+        : [];
 } catch (error) {
+    console.error(
+        "No fue posible recuperar los acompañantes:",
+        error
+    );
+
     acompanantesGuardados = [];
 }
 
-// Activa los campos adicionales de información de salud
+
+/* ==================================================
+   3. CAMPOS CONDICIONALES DE INFORMACIÓN DE SALUD
+   ================================================== */
+
 const preguntasSalud = document.querySelectorAll(
     ".pregunta-salud-acompanante"
 );
@@ -48,8 +73,7 @@ preguntasSalud.forEach((pregunta) => {
     }
 
     function actualizarCampoSalud() {
-        const respondioSi =
-            pregunta.value === "si";
+        const respondioSi = pregunta.value === "si";
 
         campoDetalle.hidden = !respondioSi;
         entradaDetalle.required = respondioSi;
@@ -67,14 +91,10 @@ preguntasSalud.forEach((pregunta) => {
     actualizarCampoSalud();
 });
 
-// Calcula el valor según la edad al comenzar el campamento
-const entradaFechaAcompanante = document.getElementById(
-    "fecha-acompanante"
-);
 
-const salidaValorAcompanante = document.getElementById(
-    "valor-acompanante"
-);
+/* ==================================================
+   4. CÁLCULO DEL VALOR DE ACREDITACIÓN
+   ================================================== */
 
 const fechaInicioCampamento = new Date(
     2027,
@@ -98,10 +118,20 @@ function actualizarValorAcompanante() {
         return;
     }
 
-    const partesFecha =
-        entradaFechaAcompanante.value
-            .split("-")
-            .map(Number);
+    const partesFecha = entradaFechaAcompanante.value
+        .split("-")
+        .map(Number);
+
+    if (
+        partesFecha.length !== 3 ||
+        partesFecha.some((parte) => Number.isNaN(parte))
+    ) {
+        salidaValorAcompanante.textContent =
+            "Fecha de nacimiento no válida";
+
+        salidaValorAcompanante.dataset.valor = "0";
+        return;
+    }
 
     const nacimiento = new Date(
         partesFecha[0],
@@ -109,7 +139,10 @@ function actualizarValorAcompanante() {
         partesFecha[2]
     );
 
-    if (nacimiento > fechaInicioCampamento) {
+    if (
+        Number.isNaN(nacimiento.getTime()) ||
+        nacimiento > fechaInicioCampamento
+    ) {
         salidaValorAcompanante.textContent =
             "Fecha de nacimiento no válida";
 
@@ -135,11 +168,17 @@ function actualizarValorAcompanante() {
         edad--;
     }
 
-    const valor =
-        edad <= 9 ? 10000 : 20000;
+    /*
+     * Valores actuales:
+     * hasta 9 años: $10.000
+     * desde 10 años: $20.000
+     */
+    const valor = edad <= 9
+        ? 10000
+        : 20000;
 
     salidaValorAcompanante.textContent =
-        `$${valor.toLocaleString("es-CL")} (${edad} años)`;
+        `$${valor.toLocaleString("es-CL")} CLP`;
 
     salidaValorAcompanante.dataset.valor =
         String(valor);
@@ -162,21 +201,45 @@ if (
     actualizarValorAcompanante();
 }
 
-// Normaliza un RUT para poder compararlo
+
+/* ==================================================
+   5. FUNCIONES DE NORMALIZACIÓN
+   ================================================== */
+
+/* Elimina puntos, guion y espacios de un RUT */
 function normalizarRut(rut) {
-    return String(rut)
+    return String(rut || "")
         .replace(/[^0-9kK]/g, "")
         .toUpperCase();
 }
 
-// Normaliza un correo para poder compararlo
+/* Normaliza un correo para poder compararlo */
 function normalizarCorreo(correo) {
-    return String(correo)
+    return String(correo || "")
         .trim()
         .toLowerCase();
 }
 
-// Guarda los acompañantes temporalmente
+/* Convierte una fecha desde aaaa-mm-dd a dd/mm/aaaa */
+function formatearFecha(fecha) {
+    if (!fecha) {
+        return "No informada";
+    }
+
+    const partes = fecha.split("-");
+
+    if (partes.length !== 3) {
+        return fecha;
+    }
+
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+
+/* ==================================================
+   6. ALMACENAMIENTO TEMPORAL
+   ================================================== */
+
 function guardarAcompanantes() {
     sessionStorage.setItem(
         "acompanantesCampamento",
@@ -184,7 +247,183 @@ function guardarAcompanantes() {
     );
 }
 
-// Muestra los acompañantes que fueron agregados
+
+/* ==================================================
+   7. CONTADOR DE ACOMPAÑANTES
+   ================================================== */
+
+function actualizarCantidadAcompanantes() {
+    if (!cantidadAcompanantes) {
+        return;
+    }
+
+    const cantidad = acompanantesGuardados.length;
+
+    cantidadAcompanantes.textContent =
+        cantidad === 1
+            ? "1 acompañante"
+            : `${cantidad} acompañantes`;
+}
+
+
+/* ==================================================
+   8. ELIMINACIÓN DE UN ACOMPAÑANTE
+   ================================================== */
+
+function eliminarAcompanante(indice) {
+    const acompanante = acompanantesGuardados[indice];
+
+    if (!acompanante) {
+        return;
+    }
+
+    const confirmarEliminacion = window.confirm(
+        `¿Deseas eliminar a ${acompanante.nombre}?`
+    );
+
+    if (!confirmarEliminacion) {
+        return;
+    }
+
+    acompanantesGuardados.splice(
+        indice,
+        1
+    );
+
+    guardarAcompanantes();
+    mostrarAcompanantes();
+}
+
+
+/* ==================================================
+   9. CREACIÓN DE LA TARJETA DE UN ACOMPAÑANTE
+   ================================================== */
+
+function crearTarjetaAcompanante(
+    acompanante,
+    indice
+) {
+    const tarjeta = document.createElement("article");
+
+    tarjeta.classList.add(
+        "tarjeta-acompanante"
+    );
+
+    const encabezado = document.createElement("div");
+
+    encabezado.classList.add(
+        "encabezado-acompanante"
+    );
+
+    /* Información situada a la izquierda */
+    const resumen = document.createElement("div");
+
+    resumen.classList.add(
+        "resumen-acompanante-guardado"
+    );
+
+    const avatar = document.createElement("div");
+
+    avatar.classList.add(
+        "avatar-acompanante"
+    );
+
+    avatar.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    avatar.textContent = "●";
+
+    const datos = document.createElement("div");
+
+    datos.classList.add(
+        "datos-acompanante-guardado"
+    );
+
+    const titulo = document.createElement("h3");
+
+    titulo.textContent =
+        acompanante.nombre || "Acompañante";
+
+    const informacion = document.createElement("p");
+
+    const rut = acompanante.rut || "No informado";
+
+    const nacimiento = formatearFecha(
+        acompanante.fechaNacimiento
+    );
+
+    informacion.textContent =
+        `RUT: ${rut}  |  Nacimiento: ${nacimiento}`;
+
+    datos.append(
+        titulo,
+        informacion
+    );
+
+    resumen.append(
+        avatar,
+        datos
+    );
+
+    /* Botón situado a la derecha */
+    const botonEliminar =
+        document.createElement("button");
+
+    botonEliminar.type = "button";
+
+    botonEliminar.classList.add(
+        "boton-eliminar-acompanante"
+    );
+
+    botonEliminar.setAttribute(
+        "aria-label",
+        `Eliminar a ${acompanante.nombre}`
+    );
+
+    const iconoEliminar =
+        document.createElement("span");
+
+    iconoEliminar.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    iconoEliminar.textContent = "▣";
+
+    const textoEliminar =
+        document.createElement("span");
+
+    textoEliminar.textContent = "Eliminar";
+
+    botonEliminar.append(
+        iconoEliminar,
+        textoEliminar
+    );
+
+    botonEliminar.addEventListener(
+        "click",
+        () => {
+            eliminarAcompanante(indice);
+        }
+    );
+
+    encabezado.append(
+        resumen,
+        botonEliminar
+    );
+
+    tarjeta.appendChild(encabezado);
+
+    return tarjeta;
+}
+
+
+/* ==================================================
+   10. REPRESENTACIÓN DE LA LISTA
+   ================================================== */
+
 function mostrarAcompanantes() {
     if (!listaAcompanantes) {
         return;
@@ -192,96 +431,32 @@ function mostrarAcompanantes() {
 
     listaAcompanantes.innerHTML = "";
 
+    actualizarCantidadAcompanantes();
+
     if (acompanantesGuardados.length === 0) {
         const mensaje = document.createElement("p");
 
         mensaje.id = "mensaje-sin-acompanantes";
+
+        mensaje.classList.add(
+            "mensaje-sin-acompanantes"
+        );
+
         mensaje.textContent =
             "Todavía no has agregado acompañantes.";
 
-        listaAcompanantes.appendChild(mensaje);
+        listaAcompanantes.appendChild(
+            mensaje
+        );
+
         return;
     }
 
     acompanantesGuardados.forEach(
         (acompanante, indice) => {
-            const tarjeta =
-                document.createElement("article");
-
-            tarjeta.classList.add(
-                "tarjeta-acompanante"
-            );
-
-            const encabezado =
-                document.createElement("div");
-
-            encabezado.classList.add(
-                "encabezado-acompanante"
-            );
-
-            const titulo =
-                document.createElement("h3");
-
-            titulo.textContent =
-                acompanante.nombre;
-
-            const botonEliminar =
-                document.createElement("button");
-
-            botonEliminar.type = "button";
-
-            botonEliminar.classList.add(
-                "boton-eliminar-acompanante"
-            );
-
-            botonEliminar.textContent =
-                "Eliminar";
-
-            botonEliminar.addEventListener(
-                "click",
-                () => {
-                    acompanantesGuardados.splice(
-                        indice,
-                        1
-                    );
-
-                    guardarAcompanantes();
-                    mostrarAcompanantes();
-                }
-            );
-
-            encabezado.append(
-                titulo,
-                botonEliminar
-            );
-
-            const rut =
-                document.createElement("p");
-
-            rut.textContent =
-                `RUT: ${acompanante.rut}`;
-
-            const correo =
-                document.createElement("p");
-
-            correo.textContent =
-                acompanante.correo
-                    ? `Correo: ${acompanante.correo}`
-                    : "Correo: no informado";
-
-            const valor =
-                document.createElement("p");
-
-            valor.textContent =
-                `Valor: $${Number(
-                    acompanante.valorAcreditacion
-                ).toLocaleString("es-CL")}`;
-
-            tarjeta.append(
-                encabezado,
-                rut,
-                correo,
-                valor
+            const tarjeta = crearTarjetaAcompanante(
+                acompanante,
+                indice
             );
 
             listaAcompanantes.appendChild(
@@ -291,12 +466,21 @@ function mostrarAcompanantes() {
     );
 }
 
-// Guarda un nuevo acompañante
+
+/* ==================================================
+   11. REGISTRO DE UN NUEVO ACOMPAÑANTE
+   ================================================== */
+
 if (formularioAcompanante) {
     formularioAcompanante.addEventListener(
         "submit",
         (evento) => {
             evento.preventDefault();
+
+            if (!formularioAcompanante.checkValidity()) {
+                formularioAcompanante.reportValidity();
+                return;
+            }
 
             const valorAcreditacion = Number(
                 salidaValorAcompanante
@@ -308,6 +492,7 @@ if (formularioAcompanante) {
                     "Selecciona una fecha de nacimiento válida."
                 );
 
+                entradaFechaAcompanante?.focus();
                 return;
             }
 
@@ -323,6 +508,7 @@ if (formularioAcompanante) {
             nuevoAcompanante.valorAcreditacion =
                 valorAcreditacion;
 
+            /* Recupera los datos de la persona principal */
             let personaPrincipal = null;
 
             try {
@@ -332,6 +518,11 @@ if (formularioAcompanante) {
                     ) || "null"
                 );
             } catch (error) {
+                console.error(
+                    "No fue posible recuperar a la persona principal:",
+                    error
+                );
+
                 personaPrincipal = null;
             }
 
@@ -344,14 +535,14 @@ if (formularioAcompanante) {
             );
 
             const rutPrincipal = normalizarRut(
-                personaPrincipal?.rut || ""
+                personaPrincipal?.rut
             );
 
             const correoPrincipal = normalizarCorreo(
-                personaPrincipal?.correo || ""
+                personaPrincipal?.correo
             );
 
-            // Impide repetir el RUT de la persona principal
+            /* Evita repetir el RUT de la persona principal */
             if (
                 rutPrincipal &&
                 rutNuevo === rutPrincipal
@@ -360,10 +551,14 @@ if (formularioAcompanante) {
                     "Este RUT ya pertenece a la persona principal."
                 );
 
+                document
+                    .getElementById("rut-acompanante")
+                    ?.focus();
+
                 return;
             }
 
-            // Impide repetir el correo de la persona principal
+            /* Evita repetir su correo electrónico */
             if (
                 correoNuevo &&
                 correoNuevo === correoPrincipal
@@ -372,10 +567,14 @@ if (formularioAcompanante) {
                     "Este correo ya pertenece a la persona principal."
                 );
 
+                document
+                    .getElementById("correo-acompanante")
+                    ?.focus();
+
                 return;
             }
 
-            // Impide repetir el RUT de otro acompañante
+            /* Evita repetir el RUT de otro acompañante */
             const rutRepetido =
                 acompanantesGuardados.some(
                     (acompanante) =>
@@ -389,10 +588,14 @@ if (formularioAcompanante) {
                     "Ya agregaste un acompañante con este RUT."
                 );
 
+                document
+                    .getElementById("rut-acompanante")
+                    ?.focus();
+
                 return;
             }
 
-            // Impide repetir el correo de otro acompañante
+            /* Evita repetir el correo de otro acompañante */
             const correoRepetido =
                 correoNuevo &&
                 acompanantesGuardados.some(
@@ -407,9 +610,14 @@ if (formularioAcompanante) {
                     "Ya agregaste un acompañante con este correo."
                 );
 
+                document
+                    .getElementById("correo-acompanante")
+                    ?.focus();
+
                 return;
             }
 
+            /* Guarda el nuevo acompañante */
             acompanantesGuardados.push(
                 nuevoAcompanante
             );
@@ -417,6 +625,7 @@ if (formularioAcompanante) {
             guardarAcompanantes();
             mostrarAcompanantes();
 
+            /* Limpia el formulario */
             formularioAcompanante.reset();
 
             preguntasSalud.forEach((pregunta) => {
@@ -429,15 +638,22 @@ if (formularioAcompanante) {
 
             actualizarValorAcompanante();
 
-            formularioAcompanante.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            /*
+             * Lleva el foco al primer campo para permitir
+             * el ingreso de otro acompañante.
+             */
+            document
+                .getElementById("nombre-acompanante")
+                ?.focus();
         }
     );
 }
 
-// Continúa al resumen y pago
+
+/* ==================================================
+   12. CONTINUAR AL RESUMEN Y PAGO
+   ================================================== */
+
 if (botonContinuar) {
     botonContinuar.addEventListener(
         "click",
@@ -458,18 +674,25 @@ if (botonContinuar) {
             const estaEnModoQA =
                 parametrosActuales.get("qa") === "1";
 
-            window.location.href =
-                estaEnModoQA
-                    ? "pago.html?qa=1"
-                    : "pago.html";
+            window.location.href = estaEnModoQA
+                ? "pago.html?qa=1"
+                : "pago.html";
         }
     );
 }
 
-// Muestra los acompañantes guardados al cargar la página
+
+/* ==================================================
+   13. CARGA INICIAL
+   ================================================== */
+
 mostrarAcompanantes();
 
-// Completa un acompañante ficticio en modo QA local
+
+/* ==================================================
+   14. DATOS AUTOMÁTICOS PARA PRUEBAS LOCALES
+   ================================================== */
+
 (() => {
     const parametrosPagina = new URLSearchParams(
         window.location.search
@@ -490,8 +713,7 @@ mostrarAcompanantes();
     }
 
     function asignarValorPrueba(id, valor) {
-        const elemento =
-            document.getElementById(id);
+        const elemento = document.getElementById(id);
 
         if (!elemento) {
             console.warn(
@@ -516,7 +738,7 @@ mostrarAcompanantes();
         );
     }
 
-    // Datos personales del acompañante
+    /* Datos personales */
     asignarValorPrueba(
         "nombre-acompanante",
         "Acompañante de prueba QA"
@@ -542,7 +764,7 @@ mostrarAcompanantes();
         "acompanante.qa@ejemplo.test"
     );
 
-    // Información de salud del acompañante
+    /* Información de salud */
     asignarValorPrueba(
         "tiene-alergias-acompanante",
         "si"
@@ -583,15 +805,19 @@ mostrarAcompanantes();
         "Sin lactosa, dato de demostración"
     );
 
-    // Contacto de emergencia del acompañante
+    /* Contacto de emergencia */
     asignarValorPrueba(
         "nombre-emergencia-acompanante",
         "Contacto del acompañante"
     );
 
+    /*
+     * Este valor debe coincidir con una opción
+     * del select de parentesco.
+     */
     asignarValorPrueba(
         "relacion-emergencia-acompanante",
-        "Madre"
+        "madre-padre"
     );
 
     asignarValorPrueba(

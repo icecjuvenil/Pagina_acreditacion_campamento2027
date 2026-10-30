@@ -7,17 +7,12 @@
    ================================================== */
 
 :root {
-    /* Paleta oficial entregada por la diseñadora */
     --color-oscuro: #251e17;
     --dorado-claro: #e4c674;
     --dorado-medio: #ab8141;
     --verde-principal: #3b9833;
-
-    /* Tonalidades de apoyo */
     --verde-profundo: #163a16;
     --verde-intermedio: #245f21;
-
-    /* Colores funcionales */
     --crema: #f7ecd4;
     --blanco: #ffffff;
     --texto: #251e17;
@@ -43,17 +38,13 @@ html {
 
 body {
     min-height: 100vh;
-
     color: var(--texto);
     background-color: var(--crema);
-
     font-family: "Roboto", Arial, sans-serif;
     line-height: 1.5;
-
     overflow-x: hidden;
 }
 
-/* Fuente oficial para los títulos */
 h1,
 h2,
 h3,
@@ -64,10 +55,6 @@ h3,
     letter-spacing: 0.02em;
 }
 
-/*
- * El contenido principal ocupa todo el ancho.
- * Cada formulario controla su propio ancho más adelante.
- */
 main {
     width: 100%;
     margin: 0;
@@ -77,12 +64,15 @@ img {
     max-width: 100%;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 
 /* ==================================================
    3. ENCABEZADO Y MENÚ PRINCIPAL
    ================================================== */
 
-/* Franja superior de ancho completo */
 .encabezado {
     display: flex;
     align-items: center;
@@ -100,7 +90,6 @@ img {
     box-shadow: none;
 }
 
-/* Agrupa el logo, el separador y el nombre */
 .marca {
     display: flex;
     align-items: center;
@@ -111,7 +100,6 @@ img {
     text-decoration: none;
 }
 
-/* Ajuste del espacio interno del archivo del logo */
 .marca img {
     display: block;
     flex-shrink: 0;
@@ -125,7 +113,6 @@ img {
     clip-path: inset(25% 30% 24% 30%);
 }
 
-/* Nombre ubicado al lado del logo */
 .marca .nombre-marca,
 .marca span {
     max-width: none;
@@ -143,7 +130,6 @@ img {
     white-space: nowrap;
 }
 
-/* Distribución horizontal del menú */
 .menu-principal {
     display: flex;
     align-items: center;
@@ -155,7 +141,6 @@ img {
     margin-left: auto;
 }
 
-/* Enlaces del menú */
 .menu-principal a {
     position: relative;
     padding: 10px 0;
@@ -177,10 +162,8 @@ img {
     outline: none;
 }
 
-/* Línea bajo el enlace de la página actual */
 .menu-principal a[aria-current="page"]::after {
     content: "";
-
     position: absolute;
     right: 0;
     bottom: 3px;
@@ -230,7 +213,6 @@ img {
     outline-offset: 3px;
 }
 
-/* Botón de acreditación */
 .boton-secundario {
     color: var(--color-oscuro);
     background-color: var(--dorado-claro);
@@ -262,7 +244,6 @@ img {
     overflow: hidden;
 }
 
-/* Título disponible para lectores de pantalla */
 .titulo-oculto {
     position: absolute;
 
@@ -277,10 +258,8 @@ img {
     border: 0;
 }
 
-/* Imagen principal del campamento */
 .portada .afiche-oficial {
     display: block;
-
     width: 100%;
     max-width: none;
     height: auto;
@@ -294,10 +273,7 @@ img {
 
 .portada-informacion {
     display: grid;
-    grid-template-columns:
-        minmax(260px, 1fr)
-        auto
-        auto;
+    grid-template-columns: minmax(260px, 1fr) auto auto;
     align-items: center;
     gap: 24px;
 
@@ -305,7 +281,6 @@ img {
     padding: 22px 28px;
 
     color: var(--blanco);
-
     background: linear-gradient(
         90deg,
         var(--verde-profundo),
@@ -313,7 +288,6 @@ img {
     );
 }
 
-/* Fecha del campamento */
 .fecha-destacada {
     display: flex;
     align-items: center;
@@ -342,7 +316,6 @@ img {
     font-weight: 700;
 }
 
-/* Contador */
 .contador-detallado {
     display: grid;
     grid-template-columns: repeat(4, minmax(68px, 1fr));
@@ -370,7 +343,6 @@ img {
 .unidad-contador span {
     display: block;
     margin-top: 4px;
-
     font-size: 0.85rem;
 }
 
@@ -400,11 +372,7 @@ img {
             rgba(22, 58, 22, 0.82),
             rgba(22, 58, 22, 0.82)
         ),
-        url("Logos/imagen.png");
-
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+        url("Logos/imagen.png") center / cover no-repeat;
 
     border-radius: 0;
     overflow: hidden;
@@ -420,7 +388,6 @@ img {
 
 .titulo-seccion::after {
     content: "";
-
     display: block;
 
     width: 48px;
@@ -444,7 +411,6 @@ img {
     padding: 28px;
 
     background-color: rgba(22, 58, 22, 0.84);
-
     border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 16px;
 
@@ -558,7 +524,6 @@ img {
     font-weight: 700;
 }
 
-/* Terminación irregular debajo del banner */
 .banner-acreditacion::after {
     content: "";
 
@@ -592,21 +557,29 @@ img {
     );
 }
 
+
 /* ==================================================
    9. FORMULARIO DE ACREDITACIÓN
    ================================================== */
 
-/* Limita el ancho del formulario y lo centra */
+.pagina-acreditacion {
+    background:
+        url("Logos/fondo-bosque.svg")
+        center bottom / 100% 340px no-repeat,
+        linear-gradient(
+            180deg,
+            var(--crema) 0%,
+            #fbf8ef 55%,
+            #eee8d4 100%
+        );
+}
+
 .pagina-acreditacion .contenido-acreditacion {
     width: min(1040px, calc(100% - 32px));
     margin: 0 auto;
     padding: 34px 0 80px;
 }
 
-/*
- * Elimina la antigua caja exterior.
- * Ahora cada sección del formulario funciona como una tarjeta.
- */
 .pagina-acreditacion .acreditacion {
     padding: 0;
     background-color: transparent;
@@ -614,7 +587,6 @@ img {
     border-radius: 0;
 }
 
-/* Encabezado principal del formulario */
 .pagina-acreditacion .cabecera-formulario {
     margin-bottom: 26px;
     text-align: center;
@@ -630,7 +602,6 @@ img {
 
 .pagina-acreditacion .cabecera-formulario h1::after {
     content: "";
-
     display: block;
 
     width: 56px;
@@ -649,13 +620,11 @@ img {
     line-height: 1.5;
 }
 
-/* Distribución vertical de las tarjetas */
 .pagina-acreditacion .formulario-acreditacion {
     display: grid;
     gap: 18px;
 }
 
-/* Tarjeta correspondiente a cada grupo del formulario */
 .pagina-acreditacion .grupo-formulario,
 .pagina-acreditacion .tarjeta-formulario {
     min-width: 0;
@@ -669,10 +638,6 @@ img {
     box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
 }
 
-/*
- * Los títulos ahora se muestran dentro de las tarjetas.
- * Por eso el legend tradicional queda oculto visualmente.
- */
 .pagina-acreditacion .grupo-formulario > legend {
     position: absolute;
 
@@ -687,7 +652,6 @@ img {
     border: 0;
 }
 
-/* Encabezado interior de cada tarjeta */
 .pagina-acreditacion .cabecera-grupo-formulario {
     display: flex;
     align-items: center;
@@ -696,7 +660,6 @@ img {
     margin-bottom: 18px;
 }
 
-/* Círculo dorado que contiene el icono */
 .pagina-acreditacion .icono-grupo-formulario {
     display: grid;
     place-items: center;
@@ -709,11 +672,11 @@ img {
     background-color: #fbefd0;
     border-radius: 50%;
 
+    font-family: "Segoe UI Symbol", Arial, sans-serif;
     font-size: 1.45rem;
     line-height: 1;
 }
 
-/* Textos del encabezado de cada tarjeta */
 .pagina-acreditacion .texto-grupo-formulario {
     min-width: 0;
 }
@@ -737,21 +700,18 @@ img {
     line-height: 1.4;
 }
 
-/* Organiza los campos en dos columnas */
 .pagina-acreditacion .campos-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px 26px;
 }
 
-/* Campos del contacto de emergencia */
 .pagina-acreditacion .campos-grid-emergencia {
     display: grid;
     grid-template-columns: 1.2fr 1fr 1fr;
     gap: 18px;
 }
 
-/* Estructura general de cada campo */
 .pagina-acreditacion .campo {
     display: flex;
     flex-direction: column;
@@ -766,24 +726,20 @@ img {
     line-height: 1.3;
 }
 
-/* Asterisco de campos obligatorios */
 .pagina-acreditacion .obligatorio {
     color: #b63a2e;
 }
 
-/* Texto que identifica un campo opcional */
 .pagina-acreditacion .texto-opcional {
     color: #73736d;
     font-size: 0.82rem;
     font-weight: 400;
 }
 
-/* Contenedor que permite colocar iconos dentro de los controles */
 .pagina-acreditacion .control-campo {
     position: relative;
 }
 
-/* Iconos interiores */
 .pagina-acreditacion .control-campo .icono-campo {
     position: absolute;
     top: 50%;
@@ -798,7 +754,6 @@ img {
     transform: translateY(-50%);
 }
 
-/* Apariencia compartida por todos los controles */
 .pagina-acreditacion .campo input,
 .pagina-acreditacion .campo select,
 .pagina-acreditacion .campo textarea {
@@ -815,25 +770,21 @@ img {
     font: inherit;
 }
 
-/* Espacio para los iconos ubicados dentro de inputs */
 .pagina-acreditacion .control-campo input {
     padding-left: 46px;
 }
 
-/* Área de texto */
 .pagina-acreditacion .campo textarea {
     min-height: 100px;
     resize: vertical;
 }
 
-/* Texto de ayuda situado debajo de un campo */
 .pagina-acreditacion .campo small {
     color: #6a6a63;
     font-size: 0.8rem;
     line-height: 1.35;
 }
 
-/* Estado activo de inputs, select y textarea */
 .pagina-acreditacion .campo input:focus,
 .pagina-acreditacion .campo select:focus,
 .pagina-acreditacion .campo textarea:focus {
@@ -841,11 +792,6 @@ img {
     outline: 3px solid rgba(228, 198, 116, 0.3);
 }
 
-/* ==================================================
-   VALOR DE LA ACREDITACIÓN
-   ================================================== */
-
-/* Franja dorada ubicada dentro de Datos personales */
 .pagina-acreditacion .resumen-valor-acreditacion {
     display: flex;
     align-items: center;
@@ -866,7 +812,6 @@ img {
     border-radius: 10px;
 }
 
-/* Agrupa el icono y la explicación del valor */
 .pagina-acreditacion .texto-valor-acreditacion {
     display: flex;
     align-items: center;
@@ -874,7 +819,6 @@ img {
     min-width: 0;
 }
 
-/* Icono de la franja de valor */
 .pagina-acreditacion .icono-valor-acreditacion {
     display: grid;
     place-items: center;
@@ -887,7 +831,6 @@ img {
     font-size: 1.45rem;
 }
 
-/* Título y descripción del valor */
 .pagina-acreditacion .texto-valor-acreditacion strong {
     display: block;
     margin-bottom: 2px;
@@ -904,7 +847,6 @@ img {
     line-height: 1.35;
 }
 
-/* Monto calculado de la acreditación */
 .pagina-acreditacion .valor-acreditacion,
 .pagina-acreditacion #valor-acreditacion {
     flex-shrink: 0;
@@ -912,25 +854,15 @@ img {
     color: #74540d;
     font-family: "Bebas Neue", "Arial Narrow", sans-serif;
     font-size: clamp(1.55rem, 3vw, 2rem);
-    font-weight: 400;
     line-height: 1;
     text-align: right;
 }
 
-/* ==================================================
-   INFORMACIÓN DE SALUD
-   ================================================== */
-
-/* Distribuye verticalmente las preguntas de salud */
 .pagina-acreditacion .campos-salud {
     display: grid;
     gap: 18px;
 }
 
-/*
- * Una pregunta utiliza una columna.
- * Cuando aparece su campo adicional, ambos se muestran lado a lado.
- */
 .pagina-acreditacion .fila-salud {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -943,17 +875,13 @@ img {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/* ==================================================
-   ACOMPAÑANTES
-   ================================================== */
-
 .pagina-acreditacion .campo-acompanantes {
     display: grid;
     grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
     gap: 24px;
     align-items: end;
 }
-/* Pregunta principal de la sección Acompañantes */
+
 .pagina-acreditacion .campo-acompanantes label {
     font-size: 1.05rem;
     font-weight: 700;
@@ -967,11 +895,6 @@ img {
     line-height: 1.45;
 }
 
-/* ==================================================
-   CONFIRMACIÓN Y BOTÓN FINAL
-   ================================================== */
-
-/* Tarjeta final de autorización */
 .pagina-acreditacion .tarjeta-confirmacion {
     padding: 18px 24px;
 
@@ -981,7 +904,6 @@ img {
     box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
 }
 
-/* Coloca la autorización sobre el botón */
 .pagina-acreditacion .confirmacion-formulario {
     display: flex;
     flex-direction: column;
@@ -991,7 +913,6 @@ img {
     margin: 0;
 }
 
-/* Casilla de autorización */
 .pagina-acreditacion .casilla-confirmacion {
     display: flex;
     align-items: flex-start;
@@ -1015,7 +936,6 @@ img {
     accent-color: var(--dorado-medio);
 }
 
-/* Botón para guardar el perfil */
 .pagina-acreditacion .boton-guardar {
     width: min(360px, 100%);
     padding: 13px 22px;
@@ -1045,219 +965,1118 @@ img {
     box-shadow: 0 7px 16px rgba(37, 30, 23, 0.2);
 }
 
-/* Indicador visible para navegación mediante teclado */
 .pagina-acreditacion .boton-guardar:focus-visible {
     outline: 3px solid var(--dorado-claro);
     outline-offset: 3px;
 }
 
-/* Elementos mostrados u ocultados mediante JavaScript */
-[hidden] {
-    display: none !important;
-}
 
 /* ==================================================
-   ADAPTACIÓN PARA TABLETAS
+   10. PÁGINA DE RESUMEN Y PAGO
    ================================================== */
 
-@media (max-width: 850px) {
-
-    .pagina-acreditacion .contenido-acreditacion {
-        width: min(720px, calc(100% - 24px));
-        padding: 28px 0 60px;
-    }
-
-    .pagina-acreditacion .campos-grid-emergencia {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .pagina-acreditacion .campo-acompanantes {
-        grid-template-columns: 1fr;
-        gap: 14px;
-    }
+.pagina-pago {
+    background:
+        url("Logos/fondo-bosque.svg")
+        center bottom / 100% 340px no-repeat,
+        linear-gradient(
+            180deg,
+            var(--crema) 0%,
+            #fbf8ef 55%,
+            #eee8d4 100%
+        );
 }
 
-/* ==================================================
-   ADAPTACIÓN PARA CELULARES
-   ================================================== */
-
-@media (max-width: 600px) {
-
-    .pagina-acreditacion .contenido-acreditacion {
-        width: calc(100% - 20px);
-        padding: 24px 0 46px;
-    }
-
-    .pagina-acreditacion .cabecera-formulario {
-        margin-bottom: 22px;
-    }
-
-    .pagina-acreditacion .cabecera-formulario h1 {
-        font-size: 2.25rem;
-    }
-
-    .pagina-acreditacion .cabecera-formulario p {
-        font-size: 0.95rem;
-    }
-
-    .pagina-acreditacion .grupo-formulario,
-    .pagina-acreditacion .tarjeta-formulario,
-    .pagina-acreditacion .tarjeta-confirmacion {
-        padding: 18px 16px;
-        border-radius: 12px;
-    }
-
-    .pagina-acreditacion .cabecera-grupo-formulario {
-        align-items: flex-start;
-        gap: 11px;
-    }
-
-    .pagina-acreditacion .icono-grupo-formulario {
-        flex-basis: 44px;
-
-        width: 44px;
-        height: 44px;
-
-        font-size: 1.25rem;
-    }
-
-    .pagina-acreditacion .texto-grupo-formulario h2,
-    .pagina-acreditacion .texto-grupo-formulario h3 {
-        font-size: 1.1rem;
-    }
-
-    .pagina-acreditacion .campos-grid,
-    .pagina-acreditacion .campos-grid-emergencia,
-    .pagina-acreditacion .fila-salud,
-    .pagina-acreditacion
-    .fila-salud:has(> .campo-condicional:not([hidden])) {
-        grid-template-columns: 1fr;
-    }
-
-    .pagina-acreditacion .resumen-valor-acreditacion {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .pagina-acreditacion .valor-acreditacion,
-    .pagina-acreditacion #valor-acreditacion {
-        width: 100%;
-        text-align: left;
-    }
+.pagina-pago .banner-pago {
+    width: 100%;
+    height: clamp(230px, 28vw, 350px);
+    overflow: hidden;
 }
 
-
-
-
-
-/* ==================================================
-   10. RESUMEN Y DATOS DEL PAGO
-   ================================================== */
-
-.datos-bancarios {
-    padding: 20px;
-
-    background-color: var(--crema);
-    border-radius: 12px;
-}
-
-.datos-bancarios p {
-    margin: 6px 0;
-}
-
-.total-acreditacion {
+.pagina-pago .banner-pago img {
     display: block;
-    margin-top: 10px;
 
-    color: var(--verde-principal);
-    font-size: 1.5rem;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center 58%;
+}
+
+.pagina-pago .contenido-pago {
+    width: min(1040px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 30px 0 72px;
+}
+
+.pagina-pago .cabecera-pago {
+    margin-bottom: 26px;
+}
+
+.pagina-pago .cabecera-pago h1 {
+    margin: 0 0 9px;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: clamp(2.4rem, 5vw, 3.35rem);
+    font-weight: 800;
+    line-height: 1.05;
+}
+
+.pagina-pago .cabecera-pago p {
+    margin: 0;
+
+    color: #55554f;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.pagina-pago .tarjeta-pago {
+    min-width: 0;
+    margin: 0 0 18px;
+    padding: 20px 24px;
+
+    background-color: rgba(255, 255, 255, 0.96);
+    border: 0;
+    border-radius: 15px;
+
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
+}
+
+.pagina-pago .cabecera-tarjeta-pago {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 18px;
+}
+
+.pagina-pago .icono-tarjeta-pago {
+    display: grid;
+    place-items: center;
+    flex: 0 0 48px;
+
+    width: 48px;
+    height: 48px;
+
+    color: var(--verde-profundo);
+    background-color: #eef3e9;
+    border-radius: 50%;
+
+    font-family: "Segoe UI Symbol", Arial, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pagina-pago .cabecera-tarjeta-pago h2 {
+    flex: 1;
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.pagina-pago .texto-cabecera-tarjeta-pago {
+    flex: 1;
+    min-width: 0;
+}
+
+.pagina-pago .texto-cabecera-tarjeta-pago p {
+    margin: 0;
+
+    color: #686862;
+    font-size: 0.86rem;
+    line-height: 1.4;
+}
+
+.pagina-pago .texto-oculto {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.pagina-pago .estado-inscripcion {
+    flex-shrink: 0;
+
+    padding: 8px 18px;
+
+    color: var(--verde-profundo);
+    background-color: #eef3e9;
+    border-radius: 999px;
+
+    font-size: 0.8rem;
     font-weight: 700;
 }
 
+.pagina-pago .mensaje-cargado-pago,
+.pagina-pago .mensaje-sin-datos-pago {
+    margin: 0;
+    padding: 16px;
 
-/* ==================================================
-   11. ACOMPAÑANTES
-   ================================================== */
+    color: #666a64;
+    text-align: center;
 
-.boton-agregar {
-    margin-top: 12px;
-    padding: 13px 20px;
+    background-color: #fafbf8;
+    border: 1px dashed #ced2ca;
+    border-radius: 9px;
+}
+
+.pagina-pago .datos-persona-pago,
+.pagina-pago .fila-acompanante-pago {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(0, 0.8fr)
+        minmax(0, 1.3fr)
+        minmax(110px, 0.5fr);
+    gap: 18px;
+    align-items: end;
+}
+
+.pagina-pago .fila-acompanante-pago {
+    padding: 15px 0;
+}
+
+.pagina-pago
+.fila-acompanante-pago
++ .fila-acompanante-pago {
+    border-top: 1px solid #e2e2de;
+}
+
+.pagina-pago .dato-pago small {
+    display: block;
+    margin-bottom: 4px;
+
+    color: #6d716d;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.pagina-pago .dato-pago strong,
+.pagina-pago .dato-pago span {
+    display: block;
+
+    color: var(--texto);
+    overflow-wrap: anywhere;
+
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.pagina-pago .dato-valor-pago {
+    padding-left: 20px;
+    border-left: 1px solid #ddddda;
+}
+
+.pagina-pago .dato-valor-pago strong {
+    color: var(--verde-profundo);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+/* Botón para agregar acompañantes desde el resumen */
+.pagina-pago .boton-agregar-acompanante-pago {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: fit-content;
+    min-height: 50px;
+    margin: 16px 0 0 auto;
+    padding: 12px 22px;
+
+    color: var(--color-oscuro);
+    background-color: #d8a326;
+    border: 2px solid #d8a326;
+    border-radius: 9px;
+
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 700;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
+}
+
+.pagina-pago .boton-agregar-acompanante-pago span {
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.pagina-pago .boton-agregar-acompanante-pago:hover {
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+    border-color: var(--color-oscuro);
+    transform: translateY(-1px);
+}
+
+.pagina-pago .resumen-total-pago {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 18px;
+    padding: 16px 24px;
 
     color: var(--blanco);
-    background-color: var(--verde-principal);
+    background: linear-gradient(
+        110deg,
+        var(--verde-profundo),
+        #0b472d
+    );
+}
 
-    border: 0;
-    border-radius: 12px;
+.pagina-pago .icono-total-pago {
+    display: grid;
+    place-items: center;
+
+    width: 50px;
+    height: 50px;
+
+    color: var(--dorado-claro);
+    background-color: rgba(228, 198, 116, 0.18);
+    border-radius: 50%;
+
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.pagina-pago .texto-total-pago h2 {
+    margin: 0 0 2px;
+
+    color: var(--blanco);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.pagina-pago .texto-total-pago p {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.82rem;
+}
+
+.pagina-pago .monto-total-pago {
+    margin: 0;
+    padding-left: 24px;
+
+    color: var(--dorado-claro);
+    border-left: 1px solid rgba(255, 255, 255, 0.35);
+
+    font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+    font-size: clamp(2.3rem, 4vw, 3.2rem);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.pagina-pago .contenido-datos-bancarios {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(270px, 0.65fr);
+    gap: 28px;
+    align-items: center;
+}
+
+.pagina-pago .lista-datos-bancarios {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.pagina-pago .lista-datos-bancarios div {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 16px;
+}
+
+.pagina-pago .lista-datos-bancarios dt,
+.pagina-pago .lista-datos-bancarios dd {
+    margin: 0;
+
+    color: var(--texto);
+    font-size: 0.88rem;
+    line-height: 1.35;
+}
+
+.pagina-pago .lista-datos-bancarios dt {
+    font-weight: 700;
+}
+
+.pagina-pago .aviso-transferencia {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+
+    padding: 17px;
+
+    color: var(--verde-profundo);
+    background-color: #eef2e8;
+    border-radius: 10px;
+}
+
+.pagina-pago .icono-aviso-transferencia {
+    display: grid;
+    place-items: center;
+    flex: 0 0 30px;
+
+    width: 30px;
+    height: 30px;
+
+    color: var(--verde-profundo);
+
+    font-family: "Segoe UI Symbol", Arial, sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pagina-pago .aviso-transferencia strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.pagina-pago .aviso-transferencia p {
+    margin: 0 0 7px;
+
+    color: #54594f;
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.pagina-pago .total-transferencia-bancaria {
+    color: var(--verde-profundo);
+    font-size: 1.05rem;
+}
+
+.pagina-pago .formulario-comprobante {
+    margin: 0;
+}
+
+.pagina-pago .campos-comprobante {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(210px, 0.75fr)
+        minmax(280px, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.pagina-pago .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.pagina-pago .campo label {
+    color: var(--texto);
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.pagina-pago .obligatorio {
+    color: #bd3237;
+}
+
+.pagina-pago .campo input:not([type="file"]) {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 14px;
+
+    color: var(--texto);
+    background-color: var(--blanco);
+
+    border: 1px solid #c9ccc6;
+    border-radius: 8px;
+
+    font: inherit;
+}
+
+.pagina-pago .campo input:focus {
+    border-color: var(--dorado-medio);
+    outline: 3px solid rgba(228, 198, 116, 0.3);
+}
+
+.pagina-pago .entrada-comprobante {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+
+    overflow: hidden;
+    opacity: 0;
+}
+
+.pagina-pago .zona-comprobante {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+
+    min-height: 115px;
+    padding: 14px;
+
+    color: #676b65;
+    text-align: center;
+
+    background-color: #fcfcfa;
+    border: 1px dashed #9da39b;
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s,
+        border-color 0.2s,
+        background-color 0.2s;
+}
+
+.pagina-pago .zona-comprobante:hover {
+    color: var(--verde-profundo);
+    background-color: #f4f7f0;
+    border-color: var(--verde-profundo);
+}
+
+.pagina-pago .icono-subir-comprobante {
+    color: var(--verde-profundo);
+    font-size: 1.7rem;
+    font-weight: 700;
+}
+
+.pagina-pago .zona-comprobante strong {
+    font-size: 0.82rem;
+}
+
+.pagina-pago .zona-comprobante small {
+    font-size: 0.74rem;
+    font-weight: 400;
+}
+
+.pagina-pago .nombre-archivo-comprobante {
+    min-height: 18px;
+    margin: 3px 0 0;
+
+    color: var(--verde-profundo);
+    font-size: 0.76rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.pagina-pago .casilla-confirmacion-pago {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    margin-top: 18px;
+
+    color: #55554f;
+    font-size: 0.84rem;
+    line-height: 1.4;
+
+    cursor: pointer;
+}
+
+.pagina-pago .casilla-confirmacion-pago input {
+    flex-shrink: 0;
+
+    width: 19px;
+    height: 19px;
+    margin-top: 1px;
+
+    accent-color: var(--dorado-medio);
+}
+
+.pagina-pago .acciones-pago {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 280px));
+    justify-content: center;
+    gap: 16px;
+
+    margin: 24px 0;
+}
+
+.pagina-pago .boton-volver-pago,
+.pagina-pago .boton-enviar-comprobante {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 50px;
+    padding: 12px 22px;
+
+    border-radius: 9px;
 
     cursor: pointer;
 
     font: inherit;
     font-weight: 700;
+    text-decoration: none;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
 }
 
-.boton-agregar:hover {
+.pagina-pago .boton-volver-pago {
+    color: var(--verde-profundo);
+    background-color: transparent;
+    border: 2px solid var(--verde-profundo);
+}
+
+.pagina-pago .boton-enviar-comprobante {
+    color: var(--color-oscuro);
+    background-color: #d8a326;
+    border: 2px solid #d8a326;
+}
+
+.pagina-pago .boton-volver-pago:hover,
+.pagina-pago .boton-enviar-comprobante:hover {
+    color: var(--blanco);
     background-color: var(--color-oscuro);
+    border-color: var(--color-oscuro);
+    transform: translateY(-1px);
 }
 
-.tarjeta-acompanante {
-    margin-top: 24px;
-    padding: 24px;
-
-    background-color: var(--color-fondo-tarjeta);
-    border: 2px solid var(--verde-principal);
-    border-radius: 16px;
+.pagina-pago button:focus-visible,
+.pagina-pago a:focus-visible,
+.pagina-pago .zona-comprobante:focus-within {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
 }
 
-.encabezado-acompanante {
+.pagina-pago .estado-pago {
+    color: var(--verde-profundo);
+}
+
+.pagina-pago .estado-pago p {
+    margin: 0;
+
+    color: #55554f;
+    line-height: 1.5;
+}
+
+
+/* ==================================================
+   11. PÁGINA DE ACOMPAÑANTES
+   ================================================== */
+
+.pagina-acompanantes {
+    background:
+        url("Logos/fondo-bosque.svg")
+        center bottom / 100% 340px no-repeat,
+        linear-gradient(
+            180deg,
+            var(--crema) 0%,
+            #fbf7eb 55%,
+            #f0ead5 100%
+        );
+}
+
+.pagina-acompanantes .banner-acompanantes {
+    width: 100%;
+    height: clamp(210px, 25vw, 330px);
+    overflow: hidden;
+}
+
+.pagina-acompanantes .banner-acompanantes img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center 62%;
+}
+
+.pagina-acompanantes .contenido-acompanantes {
+    width: min(980px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 28px 0 72px;
+}
+
+.pagina-acompanantes .cabecera-acompanantes {
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+.pagina-acompanantes .cabecera-acompanantes h1 {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.1rem);
+    font-weight: 800;
+    line-height: 1.05;
+}
+
+.pagina-acompanantes .cabecera-acompanantes h1::after {
+    content: "";
+    display: block;
+
+    width: 58px;
+    height: 4px;
+    margin: 13px auto 14px;
+
+    background-color: var(--dorado-claro);
+    border-radius: 999px;
+}
+
+.pagina-acompanantes .cabecera-acompanantes p {
+    margin: 3px 0;
+
+    color: #62625c;
+    font-size: 1rem;
+    line-height: 1.45;
+}
+
+.pagina-acompanantes .formulario-acompanante {
+    display: grid;
+    gap: 18px;
+}
+
+.pagina-acompanantes .tarjeta-acompanantes {
+    min-width: 0;
+    margin: 0 0 18px;
+    padding: 20px 24px;
+
+    background-color: rgba(255, 255, 255, 0.96);
+    border: 0;
+    border-radius: 15px;
+
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
+}
+
+.pagina-acompanantes .cabecera-tarjeta-acompanantes {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 18px;
+}
+
+.pagina-acompanantes .icono-tarjeta-acompanantes {
+    display: grid;
+    place-items: center;
+    flex: 0 0 50px;
+
+    width: 50px;
+    height: 50px;
+
+    color: var(--blanco);
+    background: linear-gradient(
+        145deg,
+        var(--verde-profundo),
+        var(--verde-intermedio)
+    );
+
+    border-radius: 50%;
+
+    font-family: "Segoe UI Symbol", Arial, sans-serif;
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.pagina-acompanantes .cabecera-tarjeta-acompanantes h2 {
+    flex: 1;
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.28rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.pagina-acompanantes .texto-oculto {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.pagina-acompanantes .cantidad-acompanantes {
+    flex-shrink: 0;
+
+    padding: 8px 17px;
+
+    color: var(--verde-profundo);
+    background-color: #f1f7e8;
+    border-radius: 999px;
+
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.pagina-acompanantes .lista-acompanantes-guardados {
+    display: grid;
+    gap: 10px;
+}
+
+.pagina-acompanantes .mensaje-sin-acompanantes {
+    margin: 0;
+    padding: 18px;
+
+    color: #66665f;
+    text-align: center;
+
+    background-color: #fafbf8;
+    border: 1px dashed #ccd2c8;
+    border-radius: 10px;
+}
+
+.pagina-acompanantes .tarjeta-acompanante {
+    margin: 0;
+    padding: 14px 16px;
+
+    background-color: #fcfcfa;
+    border: 1px solid #e0e3dd;
+    border-radius: 10px;
+}
+
+.pagina-acompanantes .encabezado-acompanante {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    gap: 18px;
 
-    margin-bottom: 20px;
+    margin: 0;
 }
 
-.encabezado-acompanante h3 {
+.pagina-acompanantes .resumen-acompanante-guardado {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.pagina-acompanantes .avatar-acompanante {
+    display: grid;
+    place-items: center;
+    flex: 0 0 48px;
+
+    width: 48px;
+    height: 48px;
+
+    color: #a7aaa4;
+    background-color: #f0f1ee;
+    border-radius: 50%;
+
+    font-family: "Segoe UI Symbol", Arial, sans-serif;
+    font-size: 1.2rem;
+}
+
+.pagina-acompanantes .datos-acompanante-guardado {
+    min-width: 0;
+}
+
+.pagina-acompanantes .datos-acompanante-guardado h3 {
+    margin: 0 0 5px;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.pagina-acompanantes .datos-acompanante-guardado p {
     margin: 0;
 
-    color: var(--verde-principal);
+    color: #66665f;
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+.pagina-acompanantes .boton-eliminar-acompanante {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 9px 18px;
+
+    color: #b72c32;
+    background-color: #fff0f1;
+
+    border: 0;
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 700;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s;
+}
+
+.pagina-acompanantes .boton-eliminar-acompanante:hover {
+    color: var(--blanco);
+    background-color: #b72c32;
+}
+
+.pagina-acompanantes .campos-grid-acompanante {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px 20px;
+}
+
+.pagina-acompanantes
+.campos-grid-acompanante
+.campo:nth-child(1) {
+    grid-column: span 4;
+}
+
+.pagina-acompanantes
+.campos-grid-acompanante
+.campo:nth-child(2) {
+    grid-column: span 2;
+}
+
+.pagina-acompanantes
+.campos-grid-acompanante
+.campo:nth-child(3),
+.pagina-acompanantes
+.campos-grid-acompanante
+.campo:nth-child(4),
+.pagina-acompanantes
+.campos-grid-acompanante
+.campo:nth-child(5) {
+    grid-column: span 2;
+}
+
+.pagina-acompanantes .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.pagina-acompanantes .campo label {
+    color: var(--texto);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.pagina-acompanantes .obligatorio {
+    color: #bd3237;
+}
+
+.pagina-acompanantes .texto-opcional {
+    color: #74746d;
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.pagina-acompanantes .campo input,
+.pagina-acompanantes .campo select,
+.pagina-acompanantes .campo textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 14px;
+
+    color: var(--texto);
+    background-color: var(--blanco);
+
+    border: 1px solid #c9ccc6;
+    border-radius: 8px;
+
+    font: inherit;
+}
+
+.pagina-acompanantes .campo small {
+    color: #696962;
+    font-size: 0.78rem;
+    line-height: 1.35;
+}
+
+.pagina-acompanantes .campo input:focus,
+.pagina-acompanantes .campo select:focus,
+.pagina-acompanantes .campo textarea:focus {
+    border-color: var(--dorado-medio);
+    outline: 3px solid rgba(228, 198, 116, 0.3);
+}
+
+.pagina-acompanantes .resumen-valor-acompanante {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    margin-top: 17px;
+    padding: 14px 18px;
+
+    background: linear-gradient(
+        90deg,
+        rgba(228, 198, 116, 0.2),
+        rgba(228, 198, 116, 0.42),
+        rgba(228, 198, 116, 0.2)
+    );
+
+    border-radius: 10px;
+}
+
+.pagina-acompanantes .descripcion-valor-acompanante {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.pagina-acompanantes .icono-valor-acompanante {
+    display: grid;
+    place-items: center;
+    flex: 0 0 50px;
+
+    width: 50px;
+    height: 50px;
+
+    color: var(--blanco);
+    background: linear-gradient(145deg, #d6a11b, #a97205);
+    border-radius: 50%;
+
+    font-family: "Segoe UI Symbol", Arial, sans-serif;
     font-size: 1.4rem;
 }
 
-.subgrupo-acompanante {
-    margin-top: 20px;
-    padding: 20px;
+.pagina-acompanantes
+.descripcion-valor-acompanante strong {
+    display: block;
+    margin-bottom: 3px;
 
-    border: 1px solid var(--verde-principal);
-    border-radius: 12px;
+    color: #74540d;
+    font-size: 0.95rem;
 }
 
-.subgrupo-acompanante legend {
-    padding: 0 10px;
+.pagina-acompanantes
+.descripcion-valor-acompanante p {
+    margin: 0;
 
-    color: var(--verde-principal);
-    font-size: 1.1rem;
-    font-weight: 700;
+    color: #656158;
+    font-size: 0.8rem;
+    line-height: 1.35;
 }
 
-.boton-eliminar-acompanante {
-    padding: 10px 16px;
+.pagina-acompanantes .valor-acompanante {
+    max-width: 240px;
 
-    color: var(--blanco);
-    background-color: var(--color-oscuro);
+    color: #74540d;
+    font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1;
+    text-align: right;
+}
 
-    border: 0;
-    border-radius: 10px;
+.pagina-acompanantes .campos-salud-acompanante {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 28px;
+}
+
+.pagina-acompanantes .fila-salud-acompanante {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-content: start;
+}
+
+.pagina-acompanantes .campos-emergencia-acompanante {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 24px;
+}
+
+.pagina-acompanantes .acciones-acompanantes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 340px));
+    justify-content: center;
+    gap: 14px;
+
+    margin-top: 4px;
+}
+
+.pagina-acompanantes .boton-guardar-acompanante,
+.pagina-acompanantes .boton-continuar-resumen {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 50px;
+    padding: 12px 22px;
+
+    border-radius: 9px;
 
     cursor: pointer;
 
     font: inherit;
     font-weight: 700;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
 }
 
-.boton-eliminar-acompanante:hover {
-    background-color: var(--color-eliminar-hover);
+.pagina-acompanantes .boton-guardar-acompanante {
+    color: var(--blanco);
+    background-color: #c98e11;
+    border: 2px solid #c98e11;
+}
+
+.pagina-acompanantes .boton-continuar-resumen {
+    color: #9a6c0a;
+    background-color: var(--blanco);
+    border: 2px solid #c98e11;
+}
+
+.pagina-acompanantes .boton-guardar-acompanante:hover,
+.pagina-acompanantes .boton-continuar-resumen:hover {
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+    border-color: var(--color-oscuro);
+    transform: translateY(-1px);
+}
+
+.pagina-acompanantes button:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
 }
 
 
@@ -1284,7 +2103,6 @@ img {
 
 .titulo-galeria::after {
     content: "";
-
     display: block;
 
     width: 48px;
@@ -1475,11 +2293,6 @@ img {
     cursor: pointer;
     font-size: 2rem;
     line-height: 1;
-
-    transition:
-        color 0.2s,
-        background-color 0.2s,
-        transform 0.2s;
 }
 
 .flecha-visor {
@@ -1505,11 +2318,6 @@ img {
     line-height: 1;
 
     transform: translateY(-50%);
-
-    transition:
-        color 0.2s,
-        background-color 0.2s,
-        transform 0.2s;
 }
 
 .flecha-visor-anterior {
@@ -1524,20 +2332,6 @@ img {
 .flecha-visor:hover {
     color: var(--blanco);
     background-color: var(--verde-profundo);
-}
-
-.cerrar-visor:hover {
-    transform: scale(1.08);
-}
-
-.flecha-visor:hover {
-    transform: translateY(-50%) scale(1.08);
-}
-
-.cerrar-visor:focus-visible,
-.flecha-visor:focus-visible {
-    outline: 3px solid var(--dorado-claro);
-    outline-offset: 3px;
 }
 
 
@@ -1572,7 +2366,6 @@ img {
 
 .contacto h2::after {
     content: "";
-
     display: block;
 
     width: 44px;
@@ -1609,11 +2402,6 @@ img {
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
-
-    transition:
-        color 0.2s,
-        background-color 0.2s,
-        transform 0.2s;
 }
 
 .icono-instagram circle:last-of-type {
@@ -1628,14 +2416,7 @@ img {
 .enlace-instagram:hover .icono-instagram {
     color: var(--verde-profundo);
     background-color: var(--dorado-claro);
-
     transform: scale(1.06);
-}
-
-.enlace-instagram:focus-visible {
-    outline: 3px solid var(--dorado-claro);
-    outline-offset: 6px;
-    border-radius: 50%;
 }
 
 
@@ -1717,12 +2498,6 @@ img {
     white-space: nowrap;
 }
 
-.marca-pie:focus-visible {
-    outline: 3px solid var(--dorado-claro);
-    outline-offset: 4px;
-    border-radius: 4px;
-}
-
 
 /* ==================================================
    16. PÁGINA DE INICIO DE SESIÓN
@@ -1752,7 +2527,6 @@ img {
 
 .pagina-login .cabecera-login h2::after {
     content: "";
-
     display: block;
 
     width: 46px;
@@ -1852,8 +2626,6 @@ img {
     font-size: 0.88rem;
     font-weight: 700;
     text-decoration: none;
-
-    transition: color 0.2s;
 }
 
 .pagina-login .enlace-recuperacion:hover {
@@ -1861,61 +2633,30 @@ img {
     text-decoration: underline;
 }
 
-.pagina-login .enlace-recuperacion:focus-visible {
-    outline: 3px solid var(--dorado-claro);
-    outline-offset: 3px;
-    border-radius: 3px;
-}
-
-
-/* ==================================================
-   BOTÓN PARA INICIAR SESIÓN
-   ================================================== */
-
-/* Estado normal: dorado claro */
 body.pagina-login .boton-login {
     width: 100%;
     height: 50px;
     margin-top: 2px;
 
-    color: #251e17;
-    background-color: #e4c674;
-    background-image: none;
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
 
-    border: 2px solid #ab8141;
+    border: 2px solid var(--dorado-medio);
     border-radius: 8px;
 
     cursor: pointer;
 
     font: inherit;
     font-weight: 700;
-
-    transition:
-        color 0.25s,
-        background-color 0.25s,
-        border-color 0.25s,
-        transform 0.2s,
-        box-shadow 0.2s;
 }
 
-/* Estado al pasar el cursor: café oscuro */
 body.pagina-login .boton-login:hover {
-    color: #ffffff;
-    background-color: #251e17;
-    background-image: none;
-    border-color: #251e17;
-
-    transform: translateY(-2px) scale(1.01);
-    box-shadow: 0 8px 18px rgba(37, 30, 23, 0.32);
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+    border-color: var(--color-oscuro);
+    transform: translateY(-2px);
 }
 
-/* Estado al presionar el botón */
-body.pagina-login .boton-login:active {
-    transform: translateY(0) scale(0.99);
-    box-shadow: 0 3px 8px rgba(37, 30, 23, 0.24);
-}
-
-/* Acceso al formulario para crear una cuenta */
 .pagina-login .crear-cuenta-login {
     margin-top: 20px;
     padding-top: 18px;
@@ -1926,9 +2667,6 @@ body.pagina-login .boton-login:active {
 
 .pagina-login .crear-cuenta-login p {
     margin: 0 0 10px;
-
-    color: var(--texto);
-    font-size: 0.95rem;
 }
 
 .pagina-login .boton-crear-cuenta {
@@ -1945,21 +2683,11 @@ body.pagina-login .boton-login:active {
 
     font-weight: 700;
     text-decoration: none;
-
-    transition:
-        color 0.2s,
-        background-color 0.2s;
 }
 
 .pagina-login .boton-crear-cuenta:hover {
     color: var(--blanco);
     background-color: var(--verde-profundo);
-}
-
-body.pagina-login .boton-login:focus-visible,
-.pagina-login .boton-crear-cuenta:focus-visible {
-    outline: 3px solid var(--dorado-claro);
-    outline-offset: 3px;
 }
 
 
@@ -1988,15 +2716,9 @@ body.pagina-login .boton-login:focus-visible,
     text-decoration: underline;
 }
 
-.pagina-recuperacion .volver-login a:focus-visible {
-    outline: 3px solid var(--dorado-claro);
-    outline-offset: 3px;
-    border-radius: 3px;
-}
-
 
 /* ==================================================
-   18. ADAPTACIÓN PARA TABLETS
+   18. ADAPTACIÓN PARA TABLETAS
    ================================================== */
 
 @media (max-width: 900px) {
@@ -2025,7 +2747,6 @@ body.pagina-login .boton-login:focus-visible,
         font-size: 0.86rem;
     }
 
-    /* Portada */
     .portada .afiche-oficial {
         width: 100%;
         height: 230px;
@@ -2051,30 +2772,68 @@ body.pagina-login .boton-login:focus-visible,
         grid-template-columns: 1fr;
     }
 
-    .contenido-acreditacion {
-        width: min(calc(100% - 24px), 650px);
-        margin: 20px auto;
+    .diapositiva-carrusel {
+        flex-basis: calc((100% - 16px) / 2);
+    }
+}
+
+@media (max-width: 850px) {
+
+    .pagina-acreditacion .contenido-acreditacion,
+    .pagina-pago .contenido-pago {
+        width: min(720px, calc(100% - 24px));
     }
 
-    .acreditacion {
-        padding: 22px;
+    .pagina-acreditacion .campos-grid-emergencia,
+    .pagina-pago .datos-persona-pago,
+    .pagina-pago .fila-acompanante-pago {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .campos-grid {
+    .pagina-acreditacion .campo-acompanantes,
+    .pagina-pago .contenido-datos-bancarios {
         grid-template-columns: 1fr;
     }
 
-    .confirmacion-formulario {
-        flex-direction: column;
-        align-items: stretch;
+    .pagina-pago .dato-valor-pago {
+        padding-left: 0;
+        border-left: 0;
     }
 
-    .boton-guardar {
-        width: 100%;
+    .pagina-pago .campos-comprobante {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .diapositiva-carrusel {
-        flex-basis: calc((100% - 16px) / 2);
+    .pagina-pago .campo-archivo-comprobante {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 800px) {
+
+    .pagina-acompanantes .contenido-acompanantes {
+        width: min(700px, calc(100% - 24px));
+        padding-bottom: 56px;
+    }
+
+    .pagina-acompanantes .campos-grid-acompanante {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pagina-acompanantes
+    .campos-grid-acompanante
+    .campo:nth-child(n) {
+        grid-column: span 1;
+    }
+
+    .pagina-acompanantes
+    .campos-grid-acompanante
+    .campo:nth-child(1) {
+        grid-column: 1 / -1;
+    }
+
+    .pagina-acompanantes .campos-salud-acompanante {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -2093,15 +2852,6 @@ body.pagina-login .boton-login:focus-visible,
         padding: 20px 16px 30px;
     }
 
-    .contenido-banner-acreditacion h1 strong {
-        margin-top: 7px;
-    }
-
-    .contenido-banner-acreditacion p {
-        margin-top: 12px;
-    }
-
-    /* Portada */
     .portada .afiche-oficial {
         height: clamp(300px, 92vw, 390px);
 
@@ -2119,10 +2869,6 @@ body.pagina-login .boton-login:focus-visible,
 
     .informacion-campamento {
         padding: 40px 18px;
-    }
-
-    .tarjeta-informacion {
-        padding: 22px;
     }
 
     .galeria-campamento {
@@ -2144,6 +2890,88 @@ body.pagina-login .boton-login:focus-visible,
         font-size: 1.2rem;
     }
 
+    .pagina-acreditacion .contenido-acreditacion,
+    .pagina-pago .contenido-pago,
+    .pagina-acompanantes .contenido-acompanantes {
+        width: calc(100% - 20px);
+        padding: 24px 0 44px;
+    }
+
+    .pagina-acreditacion .grupo-formulario,
+    .pagina-acreditacion .tarjeta-formulario,
+    .pagina-acreditacion .tarjeta-confirmacion,
+    .pagina-pago .tarjeta-pago,
+    .pagina-acompanantes .tarjeta-acompanantes {
+        padding: 18px 15px;
+        border-radius: 12px;
+    }
+
+    .pagina-acreditacion .campos-grid,
+    .pagina-acreditacion .campos-grid-emergencia,
+    .pagina-acreditacion .fila-salud,
+    .pagina-acreditacion
+    .fila-salud:has(> .campo-condicional:not([hidden])),
+    .pagina-pago .datos-persona-pago,
+    .pagina-pago .fila-acompanante-pago,
+    .pagina-pago .campos-comprobante,
+    .pagina-acompanantes .campos-grid-acompanante,
+    .pagina-acompanantes .campos-emergencia-acompanante {
+        grid-template-columns: 1fr;
+    }
+
+    .pagina-acreditacion .resumen-valor-acreditacion,
+    .pagina-acompanantes .resumen-valor-acompanante {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pagina-pago .resumen-total-pago {
+        grid-template-columns: auto minmax(0, 1fr);
+        padding: 20px 16px;
+    }
+
+    .pagina-pago .monto-total-pago {
+        grid-column: 1 / -1;
+
+        padding: 16px 0 0;
+
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        border-left: 0;
+
+        text-align: center;
+    }
+
+    .pagina-pago .lista-datos-bancarios div {
+        grid-template-columns: 1fr;
+        gap: 2px;
+    }
+
+    .pagina-pago .acciones-pago,
+    .pagina-acompanantes .acciones-acompanantes {
+        grid-template-columns: 1fr;
+    }
+
+    .pagina-pago .boton-agregar-acompanante-pago {
+        width: 100%;
+        margin: 14px 0 0;
+    }
+
+    .pagina-acompanantes .valor-acompanante {
+        width: 100%;
+        max-width: none;
+        text-align: left;
+    }
+
+    .pagina-acompanantes .encabezado-acompanante {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .pagina-acompanantes .boton-eliminar-acompanante {
+        width: 100%;
+    }
+
     .visor-fotografia {
         width: 100vw;
         max-width: 100vw;
@@ -2157,64 +2985,14 @@ body.pagina-login .boton-login:focus-visible,
         border-radius: 10px;
     }
 
-    .cerrar-visor {
-        top: 8px;
-        right: 8px;
-
-        width: 40px;
-        height: 40px;
-
-        font-size: 1.7rem;
-    }
-
-    .flecha-visor {
-        width: 44px;
-        height: 44px;
-
-        font-size: 1.4rem;
-    }
-
-    .flecha-visor-anterior {
-        left: 8px;
-    }
-
-    .flecha-visor-siguiente {
-        right: 8px;
-    }
-
-    .contacto {
-        padding: 24px 18px 28px;
-    }
-
-    .icono-instagram {
-        width: 56px;
-        height: 56px;
-        padding: 14px;
-    }
-
-    /* Login */
     .pagina-login .contenido-login {
         width: calc(100% - 24px);
         margin-bottom: 32px;
     }
 
-    .pagina-login .seccion-login {
-        padding-top: 20px;
-    }
-
     .pagina-login .tarjeta-login {
         padding: 22px 18px;
     }
-
-    .pagina-login .cabecera-login p {
-        font-size: 0.93rem;
-    }
-
-    /* Campos condicionales de salud en celulares */
-    .fila-salud,
-    .fila-salud:has(> .campo-condicional:not([hidden])) {
-        grid-template-columns: 1fr;
-}
 }
 
 
@@ -2251,28 +3029,6 @@ body.pagina-login .boton-login:focus-visible,
 
         font-size: 0.78rem;
         text-align: center;
-    }
-
-    .acreditacion {
-        padding: 16px;
-        border-radius: 18px;
-    }
-
-    .grupo-formulario {
-        padding: 18px 14px;
-    }
-
-    .tarjeta-acompanante {
-        padding: 16px;
-    }
-
-    .encabezado-acompanante {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .boton-eliminar-acompanante {
-        width: 100%;
     }
 
     .pie-pagina {
