@@ -1,5 +1,11 @@
-// Recupera información guardada durante la acreditación
-function obtenerDatosGuardados(clave, valorInicial) {
+/* ==================================================
+   1. RECUPERACIÓN SEGURA DE DATOS
+   ================================================== */
+
+function obtenerDatosGuardados(
+    clave,
+    valorInicial
+) {
     const datosGuardados =
         sessionStorage.getItem(clave);
 
@@ -10,23 +16,39 @@ function obtenerDatosGuardados(clave, valorInicial) {
     try {
         return JSON.parse(datosGuardados);
     } catch (error) {
+        console.error(
+            `No fue posible recuperar ${clave}:`,
+            error
+        );
+
         return valorInicial;
     }
 }
 
-// Recupera la persona principal
+
+/* Persona inscrita mediante acreditacion.html */
 const personaPrincipal = obtenerDatosGuardados(
     "personaPrincipalCampamento",
     null
 );
 
-// Recupera los acompañantes
-const acompanantes = obtenerDatosGuardados(
+/* Personas agregadas mediante acompanantes.html */
+const datosAcompanantes = obtenerDatosGuardados(
     "acompanantesCampamento",
     []
 );
 
-// Obtiene los elementos del resumen
+const acompanantes = Array.isArray(
+    datosAcompanantes
+)
+    ? datosAcompanantes
+    : [];
+
+
+/* ==================================================
+   2. ELEMENTOS DEL RESUMEN
+   ================================================== */
+
 const resumenPersonaPrincipal =
     document.getElementById(
         "resumen-personal-principal"
@@ -39,109 +61,186 @@ const resumenAcompanantes = document.getElementById(
     "resumen-acompanantes"
 );
 
+const cantidadAcompanantesPago =
+    document.getElementById(
+        "cantidad-acompanantes-pago"
+    );
+
 const salidaTotal = document.getElementById(
     "total-acreditacion"
 );
+
+const totalTransferenciaBancaria =
+    document.getElementById(
+        "total-transferencia-bancaria"
+    );
+
+const detalleTotalInscripciones =
+    document.getElementById(
+        "detalle-total-inscripciones"
+    );
 
 const enlaceVolver = document.getElementById(
     "volver-formulario"
 );
 
-const referenciaTransferencia =
-    document.getElementById(
-        "referencia-transferencia"
-    );
 
-const formularioComprobante =
-    document.getElementById(
-        "formulario-comprobante"
-    );
+/* ==================================================
+   3. FUNCIONES DE FORMATO
+   ================================================== */
 
-// Agrega un dato al resumen sin insertar HTML del usuario
-function agregarDato(contenedor, etiqueta, valor) {
-    const parrafo = document.createElement("p");
+function formatearDinero(valor) {
+    const numero = Number(valor || 0);
+
+    return `$${numero.toLocaleString("es-CL")}`;
+}
+
+function obtenerNombrePersona(persona) {
+    return (
+        persona?.nombreCompleto ||
+        persona?.nombre ||
+        "No informado"
+    );
+}
+
+function obtenerCorreoPersona(persona) {
+    return persona?.correo || "No informado";
+}
+
+
+/* ==================================================
+   4. CREACIÓN DE DATOS DEL RESUMEN
+   ================================================== */
+
+function crearDatoPago(
+    etiqueta,
+    valor,
+    claseAdicional = ""
+) {
+    const contenedor =
+        document.createElement("div");
+
+    contenedor.classList.add("dato-pago");
+
+    if (claseAdicional) {
+        contenedor.classList.add(
+            claseAdicional
+        );
+    }
 
     const nombreDato =
-        document.createElement("strong");
+        document.createElement("small");
 
-    nombreDato.textContent =
-        `${etiqueta}: `;
+    nombreDato.textContent = etiqueta;
 
     const contenidoDato =
-        document.createTextNode(
-            valor || "No informado"
-        );
+        document.createElement("strong");
 
-    parrafo.append(
+    contenidoDato.textContent =
+        valor || "No informado";
+
+    contenedor.append(
         nombreDato,
         contenidoDato
     );
 
-    contenedor.appendChild(parrafo);
+    return contenedor;
 }
 
-// Crea una tarjeta resumida de una persona
-function crearTarjetaPersona(persona, titulo) {
-    const tarjeta =
-        document.createElement("article");
 
-    tarjeta.classList.add(
-        "tarjeta-resumen-pago"
+/* Crea los cuatro datos de una persona */
+function crearResumenPersona(persona) {
+    const contenedor =
+        document.createElement("div");
+
+    contenedor.classList.add(
+        "datos-persona-pago"
     );
 
-    const encabezado =
-        document.createElement("h3");
+    contenedor.append(
+        crearDatoPago(
+            "Nombre completo",
+            obtenerNombrePersona(persona)
+        ),
 
-    encabezado.textContent = titulo;
+        crearDatoPago(
+            "RUT",
+            persona?.rut
+        ),
 
-    tarjeta.appendChild(encabezado);
+        crearDatoPago(
+            "Correo",
+            obtenerCorreoPersona(persona)
+        ),
 
-    agregarDato(
-        tarjeta,
-        "Nombre",
-        persona.nombreCompleto ||
-            persona.nombre
+        crearDatoPago(
+            "Valor",
+            formatearDinero(
+                persona?.valorAcreditacion
+            ),
+            "dato-valor-pago"
+        )
     );
 
-    agregarDato(
-        tarjeta,
-        "RUT",
-        persona.rut
-    );
-
-    agregarDato(
-        tarjeta,
-        "Correo",
-        persona.correo ||
-            "No informado"
-    );
-
-    agregarDato(
-        tarjeta,
-        "Valor",
-        `$${Number(
-            persona.valorAcreditacion || 0
-        ).toLocaleString("es-CL")}`
-    );
-
-    return tarjeta;
+    return contenedor;
 }
 
-// Muestra la persona principal
-if (resumenPersonaPrincipal) {
-    resumenPersonaPrincipal.textContent = "";
 
-    if (personaPrincipal) {
-        resumenPersonaPrincipal.appendChild(
-            crearTarjetaPersona(
-                personaPrincipal,
-                personaPrincipal.nombreCompleto ||
-                    "Persona principal"
-            )
-        );
-    } else {
+/* Crea una fila para un acompañante */
+function crearFilaAcompanante(acompanante) {
+    const fila = document.createElement("article");
+
+    fila.classList.add(
+        "fila-acompanante-pago"
+    );
+
+    fila.append(
+        crearDatoPago(
+            "Nombre completo",
+            obtenerNombrePersona(acompanante)
+        ),
+
+        crearDatoPago(
+            "RUT",
+            acompanante?.rut
+        ),
+
+        crearDatoPago(
+            "Correo",
+            obtenerCorreoPersona(acompanante)
+        ),
+
+        crearDatoPago(
+            "Valor",
+            formatearDinero(
+                acompanante?.valorAcreditacion
+            ),
+            "dato-valor-pago"
+        )
+    );
+
+    return fila;
+}
+
+
+/* ==================================================
+   5. PERSONA PRINCIPAL
+   ================================================== */
+
+function mostrarPersonaPrincipal() {
+    if (!resumenPersonaPrincipal) {
+        return;
+    }
+
+    resumenPersonaPrincipal.replaceChildren();
+
+    if (!personaPrincipal) {
         const mensaje =
             document.createElement("p");
+
+        mensaje.classList.add(
+            "mensaje-sin-datos-pago"
+        );
 
         mensaje.textContent =
             "No se encontraron los datos de la persona principal.";
@@ -149,32 +248,51 @@ if (resumenPersonaPrincipal) {
         resumenPersonaPrincipal.appendChild(
             mensaje
         );
+
+        return;
     }
+
+    resumenPersonaPrincipal.appendChild(
+        crearResumenPersona(
+            personaPrincipal
+        )
+    );
 }
 
-// Coloca el RUT como referencia de transferencia
-if (referenciaTransferencia) {
-    referenciaTransferencia.textContent =
-        personaPrincipal?.rut ||
-        "No disponible";
+
+/* ==================================================
+   6. ACOMPAÑANTES
+   ================================================== */
+
+function actualizarCantidadAcompanantes() {
+    if (!cantidadAcompanantesPago) {
+        return;
+    }
+
+    const cantidad = acompanantes.length;
+
+    cantidadAcompanantesPago.textContent =
+        cantidad === 1
+            ? "1 inscrito"
+            : `${cantidad} inscritos`;
 }
 
-// Oculta el formulario si no existe una persona principal
-if (formularioComprobante) {
-    formularioComprobante.hidden =
-        !personaPrincipal;
-}
+function mostrarAcompanantes() {
+    if (!resumenAcompanantes) {
+        return;
+    }
 
-// Muestra los acompañantes
-if (resumenAcompanantes) {
-    resumenAcompanantes.textContent = "";
+    resumenAcompanantes.replaceChildren();
 
-    if (
-        !Array.isArray(acompanantes) ||
-        acompanantes.length === 0
-    ) {
+    actualizarCantidadAcompanantes();
+
+    if (acompanantes.length === 0) {
         const mensaje =
             document.createElement("p");
+
+        mensaje.classList.add(
+            "mensaje-sin-datos-pago"
+        );
 
         mensaje.textContent =
             "No se agregaron acompañantes.";
@@ -182,22 +300,96 @@ if (resumenAcompanantes) {
         resumenAcompanantes.appendChild(
             mensaje
         );
-    } else {
-        acompanantes.forEach(
-            (acompanante, posicion) => {
-                resumenAcompanantes.appendChild(
-                    crearTarjetaPersona(
-                        acompanante,
-                        `Acompañante ${posicion + 1}`
-                    )
-                );
-            }
+
+        return;
+    }
+
+    acompanantes.forEach((acompanante) => {
+        resumenAcompanantes.appendChild(
+            crearFilaAcompanante(
+                acompanante
+            )
         );
+    });
+}
+
+
+/* ==================================================
+   7. CÁLCULO DEL TOTAL
+   ================================================== */
+
+const valorPersonaPrincipal = Number(
+    personaPrincipal?.valorAcreditacion || 0
+);
+
+const valorAcompanantes = acompanantes.reduce(
+    (total, acompanante) => {
+        return (
+            total +
+            Number(
+                acompanante?.valorAcreditacion || 0
+            )
+        );
+    },
+    0
+);
+
+const totalInscripcion =
+    valorPersonaPrincipal +
+    valorAcompanantes;
+
+function mostrarTotal() {
+    const existeInscripcion =
+        Boolean(personaPrincipal);
+
+    const textoTotal = existeInscripcion
+        ? formatearDinero(totalInscripcion)
+        : "No disponible";
+
+    if (salidaTotal) {
+        salidaTotal.textContent = textoTotal;
+    }
+
+    if (totalTransferenciaBancaria) {
+        totalTransferenciaBancaria.textContent =
+            textoTotal;
+    }
+
+    if (detalleTotalInscripciones) {
+        if (!existeInscripcion) {
+            detalleTotalInscripciones.textContent =
+                "No se encontraron datos de la inscripción.";
+
+            return;
+        }
+
+        const cantidadAcompanantes =
+            acompanantes.length;
+
+        const cantidadInscripciones =
+            1 + cantidadAcompanantes;
+
+        const textoAcompanantes =
+            cantidadAcompanantes === 1
+                ? "1 acompañante"
+                : `${cantidadAcompanantes} acompañantes`;
+
+        detalleTotalInscripciones.textContent =
+            `${cantidadInscripciones} inscripciones ` +
+            `(1 principal + ${textoAcompanantes})`;
     }
 }
 
-// Decide a qué formulario debe regresar
-if (enlaceVolver) {
+
+/* ==================================================
+   8. ENLACE PARA VOLVER Y CORREGIR
+   ================================================== */
+
+function configurarEnlaceVolver() {
+    if (!enlaceVolver) {
+        return;
+    }
+
     const parametrosActuales =
         new URLSearchParams(
             window.location.search
@@ -206,62 +398,29 @@ if (enlaceVolver) {
     const estaEnModoQA =
         parametrosActuales.get("qa") === "1";
 
-    if (
-        Array.isArray(acompanantes) &&
-        acompanantes.length > 0
-    ) {
-        enlaceVolver.href =
-            estaEnModoQA
-                ? "acompanantes.html?qa=1"
-                : "acompanantes.html";
-    } else {
-        enlaceVolver.href =
-            estaEnModoQA
-                ? "acreditacion.html?qa=1"
-                : "acreditacion.html";
+    if (acompanantes.length > 0) {
+        enlaceVolver.href = estaEnModoQA
+            ? "acompanantes.html?qa=1"
+            : "acompanantes.html";
+
+        return;
     }
+
+    enlaceVolver.href = estaEnModoQA
+        ? "acreditacion.html?qa=1"
+        : "acreditacion.html";
 }
 
-// Calcula el valor de la persona principal
-const valorPersonaPrincipal = Number(
-    personaPrincipal?.valorAcreditacion ||
-    0
-);
 
-// Calcula el valor de todos los acompañantes
-const valorAcompanantes = Array.isArray(
-    acompanantes
-)
-    ? acompanantes.reduce(
-        (total, acompanante) =>
-            total +
-            Number(
-                acompanante.valorAcreditacion ||
-                0
-            ),
-        0
-    )
-    : 0;
+/* ==================================================
+   9. ELEMENTOS DEL COMPROBANTE
+   ================================================== */
 
-// Calcula el total de la inscripción
-const totalInscripcion =
-    valorPersonaPrincipal +
-    valorAcompanantes;
+const formularioComprobante =
+    document.getElementById(
+        "formulario-comprobante"
+    );
 
-// Muestra el total
-if (salidaTotal) {
-    if (personaPrincipal) {
-        salidaTotal.textContent =
-            `$${totalInscripcion.toLocaleString(
-                "es-CL"
-            )}`;
-    } else {
-        salidaTotal.textContent =
-            "Total no disponible";
-    }
-}
-
-// Obtiene los elementos del comprobante
 const entradaComprobante =
     document.getElementById(
         "comprobante-transferencia"
@@ -270,12 +429,24 @@ const entradaComprobante =
         "comprobante-tranferencia"
     );
 
+const nombreArchivoComprobante =
+    document.getElementById(
+        "nombre-archivo-comprobante"
+    );
+
 const entradaFechaTransferencia =
     document.getElementById(
         "fecha-transferencia"
     );
 
+/*
+ * Se consideran las dos versiones porque el HTML
+ * utiliza actualmente titular-tranferencia.
+ */
 const entradaTitularTransferencia =
+    document.getElementById(
+        "titular-tranferencia"
+    ) ||
     document.getElementById(
         "titular-transferencia"
     );
@@ -289,7 +460,39 @@ const mensajeEstadoPago =
         "mensaje-estado-pago"
     );
 
-// Configuración permitida para el comprobante
+
+/* Oculta el formulario si falta la persona principal */
+if (formularioComprobante) {
+    formularioComprobante.hidden =
+        !personaPrincipal;
+}
+
+
+/* ==================================================
+   10. FECHA DE TRANSFERENCIA
+   ================================================== */
+
+const fechaActual = new Date();
+
+const fechaLocal = new Date(
+    fechaActual.getTime() -
+    fechaActual.getTimezoneOffset() * 60000
+);
+
+const fechaActualFormato = fechaLocal
+    .toISOString()
+    .split("T")[0];
+
+if (entradaFechaTransferencia) {
+    entradaFechaTransferencia.max =
+        fechaActualFormato;
+}
+
+
+/* ==================================================
+   11. VALIDACIÓN DEL COMPROBANTE
+   ================================================== */
+
 const tamanioMaximoComprobante =
     5 * 1024 * 1024;
 
@@ -306,27 +509,23 @@ const extensionesPermitidas = [
     "pdf"
 ];
 
-// Obtiene la fecha actual local
-const fechaActual = new Date();
+function mostrarNombreArchivo() {
+    if (
+        !entradaComprobante ||
+        !nombreArchivoComprobante
+    ) {
+        return;
+    }
 
-const fechaLocal = new Date(
-    fechaActual.getTime() -
-    fechaActual.getTimezoneOffset() *
-        60000
-);
+    const archivo =
+        entradaComprobante.files[0];
 
-const fechaActualFormato =
-    fechaLocal
-        .toISOString()
-        .split("T")[0];
-
-// Impide seleccionar una fecha futura
-if (entradaFechaTransferencia) {
-    entradaFechaTransferencia.max =
-        fechaActualFormato;
+    nombreArchivoComprobante.textContent =
+        archivo
+            ? `Archivo seleccionado: ${archivo.name}`
+            : "";
 }
 
-// Valida el comprobante seleccionado
 function validarComprobante() {
     if (!entradaComprobante) {
         return false;
@@ -346,14 +545,24 @@ function validarComprobante() {
         return false;
     }
 
-    const extension = archivo.name
-        .split(".")
-        .pop()
-        .toLowerCase();
+    const partesNombre =
+        archivo.name.split(".");
 
+    const extension =
+        partesNombre.length > 1
+            ? partesNombre.pop().toLowerCase()
+            : "";
+
+    /*
+     * Algunos navegadores pueden entregar un tipo vacío.
+     * En ese caso se valida mediante la extensión.
+     */
     const tipoValido =
-        tiposPermitidos.includes(
-            archivo.type
+        (
+            archivo.type === "" ||
+            tiposPermitidos.includes(
+                archivo.type
+            )
         ) &&
         extensionesPermitidas.includes(
             extension
@@ -383,15 +592,26 @@ function validarComprobante() {
     return true;
 }
 
-// Revisa el comprobante al seleccionar un archivo
+
+/* Revisa el archivo al seleccionarlo */
 if (entradaComprobante) {
     entradaComprobante.addEventListener(
         "change",
-        validarComprobante
+        () => {
+            mostrarNombreArchivo();
+
+            if (entradaComprobante.files.length > 0) {
+                validarComprobante();
+            }
+        }
     );
 }
 
-// Registra temporalmente el comprobante para la prueba
+
+/* ==================================================
+   12. ENVÍO DEL COMPROBANTE
+   ================================================== */
+
 if (
     formularioComprobante &&
     entradaComprobante &&
@@ -408,6 +628,11 @@ if (
                     "No se encontraron los datos de la inscripción."
                 );
 
+                return;
+            }
+
+            if (!formularioComprobante.checkValidity()) {
+                formularioComprobante.reportValidity();
                 return;
             }
 
@@ -434,6 +659,10 @@ if (
             const archivo =
                 entradaComprobante.files[0];
 
+            /*
+             * En esta etapa solo se guarda la información
+             * del archivo. La carga real corresponde al backend.
+             */
             const datosComprobante = {
                 titularTransferencia:
                     entradaTitularTransferencia
@@ -441,8 +670,7 @@ if (
                         .trim(),
 
                 fechaTransferencia:
-                    entradaFechaTransferencia
-                        .value,
+                    entradaFechaTransferencia.value,
 
                 nombreArchivo:
                     archivo.name,
@@ -478,13 +706,29 @@ if (
 
             if (mensajeEstadoPago) {
                 mensajeEstadoPago.textContent =
-                    "Comprobante recibido. El pago está pendiente de revisión.";
+                    "Comprobante recibido. " +
+                    "El pago está pendiente de revisión.";
             }
         }
     );
 }
 
-// Completa los datos del pago en modo QA
+
+/* ==================================================
+   13. CARGA INICIAL
+   ================================================== */
+
+mostrarPersonaPrincipal();
+mostrarAcompanantes();
+mostrarTotal();
+configurarEnlaceVolver();
+mostrarNombreArchivo();
+
+
+/* ==================================================
+   14. MODO DE PRUEBAS LOCALES
+   ================================================== */
+
 (() => {
     const parametrosPagina =
         new URLSearchParams(

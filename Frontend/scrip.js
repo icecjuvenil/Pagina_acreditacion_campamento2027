@@ -167,12 +167,26 @@ function actualizarValorAcreditacion() {
         edad--;
     }
 
-    const valor =
-        edad <= 9 ? 10000 : 20000;
+    // Determina el valor según la edad al inicio del campamento
+    let valor;
+    let categoria;
 
+    if (edad >= 0 && edad <= 5) {
+        valor = 0;
+        categoria = "Sin costo";
+    } else if (edad >= 6 && edad <= 10) {
+        valor = 10000;
+        categoria = "Tarifa niño";
+    } else {
+        valor = 20000;
+        categoria = "Tarifa general";
+    }
+
+    // Muestra el valor, la edad y la categoría correspondiente
     salidaValorAcreditacion.textContent =
-        `$${valor.toLocaleString("es-CL")} (${edad} años)`;
+        `$${valor.toLocaleString("es-CL")} (${edad} años - ${categoria})`;
 
+    // Guarda el valor numérico para utilizarlo en el resumen y pago
     salidaValorAcreditacion.dataset.valor =
         String(valor);
 }

@@ -1,236 +1,540 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+    <!-- Configuración general -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Resumen y pago | Elegidos ICEC Juvenil</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Resumen y pago | Elegidos ICEC Juvenil</title>
+
+    <!-- Archivo general de estilos -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!--Encabezado y menú principal -->
+
+<body class="pagina-pago">
+
+    <!-- ==================================================
+         ENCABEZADO Y MENÚ PRINCIPAL
+         ================================================== -->
+
     <header class="encabezado">
+
+        <!-- Identidad de ICEC Juvenil -->
         <a href="index.html" class="marca">
-            <img src="Logos/logo-elegidos.png" alt="Logo Elegidos ICEC Juvenil">
-        <span>Elegidos ICEC Juvenil</span>
+
+            <img
+                src="Logos/logo-elegidos.png"
+                alt="Logo Elegidos ICEC Juvenil">
+
+            <span>ICEC Juvenil</span>
+
         </a>
 
+        <!-- Navegación principal -->
         <nav
-        class="menu-principal"
-        aria-label="Navegación principal">
+            class="menu-principal"
+            aria-label="Navegación principal">
 
-        <a href="index.html"> Inicio</a>
-        <a href="index.html#informacion">Información</a>
-
-        <a 
-            href="acreditacion.html"
-            aria-current="page">
-            Acreditación
+            <a href="index.html">
+                Inicio
             </a>
 
-            <a href="index.html#contecto">Contacto</a>
+            <a href="index.html#informacion">
+                Información
+            </a>
+
+            <a
+                href="login.html"
+                aria-current="page">
+                Acreditación
+            </a>
+
+            <a href="index.html#contacto">
+                Contacto
+            </a>
+
         </nav>
+
     </header>
 
-    <!--Contenido principal del pago-->
-    <main class="contenido-acreditacion">
-        <section class="acreditacion">
 
-            <!--Presentación de la pagina -->
-            <div class="cabecera-formulario">
-                <h1>Resumen y pago</h1>
+    <!-- ==================================================
+         BANNER DEL CAMPAMENTO
+         ================================================== -->
 
-                <p>
-                    Revisa las personas inscritas y realiza
-                    la tranferencia por el total indicado
-                </p>
-            </div>
+    <section
+        class="banner-acreditacion banner-pago"
+        aria-label="Campamento ICEC Juvenil">
 
-            <!--Resumen de la persona principal-->
-            <section class="grupo-formulario">
+        <img
+            src="Logos/imagen.png"
+            alt="">
 
-                <h2>Persona principal</h2>
+    </section>
 
-                <div id="resumen-personal-principal">
-                    <p>Cargando Información...</p>
-                </div>
-            </section>
-            
-            <!--Resumen de los acompañantes-->
-            <section class="grupo-formulario">
 
-                <h2>Acompañantes</h2>
+    <!-- ==================================================
+         CONTENIDO PRINCIPAL
+         ================================================== -->
 
-                <div id="resumen-acompanantes">
-                     <p>No se agregaron acompañantes</p>
-                </div>
-            </section>
+    <main class="contenido-pago">
 
-            <!--Total de la inscripción-->
-            <section class="grupo-formulario resumen-total">
+        <!-- Presentación de la página -->
+        <header class="cabecera-pago">
 
-                <div>
-                    <h2>Total a pagar</h2>
+            <h1>Resumen y pago</h1>
 
-                    <p>
-                        Incluye la persona principal y sus acompañantes.
-                    </p>
-                </div>
+            <p>
+                Revisa las personas inscritas y realiza la transferencia
+                por el total indicado.
+            </p>
 
-                <p
-                    id="total-acreditacion"
-                    class="total-acreditacion">
+        </header>
 
-                    $0
-                </p>
-                
-            </section>
-        
 
-        <!--Datos para realizar la transferencia-->
-        <section class="grupo-formulario">
+        <!-- ==================================================
+             PERSONA PRINCIPAL
+             ================================================== -->
 
-            <h2>Datos bancarios</h2>
+        <section
+            class="tarjeta-pago"
+            aria-labelledby="titulo-persona-principal">
 
-            <div class="datos-bancarios">
-                <p>
-                    <strong>Nombre:</strong>
-                    Yanina Salinas
-                </p>
+            <!-- Encabezado de la tarjeta -->
+            <div class="cabecera-tarjeta-pago">
 
-                <p>
-                    <strong>RUT:</strong>
-                    17.858.351-4
-                </p>
-
-                <p>
-                    <strong>Banco:</strong>
-                    Banco de Chile
-                </p>
-
-                <p>
-                    <strong>Tipo de cuenta:</strong>
-                    Cuenta Vista
-                </p>
-
-                <p>
-                    <strong>Número de cuenta:</strong>
-                    00-020-79212-85
-                </p>
-
-                <p>
-                    <strong>Correo:</strong>
-                    ya.salinas28@gmail.com
-                </p>
-            </div>
-        </section>
-
-        <!-- Formulario para enviar el comprobante-->
-         <form 
-            id="formulario-comprobante"
-            class="formulario-acreditacion">
-
-            <fieldset class="grupo-formulario">
-
-                <legend>Comprobante de transferencia</legend>
-            
-            <div class="campos-grid">
-                <div class="campo">
-                    <label for="titular-tranferencia">
-                        Nombre del titular que realizó la transferencia
-                    </label>
-
-                    <input 
-                        type="text"
-                        id="titular-tranferencia" 
-                        name="titular-tranferencia"
-                        required>
+                <div
+                    class="icono-tarjeta-pago"
+                    aria-hidden="true">
+                    &#128100;&#65038;
                 </div>
 
-                <div class="campo">
-                    <label for="fecha-transferencia">
-                        Fecha de la transferencia
-                    </label>
+                <h2 id="titulo-persona-principal">
+                    Persona principal
+                </h2>
 
-                    <input 
-                        type="date"
-                        id="fecha-transferencia"
-                        name="fechaTransferencia"
-                        required>
-                </div>
-
-                <div class="campo">
-                    <label for="comprobante-transferencia">
-                        Comprobante
-                    </label>
-
-                    <input
-                        type="file"
-                        id="comprobante-transferencia"
-                        name="comprobanteTransferencia"
-                        accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
-                        required>
-
-                        <small>
-                            Formatos permitidos: JPG, PNG O PDF.
-                            Tamaño máximo: 5 MG
-                        </small>
-                </div>
-            </div>
-
-            <label class="casilla-confirmacion">
-                <input 
-                    type="checkbox"
-                    id="confirma-transferencia"
-                    name="confirmarTransferencia"
-                    required>
-
-                <span>
-                    Confirmo que el comprobante corresponde
-                    al pago de la inscripción
+                <span class="estado-inscripcion">
+                    Inscrito
                 </span>
 
-            </label>
+            </div>
 
-            <div class="confirmacion-formulario">
+            <!-- Información generada mediante JavaScript -->
+            <div
+                id="resumen-personal-principal"
+                class="resumen-persona-pago">
 
-                <a 
+                <p class="mensaje-cargando-pago">
+                    Cargando información...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             ACOMPAÑANTES
+             ================================================== -->
+
+        <section
+            class="tarjeta-pago"
+            aria-labelledby="titulo-resumen-acompanantes">
+
+            <!-- Encabezado de la tarjeta -->
+            <div class="cabecera-tarjeta-pago">
+
+                <div
+                    class="icono-tarjeta-pago"
+                    aria-hidden="true">
+                    &#128101;&#65038;
+                </div>
+
+                <h2 id="titulo-resumen-acompanantes">
+                    Acompañantes
+                </h2>
+
+                <span
+                    id="cantidad-acompanantes-pago"
+                    class="estado-inscripcion">
+                    0 inscritos
+                </span>
+
+            </div>
+
+            <!-- Lista generada mediante JavaScript -->
+        <div
+            id="resumen-acompanantes"
+            class="resumen-acompanantes-pago">
+
+                <p class="mensaje-sin-datos-pago">
+                    No se agregaron acompañantes.
+                </p>
+
+        </div>
+
+    <!-- Permite agregar acompañantes antes de realizar el pago -->
+    <a
+        href="acompanantes.html"
+        class="boton-agregar-acompanante-pago">
+
+        <span aria-hidden="true">+</span>
+            Agregar acompañante
+
+    </a>
+
+</section>
+            
+
+        </section>
+
+
+        <!-- ==================================================
+             TOTAL DE LA INSCRIPCIÓN
+             ================================================== -->
+
+        <section
+            class="resumen-total-pago"
+            aria-labelledby="titulo-total-pago">
+
+            <div
+                class="icono-total-pago"
+                aria-hidden="true">
+                $
+            </div>
+
+            <div class="texto-total-pago">
+
+                <h2 id="titulo-total-pago">
+                    Total a pagar
+                </h2>
+
+                <p id="detalle-total-inscripciones">
+                    Incluye la persona principal y sus acompañantes.
+                </p>
+
+            </div>
+
+            <p
+                id="total-acreditacion"
+                class="monto-total-pago">
+                $0
+            </p>
+
+        </section>
+
+
+        <!-- ==================================================
+             DATOS BANCARIOS
+             ================================================== -->
+
+        <section
+            class="tarjeta-pago"
+            aria-labelledby="titulo-datos-bancarios">
+
+            <!-- Encabezado de la tarjeta -->
+            <div class="cabecera-tarjeta-pago">
+
+                <div
+                    class="icono-tarjeta-pago"
+                    aria-hidden="true">
+                    &#9878;
+                </div>
+
+                <div class="texto-cabecera-tarjeta-pago">
+
+                    <h2 id="titulo-datos-bancarios">
+                        Datos bancarios
+                    </h2>
+
+                    <p>
+                        Realiza la transferencia por el total indicado
+                        a la siguiente cuenta.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="contenido-datos-bancarios">
+
+                <!-- Datos reales para la transferencia -->
+                <dl class="lista-datos-bancarios">
+
+                    <div>
+                        <dt>Nombre</dt>
+                        <dd>Yanina Salinas</dd>
+                    </div>
+
+                    <div>
+                        <dt>RUT</dt>
+                        <dd>17.858.351-4</dd>
+                    </div>
+
+                    <div>
+                        <dt>Banco</dt>
+                        <dd>Banco de Chile</dd>
+                    </div>
+
+                    <div>
+                        <dt>Tipo de cuenta</dt>
+                        <dd>Cuenta Vista</dd>
+                    </div>
+
+                    <div>
+                        <dt>Número de cuenta</dt>
+                        <dd>00-020-79212-85</dd>
+                    </div>
+
+                    <div>
+                        <dt>Correo de confirmación</dt>
+                        <dd>ya.salinas28@gmail.com</dd>
+                    </div>
+
+                </dl>
+
+                <!-- Advertencia sobre el monto -->
+                <aside class="aviso-transferencia">
+
+                    <div
+                        class="icono-aviso-transferencia"
+                        aria-hidden="true">
+                        &#9432;
+                    </div>
+
+                    <div>
+
+                        <strong>Importante</strong>
+
+                        <p>
+                            El monto de la transferencia debe ser
+                            exactamente por el total indicado:
+                        </p>
+
+                        <strong
+                            id="total-transferencia-bancaria"
+                            class="total-transferencia-bancaria">
+                            $0
+                        </strong>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             COMPROBANTE DE TRANSFERENCIA
+             ================================================== -->
+
+        <form
+            id="formulario-comprobante"
+            class="formulario-comprobante">
+
+            <fieldset
+                class="tarjeta-pago"
+                aria-labelledby="titulo-comprobante">
+
+                <legend class="texto-oculto">
+                    Comprobante de transferencia
+                </legend>
+
+                <!-- Encabezado de la tarjeta -->
+                <div class="cabecera-tarjeta-pago">
+
+                    <div
+                        class="icono-tarjeta-pago"
+                        aria-hidden="true">
+                        &#9638;
+                    </div>
+
+                    <div class="texto-cabecera-tarjeta-pago">
+
+                        <h2 id="titulo-comprobante">
+                            Comprobante de transferencia
+                        </h2>
+
+                        <p>
+                            Completa los datos y adjunta el comprobante
+                            de tu transferencia.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Campos del comprobante -->
+                <div class="campos-comprobante">
+
+                    <div class="campo">
+
+                        <label for="titular-tranferencia">
+                            Nombre del titular
+                            <span class="obligatorio">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="titular-tranferencia"
+                            name="titular-tranferencia"
+                            autocomplete="name"
+                            placeholder="Nombre completo del titular de la cuenta"
+                            required>
+
+                    </div>
+
+                    <div class="campo">
+
+                        <label for="fecha-transferencia">
+                            Fecha de la transferencia
+                            <span class="obligatorio">*</span>
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fecha-transferencia"
+                            name="fechaTransferencia"
+                            required>
+
+                    </div>
+
+                    <div class="campo campo-archivo-comprobante">
+
+                        <label for="comprobante-transferencia">
+                            Comprobante
+                            <span class="obligatorio">*</span>
+                        </label>
+
+                        <!-- Zona visible para seleccionar el archivo -->
+                        <label
+                            for="comprobante-transferencia"
+                            class="zona-comprobante">
+
+                            <span
+                                class="icono-subir-comprobante"
+                                aria-hidden="true">
+                                ↑
+                            </span>
+
+                            <strong>
+                                Haz clic para adjuntar tu comprobante
+                            </strong>
+
+                            <small>
+                                PNG, JPG o PDF — máximo 5 MB
+                            </small>
+
+                        </label>
+
+                        <input
+                            type="file"
+                            id="comprobante-transferencia"
+                            name="comprobanteTransferencia"
+                            class="entrada-comprobante"
+                            accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                            required>
+
+                        <!-- Nombre del archivo seleccionado -->
+                        <p
+                            id="nombre-archivo-comprobante"
+                            class="nombre-archivo-comprobante"
+                            aria-live="polite">
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Confirmación de la transferencia -->
+                <label class="casilla-confirmacion-pago">
+
+                    <input
+                        type="checkbox"
+                        id="confirma-transferencia"
+                        name="confirmarTransferencia"
+                        required>
+
+                    <span>
+                        Confirmo que el comprobante corresponde al pago
+                        de esta inscripción.
+                    </span>
+
+                </label>
+
+            </fieldset>
+
+
+            <!-- ==================================================
+                 BOTONES FINALES
+                 ================================================== -->
+
+            <div class="acciones-pago">
+
+                <a
                     href="acreditacion.html"
                     id="volver-formulario"
-                    class="boton boton-agregar">
+                    class="boton-volver-pago">
 
+                    <span aria-hidden="true">←</span>
                     Volver y corregir
                 </a>
 
                 <button
                     type="submit"
-                    class="boton boton-guardar">
+                    class="boton-enviar-comprobante">
 
+                    <span aria-hidden="true">➤</span>
                     Enviar comprobante
                 </button>
+
             </div>
-        </fieldset>
-        
-    </form>
 
-    <!--Estado de la revision del pago-->
+        </form>
+
+
+        <!-- ==================================================
+             ESTADO DE REVISIÓN DEL PAGO
+             ================================================== -->
+
         <section
-        id="estado-pago"
-        class="grupo-formulario"
-        hidden>
+            id="estado-pago"
+            class="tarjeta-pago estado-pago"
+            aria-labelledby="titulo-estado-pago"
+            hidden>
 
-        <h2>Estado del pago</h2>
+            <div class="cabecera-tarjeta-pago">
 
-        <p id="mensaje-estado-pago">
+                <div
+                    class="icono-tarjeta-pago"
+                    aria-hidden="true">
+                    ✓
+                </div>
 
-            Comprobante pediente de revisión.
-        </p>
-        
+                <h2 id="titulo-estado-pago">
+                    Estado del pago
+                </h2>
+
+            </div>
+
+            <p id="mensaje-estado-pago">
+                Comprobante pendiente de revisión.
+            </p>
+
         </section>
-    </section>
 
-    
     </main>
 
+
+    <!-- Funciones de la página de pago -->
     <script src="pago.js"></script>
+
 </body>
+
 </html>

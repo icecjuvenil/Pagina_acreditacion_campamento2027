@@ -1,0 +1,72 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 1600 320"
+    preserveAspectRatio="xMidYMax slice">
+
+    <!-- Montañas suaves del fondo -->
+    <path
+        fill="#d8dfd0"
+        opacity="0.25"
+        d="M0 230
+           L150 165
+           L270 220
+           L430 135
+           L590 225
+           L760 155
+           L930 220
+           L1100 145
+           L1270 215
+           L1430 150
+           L1600 220
+           L1600 320
+           L0 320 Z"/>
+
+    <!-- Modelo reutilizable de pino -->
+    <defs>
+        <path
+            id="pino"
+            d="M50 0
+               L20 60
+               H36
+               L8 112
+               H31
+               L0 175
+               H42
+               V220
+               H58
+               V175
+               H100
+               L69 112
+               H92
+               L64 60
+               H80 Z"/>
+    </defs>
+
+    <!-- Bosque trasero -->
+    <g fill="#aebda6" opacity="0.20">
+        <use href="#pino" transform="translate(15 75) scale(.75)"/>
+        <use href="#pino" transform="translate(120 95) scale(.65)"/>
+        <use href="#pino" transform="translate(235 70) scale(.82)"/>
+        <use href="#pino" transform="translate(370 90) scale(.70)"/>
+        <use href="#pino" transform="translate(500 55) scale(.90)"/>
+        <use href="#pino" transform="translate(650 85) scale(.70)"/>
+        <use href="#pino" transform="translate(775 60) scale(.86)"/>
+        <use href="#pino" transform="translate(925 92) scale(.66)"/>
+        <use href="#pino" transform="translate(1040 65) scale(.84)"/>
+        <use href="#pino" transform="translate(1185 88) scale(.70)"/>
+        <use href="#pino" transform="translate(1320 55) scale(.90)"/>
+        <use href="#pino" transform="translate(1480 85) scale(.72)"/>
+    </g>
+
+    <!-- Bosque delantero -->
+    <g fill="#879d80" opacity="0.14">
+        <use href="#pino" transform="translate(-25 120) scale(.92)"/>
+        <use href="#pino" transform="translate(180 135) scale(.80)"/>
+        <use href="#pino" transform="translate(410 110) scale(.95)"/>
+        <use href="#pino" transform="translate(700 130) scale(.82)"/>
+        <use href="#pino" transform="translate(960 105) scale(.96)"/>
+        <use href="#pino" transform="translate(1240 125) scale(.84)"/>
+        <use href="#pino" transform="translate(1510 110) scale(.95)"/>
+    </g>
+
+</svg>
