@@ -1,3 +1,12 @@
+
+/*
+ * API del Campamento Juvenil ICEC 2027
+ * Cloudflare Workers
+ */
+
+const API_CAMPAMENTO =
+    "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+
 // Preguntas que muestran un campo adicional al responder "Sí"
 const preguntasCondicionales = [
     {
