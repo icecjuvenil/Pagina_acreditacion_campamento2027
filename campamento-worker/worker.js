@@ -131,13 +131,15 @@ function validarDatos(datos) {
     return "Correo electrónico no válido.";
   }
 
-  if (
-    typeof datos.contrasena !== "string" ||
-    datos.contrasena.length < 12 ||
-    datos.contrasena.length > 128
-  ) {
-    return "La contraseña debe tener entre 12 y 128 caracteres.";
-  }
+  
+if (
+  typeof datos.contrasena !== "string" ||
+  datos.contrasena.length < 8 ||
+  datos.contrasena.length > 128
+) {
+  return "La contraseña debe tener entre 8 y 128 caracteres.";
+}
+
 
   if (!textoValido(datos.nombreCompleto, 150)) {
     return "Nombre completo no válido.";
