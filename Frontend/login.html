@@ -1,8 +1,8 @@
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-    <!-- Configuración general de la página -->
     <meta charset="UTF-8">
 
     <meta
@@ -11,29 +11,29 @@
 
     <title>Iniciar sesión | Elegidos ICEC Juvenil</title>
 
-    <!-- Estilos generales del sitio -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Cloudflare Turnstile -->
+    <script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer>
+    </script>
 </head>
 
 <body class="pagina-acreditacion pagina-login">
 
-    <!-- ==================================================
-         ENCABEZADO PRINCIPAL
-         ================================================== -->
+    <!-- ENCABEZADO PRINCIPAL -->
     <header class="encabezado">
 
-        <!-- Logo y nombre de Instagram -->
         <a href="index.html" class="marca">
-
             <img
                 src="Logos/logo-elegidos.png"
                 alt="Logo Elegidos ICEC Juvenil">
 
             <span>@ICECJUVENIL</span>
-
         </a>
 
-        <!-- Navegación principal -->
         <nav
             class="menu-principal"
             aria-label="Navegación principal">
@@ -57,30 +57,22 @@
             </a>
 
         </nav>
-
     </header>
 
-    <!-- ==================================================
-         BANNER DEL CAMPAMENTO
-         ================================================== -->
+    <!-- BANNER -->
     <section
         class="banner-acreditacion"
         aria-labelledby="titulo-banner-login">
 
-        <!-- Fotografía del campamento -->
         <img
             src="Logos/imagen.png"
             alt="Jóvenes reunidos alrededor de una fogata">
 
-        <!-- Título central del banner -->
         <div class="contenido-banner-acreditacion">
 
             <h1 id="titulo-banner-login">
-
                 <span>Reconciliado</span>
-
                 <strong>A la Cruz</strong>
-
             </h1>
 
             <p>Campamento ICEC 2027</p>
@@ -89,16 +81,13 @@
 
     </section>
 
-    <!-- ==================================================
-         INICIO DE SESIÓN
-         ================================================== -->
+    <!-- INICIO DE SESIÓN -->
     <main class="contenido-login">
 
         <section
             class="seccion-login"
             aria-labelledby="titulo-login">
 
-            <!-- Presentación de la sección -->
             <div class="cabecera-login">
 
                 <h2 id="titulo-login">
@@ -106,19 +95,19 @@
                 </h2>
 
                 <p>
-                    Ingresa a tu cuenta para continuar con tu acreditación.
+                    Ingresa a tu cuenta para continuar
+                    con tu acreditación.
                 </p>
 
             </div>
 
-            <!-- Tarjeta del formulario -->
             <div class="tarjeta-login">
 
                 <form
                     id="formulario-login"
                     class="formulario-login">
 
-                    <!-- Campo de correo electrónico -->
+                    <!-- CORREO -->
                     <div class="campo-login">
 
                         <label for="correo-login">
@@ -127,7 +116,6 @@
 
                         <div class="control-login">
 
-                            <!-- Icono de correo -->
                             <svg
                                 viewBox="0 0 24 24"
                                 aria-hidden="true">
@@ -149,13 +137,13 @@
                                 id="correo-login"
                                 name="correo"
                                 autocomplete="email"
+                                maxlength="150"
                                 required>
 
                         </div>
-
                     </div>
 
-                    <!-- Campo de contraseña -->
+                    <!-- CONTRASEÑA -->
                     <div class="campo-login">
 
                         <label for="contrasena-login">
@@ -164,7 +152,6 @@
 
                         <div class="control-login">
 
-                            <!-- Icono de candado -->
                             <svg
                                 viewBox="0 0 24 24"
                                 aria-hidden="true">
@@ -188,12 +175,13 @@
                                 id="contrasena-login"
                                 name="contrasena"
                                 autocomplete="current-password"
+                                maxlength="128"
                                 required>
 
                         </div>
-
                     </div>
-                    <!-- Enlace para recuperar la contraseña -->
+
+                    <!-- RECUPERAR CONTRASEÑA -->
                     <div class="opciones-login">
 
                         <a
@@ -205,9 +193,28 @@
 
                     </div>
 
-                    <!-- Se conectará al sistema de cuentas posteriormente -->
+                    <!-- VERIFICACIÓN TURNSTILE -->
+                    <!-- CLAVE DE PRODUCCIÓN -->
+                    <!-- <div
+                        class="cf-turnstile"
+                        data-sitekey="0x4AAAAAAFsHJQwPGsRUwZEf">
+                        
+                    </div> -->
+                    <!-- CLAVE DE PRUEBA LOCAL -->
+                    <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
+
+                    <!-- MENSAJES DEL SISTEMA -->
+                    <p
+                        id="mensaje-login"
+                        role="status"
+                        aria-live="polite"
+                        style="margin: 12px 0;">
+                    </p>
+
+                    <!-- BOTÓN DE INICIO -->
                     <button
-                        type="button"
+                        type="submit"
+                        id="boton-iniciar-sesion"
                         class="boton-login">
 
                         Iniciar sesión
@@ -215,8 +222,31 @@
 
                 </form>
 
-                <!-- Acceso para personas que todavía no tienen cuenta -->
-                <div class="crear-cuenta-login">
+                <!-- INFORMACIÓN DE SESIÓN -->
+                <div
+                    id="panel-sesion"
+                    hidden>
+
+                    <h3>Sesión iniciada</h3>
+
+                    <p id="nombre-usuario"></p>
+
+                    <p id="correo-usuario"></p>
+
+                    <button
+                        type="button"
+                        id="boton-cerrar-sesion"
+                        class="boton-login">
+
+                        Cerrar sesión
+                    </button>
+
+                </div>
+
+                <!-- CREAR CUENTA -->
+                <div
+                    id="crear-cuenta-login"
+                    class="crear-cuenta-login">
 
                     <p>¿Aún no tienes una cuenta?</p>
 
@@ -235,6 +265,8 @@
 
     </main>
 
-</body>
+    <!-- LÓGICA DEL INICIO DE SESIÓN -->
+    <script src="login.js"></script>
 
+</body>
 </html>

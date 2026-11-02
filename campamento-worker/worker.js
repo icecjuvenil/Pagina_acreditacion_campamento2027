@@ -1,14 +1,39 @@
 
 /*
- * Campamento Juvenil ICEC 2027
+ * CAMPAMENTO JUVENIL ICEC 2027
  * Backend: Cloudflare Workers + D1
- * Registro de participantes con Turnstile
+ *
+ * Registro de participantes
+ * Cloudflare Turnstile
+ * Inicio y cierre de sesión
+ * Protección de contraseñas
+ * Límite de intentos de acceso
  */
+
+// ==========================================
+// CONFIGURACIÓN
+// ==========================================
+import { manejarAcompanantes } from "./acompanantes-api.js";
 
 const FECHA_CAMPAMENTO = "2027-01-08";
 
+const DURACION_SESION_SEGUNDOS = 8 * 60 * 60;
+
+const NOMBRE_COOKIE_SESION = "icec_sesion";
+
+const VENTANA_LOGIN_SEGUNDOS = 15 * 60;
+
+const MAX_INTENTOS_LOGIN = 8;
+
 const URL_TURNSTILE =
   "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+const ORIGENES_PERMITIDOS = [
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+  "http://localhost:5501",
+  "http://127.0.0.1:5501"
+];
 
 // ==========================================
 // RESPUESTAS JSON
@@ -23,16 +48,30 @@ function responder(datos, estado = 200) {
   });
 }
 
+function respuestaConCookie(datos, estado, cookie) {
+  const respuesta = responder(datos, estado);
+
+  respuesta.headers.set("Set-Cookie", cookie);
+
+  return respuesta;
+}
+
 // ==========================================
-// FUNCIONES DE VALIDACIÓN
+// VALIDACIONES
 // ==========================================
 
 function limpiar(valor) {
-  return typeof valor === "string" ? valor.trim() : "";
+  return typeof valor === "string"
+    ? valor.trim()
+    : "";
 }
 
 function textoValido(valor, maximo, obligatorio = true) {
-  if (valor === undefined || valor === null || valor === "") {
+  if (
+    valor === undefined ||
+    valor === null ||
+    valor === ""
+  ) {
     return !obligatorio;
   }
 
@@ -45,9 +84,11 @@ function textoValido(valor, maximo, obligatorio = true) {
 
 function validarTelefono(valor, obligatorio = true) {
   if (!obligatorio && !valor) return true;
+
   if (typeof valor !== "string") return false;
 
   const texto = valor.trim();
+
   const digitos = texto.replace(/\D/g, "");
 
   return (
@@ -71,13 +112,16 @@ function validarRut(rut) {
   }
 
   const cuerpo = limpio.slice(0, -1);
+
   const verificador = limpio.slice(-1);
 
   let suma = 0;
+
   let factor = 2;
 
   for (let i = cuerpo.length - 1; i >= 0; i--) {
     suma += Number(cuerpo[i]) * factor;
+
     factor = factor === 7 ? 2 : factor + 1;
   }
 
@@ -115,8 +159,14 @@ function validarFecha(fecha) {
   return fecha <= hoy && fecha <= FECHA_CAMPAMENTO;
 }
 
+// ==========================================
+// VALORES DE ACREDITACIÓN
+// ==========================================
+
 function calcularAcreditacion(fecha) {
-  const [anio, mes, dia] = fecha.split("-").map(Number);
+  const [anio, mes, dia] = fecha
+    .split("-")
+    .map(Number);
 
   let edad = 2027 - anio;
 
@@ -124,12 +174,24 @@ function calcularAcreditacion(fecha) {
     edad--;
   }
 
-  return edad <= 9 ? 10000 : 20000;
+  if (edad >= 0 && edad <= 5) {
+    return 0;
+  }
+
+  if (edad >= 6 && edad <= 10) {
+    return 10000;
+  }
+
+  return 20000;
 }
 
 function siNo(valor) {
   return valor === "si" || valor === "no";
 }
+
+// ==========================================
+// VALIDAR DATOS DEL PARTICIPANTE
+// ==========================================
 
 function validarDatos(datos) {
   if (
@@ -245,19 +307,17 @@ function validarDatos(datos) {
 }
 
 // ==========================================
-// PROTECCIÓN DE CONTRASEÑAS
+// CREAR HASH DE CONTRASEÑA
 // ==========================================
 
 async function crearHashContrasena(contrasena) {
-  const encoder = new TextEncoder();
-
   const salt = crypto.getRandomValues(
     new Uint8Array(16)
   );
 
   const clave = await crypto.subtle.importKey(
     "raw",
-    encoder.encode(contrasena),
+    new TextEncoder().encode(contrasena),
     "PBKDF2",
     false,
     ["deriveBits"]
@@ -276,7 +336,7 @@ async function crearHashContrasena(contrasena) {
     256
   );
 
-  const hex = (bytes) =>
+  const hex = bytes =>
     Array.from(bytes)
       .map(n => n.toString(16).padStart(2, "0"))
       .join("");
@@ -290,15 +350,289 @@ async function crearHashContrasena(contrasena) {
 }
 
 // ==========================================
-// VERIFICACIÓN DE CLOUDFARE TURNSTILE
+// VERIFICAR CONTRASEÑA
 // ==========================================
 
-async function verificarTurnstile(token, request, env) {
+async function verificarContrasena(
+  contrasena,
+  hashGuardado
+) {
+  if (
+    typeof contrasena !== "string" ||
+    typeof hashGuardado !== "string"
+  ) {
+    return false;
+  }
+
+  const partes = hashGuardado.split("$");
+
+  if (
+    partes.length !== 4 ||
+    partes[0] !== "pbkdf2_sha256"
+  ) {
+    return false;
+  }
+
+  if (Number(partes[1]) !== 100000) {
+    return false;
+  }
+
+  const convertirHex = texto => {
+    if (!/^(?:[0-9a-f]{2})+$/i.test(texto)) {
+      throw new Error("Formato de hash no válido.");
+    }
+
+    return Uint8Array.from(
+      texto.match(/.{2}/g),
+      byte => parseInt(byte, 16)
+    );
+  };
+
+  try {
+    const salt = convertirHex(partes[2]);
+
+    const hashOriginal = convertirHex(partes[3]);
+
+    if (
+      salt.length !== 16 ||
+      hashOriginal.length !== 32
+    ) {
+      return false;
+    }
+
+    const clave = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(contrasena),
+      "PBKDF2",
+      false,
+      ["deriveBits"]
+    );
+
+    const hashCalculado = new Uint8Array(
+      await crypto.subtle.deriveBits(
+        {
+          name: "PBKDF2",
+          salt,
+          iterations: 100000,
+          hash: "SHA-256"
+        },
+        clave,
+        256
+      )
+    );
+
+    let diferencias = 0;
+
+    for (let i = 0; i < hashOriginal.length; i++) {
+      diferencias |=
+        hashOriginal[i] ^ hashCalculado[i];
+    }
+
+    return diferencias === 0;
+
+  } catch {
+    return false;
+  }
+}
+
+// ==========================================
+// SESIONES FIRMADAS
+// ==========================================
+
+function convertirBase64Url(bytes) {
+  const binario = Array.from(
+    bytes,
+    byte => String.fromCharCode(byte)
+  ).join("");
+
+  return btoa(binario)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+async function firmarSesion(contenido, secreto) {
+  const clave = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secreto),
+    {
+      name: "HMAC",
+      hash: "SHA-256"
+    },
+    false,
+    ["sign"]
+  );
+
+  const firma = await crypto.subtle.sign(
+    "HMAC",
+    clave,
+    new TextEncoder().encode(contenido)
+  );
+
+  return convertirBase64Url(
+    new Uint8Array(firma)
+  );
+}
+
+async function crearTokenSesion(usuarioId, env) {
+  if (!env.LOGIN_SESSION_SECRET) {
+    throw new Error(
+      "Clave de sesiones no configurada."
+    );
+  }
+
+  const ahora = Math.floor(Date.now() / 1000);
+
+  const identificador = crypto.randomUUID();
+
+  const contenido = [
+    usuarioId,
+    ahora + DURACION_SESION_SEGUNDOS,
+    identificador
+  ].join(".");
+
+  const firma = await firmarSesion(
+    contenido,
+    env.LOGIN_SESSION_SECRET
+  );
+
+  return `${contenido}.${firma}`;
+}
+
+async function verificarTokenSesion(token, env) {
+  if (
+    typeof token !== "string" ||
+    !env.LOGIN_SESSION_SECRET
+  ) {
+    return null;
+  }
+
+  const partes = token.split(".");
+
+  if (partes.length !== 4) {
+    return null;
+  }
+
+  const [
+    usuarioIdTexto,
+    vencimientoTexto,
+    identificador,
+    firma
+  ] = partes;
+
+  const usuarioId = Number(usuarioIdTexto);
+
+  const vencimiento = Number(vencimientoTexto);
+
+  const ahora = Math.floor(Date.now() / 1000);
+
+  if (
+    !Number.isSafeInteger(usuarioId) ||
+    usuarioId <= 0 ||
+    !Number.isSafeInteger(vencimiento) ||
+    vencimiento <= ahora ||
+    vencimiento > ahora + DURACION_SESION_SEGUNDOS ||
+    !/^[0-9a-f-]{36}$/i.test(identificador)
+  ) {
+    return null;
+  }
+
+  const contenido = [
+    usuarioIdTexto,
+    vencimientoTexto,
+    identificador
+  ].join(".");
+
+  const firmaEsperada = await firmarSesion(
+    contenido,
+    env.LOGIN_SESSION_SECRET
+  );
+
+  if (firma.length !== firmaEsperada.length) {
+    return null;
+  }
+
+  let diferencias = 0;
+
+  for (let i = 0; i < firma.length; i++) {
+    diferencias |=
+      firma.charCodeAt(i) ^
+      firmaEsperada.charCodeAt(i);
+  }
+
+  return diferencias === 0
+    ? { usuarioId, vencimiento }
+    : null;
+}
+
+// ==========================================
+// COOKIES
+// ==========================================
+
+function crearCookieSesion(token) {
+  return [
+    `${NOMBRE_COOKIE_SESION}=${encodeURIComponent(token)}`,
+    "HttpOnly",
+    "Secure",
+    "SameSite=None",
+    "Path=/",
+    `Max-Age=${DURACION_SESION_SEGUNDOS}`
+  ].join("; ");
+}
+
+function obtenerCookieSesion(request) {
+  const cookies =
+    request.headers.get("Cookie") || "";
+
+  for (const cookie of cookies.split(";")) {
+    const separador = cookie.indexOf("=");
+
+    if (separador === -1) continue;
+
+    const nombre =
+      cookie.slice(0, separador).trim();
+
+    const valor =
+      cookie.slice(separador + 1).trim();
+
+    if (nombre === NOMBRE_COOKIE_SESION) {
+      try {
+        return decodeURIComponent(valor);
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  return null;
+}
+
+function eliminarCookieSesion() {
+  return [
+    `${NOMBRE_COOKIE_SESION}=`,
+    "HttpOnly",
+    "Secure",
+    "SameSite=None",
+    "Path=/",
+    "Max-Age=0"
+  ].join("; ");
+}
+
+// ==========================================
+// CLOUDFARE TURNSTILE
+// ==========================================
+
+async function verificarTurnstile(
+  token,
+  request,
+  env
+) {
   if (!env.TURNSTILE_SECRET_KEY) {
     return {
       correcto: false,
       estado: 503,
-      mensaje: "La verificación de seguridad no está configurada."
+      mensaje:
+        "La verificación de seguridad no está configurada."
     };
   }
 
@@ -310,64 +644,88 @@ async function verificarTurnstile(token, request, env) {
     return {
       correcto: false,
       estado: 403,
-      mensaje: "Debes completar la verificación de seguridad."
+      mensaje:
+        "Debes completar la verificación de seguridad."
     };
   }
 
   const parametros = new URLSearchParams();
 
-  parametros.set("secret", env.TURNSTILE_SECRET_KEY);
+  parametros.set(
+    "secret",
+    env.TURNSTILE_SECRET_KEY
+  );
+
   parametros.set("response", token);
 
-  const ip = request.headers.get("CF-Connecting-IP");
+  const ip = request.headers.get(
+    "CF-Connecting-IP"
+  );
 
   if (ip) {
     parametros.set("remoteip", ip);
   }
 
   try {
-    const respuesta = await fetch(URL_TURNSTILE, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: parametros.toString(),
-      signal: AbortSignal.timeout(10000)
-    });
+    const respuesta = await fetch(
+      URL_TURNSTILE,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/x-www-form-urlencoded"
+        },
+        body: parametros.toString(),
+        signal: AbortSignal.timeout(10000)
+      }
+    );
 
     if (!respuesta.ok) {
       return {
         correcto: false,
         estado: 503,
-        mensaje: "No se pudo verificar la seguridad. Intenta nuevamente."
+        mensaje:
+          "No se pudo verificar la seguridad."
       };
     }
 
     const resultado = await respuesta.json();
+    console.log("Hostname recibido de Turnstile:", resultado.hostname);
 
     if (resultado.success !== true) {
       return {
         correcto: false,
         estado: 403,
-        mensaje: "La verificación de seguridad falló. Intenta nuevamente."
+        mensaje:
+          "La verificación de seguridad falló."
       };
     }
 
-    // Durante las pruebas, el widget solo
-    // está autorizado para localhost.
-    // Al publicar la página agregaremos
-    // su dominio real a esta lista.
+    // Añadir aquí el dominio definitivo.
 
-    const HOSTNAMES_PERMITIDOS = [
-      "localhost",
-      "127.0.0.1"
-    ];
+    const ES_PRUEBA_LOCAL =
+  ["localhost", "127.0.0.1"].includes(
+    new URL(request.url).hostname
+  ) &&
+  env.TURNSTILE_SECRET_KEY ===
+    "1x0000000000000000000000000000000AA";
 
-    if (!HOSTNAMES_PERMITIDOS.includes(resultado.hostname)) {
+const HOSTNAMES_PERMITIDOS = [
+  "localhost",
+  "127.0.0.1",
+  ...(ES_PRUEBA_LOCAL ? ["example.com"] : [])
+];
+
+    if (
+      !HOSTNAMES_PERMITIDOS.includes(
+        resultado.hostname
+      )
+    ) {
       return {
         correcto: false,
         estado: 403,
-        mensaje: "El origen de la verificación no está autorizado."
+        mensaje:
+          "El origen de la verificación no está autorizado."
       };
     }
 
@@ -377,20 +735,21 @@ async function verificarTurnstile(token, request, env) {
 
   } catch (error) {
     console.error(
-      "Error al consultar Turnstile:",
+      "Error al verificar Turnstile:",
       error?.name
     );
 
     return {
       correcto: false,
       estado: 503,
-      mensaje: "No fue posible verificar la seguridad. Intenta nuevamente."
+      mensaje:
+        "No fue posible verificar la seguridad."
     };
   }
 }
 
 // ==========================================
-// REGISTRAR PARTICIPANTE EN D1
+// REGISTRO DE PARTICIPANTES
 // ==========================================
 
 async function registrarParticipante(datos, env) {
@@ -402,21 +761,32 @@ async function registrarParticipante(datos, env) {
     }, 400);
   }
 
-  const correo = limpiar(datos.correo).toLowerCase();
-  const rut = normalizarRut(datos.rut);
-  const genero = limpiar(datos.genero).toUpperCase();
+  const correo =
+    limpiar(datos.correo).toLowerCase();
 
-  // Comprobar duplicados.
+  const rut = normalizarRut(datos.rut);
+
+  const genero =
+    limpiar(datos.genero).toUpperCase();
 
   const duplicado = await env.DB.prepare(
     `SELECT
-      (SELECT COUNT(*) FROM usuarios
-       WHERE correo = ?) AS correos,
-      (SELECT COUNT(*) FROM participantes
-       WHERE rut = ?) AS participantes,
-      (SELECT COUNT(*) FROM acompanantes
-       WHERE rut = ?) AS acompanantes`
-  ).bind(correo, rut, rut).first();
+       (SELECT COUNT(*)
+        FROM usuarios
+        WHERE correo = ?) AS correos,
+
+       (SELECT COUNT(*)
+        FROM participantes
+        WHERE rut = ?) AS participantes,
+
+       (SELECT COUNT(*)
+        FROM acompanantes
+        WHERE rut = ?) AS acompanantes`
+  ).bind(
+    correo,
+    rut,
+    rut
+  ).first();
 
   if (
     duplicado.correos > 0 ||
@@ -424,7 +794,8 @@ async function registrarParticipante(datos, env) {
     duplicado.acompanantes > 0
   ) {
     return responder({
-      mensaje: "El correo o RUT ya está registrado."
+      mensaje:
+        "El correo o RUT ya está registrado."
     }, 409);
   }
 
@@ -436,7 +807,7 @@ async function registrarParticipante(datos, env) {
     datos.fechaNacimiento
   );
 
-  const bandera = (valor) =>
+  const bandera = valor =>
     valor === "si" ? 1 : 0;
 
   const detalle = (pregunta, campo) =>
@@ -447,20 +818,31 @@ async function registrarParticipante(datos, env) {
   const idParticipante = `
     SELECT p.id
     FROM participantes p
-    JOIN usuarios u ON u.id = p.usuario_id
+    JOIN usuarios u
+      ON u.id = p.usuario_id
     WHERE u.correo = ?
   `;
 
-  // El lote evita guardar registros incompletos.
-
   try {
     await env.DB.batch([
+
+      // USUARIO
       env.DB.prepare(
         `INSERT INTO usuarios
-         (correo, contrasena_hash, rol, genero)
+         (
+           correo,
+           contrasena_hash,
+           rol,
+           genero
+         )
          VALUES (?, ?, 'PARTICIPANTE', ?)`
-      ).bind(correo, hash, genero),
+      ).bind(
+        correo,
+        hash,
+        genero
+      ),
 
+      // PARTICIPANTE
       env.DB.prepare(
         `INSERT INTO participantes
          (
@@ -488,6 +870,7 @@ async function registrarParticipante(datos, env) {
         correo
       ),
 
+      // INFORMACIÓN MÉDICA
       env.DB.prepare(
         `INSERT INTO informacion_medica
          (
@@ -528,6 +911,7 @@ async function registrarParticipante(datos, env) {
         )
       ),
 
+      // CONTACTO DE EMERGENCIA
       env.DB.prepare(
         `INSERT INTO contactos_emergencia
          (
@@ -545,9 +929,12 @@ async function registrarParticipante(datos, env) {
         limpiar(datos.nombreEmergencia),
         datos.parentesco,
         limpiar(datos.telefonoEmergencia),
-        limpiar(datos.telefonoAlternativo) || null
+        limpiar(
+          datos.telefonoAlternativo
+        ) || null
       ),
 
+      // PAGO PENDIENTE
       env.DB.prepare(
         `INSERT INTO pagos
          (
@@ -564,11 +951,15 @@ async function registrarParticipante(datos, env) {
            FROM usuarios
            WHERE correo = ?
          )`
-      ).bind(monto, correo)
+      ).bind(
+        monto,
+        correo
+      )
     ]);
 
     return responder({
-      mensaje: "Inscripción registrada correctamente.",
+      mensaje:
+        "Inscripción registrada correctamente.",
       estado: "REGISTRADA",
       montoTotal: monto,
       pago: "PENDIENTE",
@@ -588,15 +979,19 @@ async function registrarParticipante(datos, env) {
 
     if (
       mensaje.includes("UNIQUE constraint") ||
-      mensaje.includes("SQLITE_CONSTRAINT_UNIQUE")
+      mensaje.includes(
+        "SQLITE_CONSTRAINT_UNIQUE"
+      )
     ) {
       return responder({
-        mensaje: "El correo o RUT ya está registrado."
+        mensaje:
+          "El correo o RUT ya está registrado."
       }, 409);
     }
 
     return responder({
-      mensaje: "No se pudo completar la inscripción."
+      mensaje:
+        "No se pudo completar la inscripción."
     }, 500);
   }
 }
@@ -605,39 +1000,40 @@ async function registrarParticipante(datos, env) {
 // CONFIGURACIÓN CORS
 // ==========================================
 
-// Direcciones autorizadas durante desarrollo.
-// Agregar el dominio real antes del lanzamiento.
-
-
-const ORIGENES_PERMITIDOS = [
-  "http://localhost:5500",
-  "http://127.0.0.1:5500",
-  "http://localhost:5501",
-  "http://127.0.0.1:5501"
-];
-
-
 function obtenerHeadersCORS(request) {
-  const origen = request.headers.get("Origin");
+  const origen = request.headers.get(
+    "Origin"
+  );
 
   if (!ORIGENES_PERMITIDOS.includes(origen)) {
     return {};
   }
 
-  return {
-    "Access-Control-Allow-Origin": origen,
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Max-Age": "600",
-    "Vary": "Origin"
-  };
+  
+return {
+  "Access-Control-Allow-Origin": origen,
+  "Access-Control-Allow-Methods":
+    "GET, POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "Content-Type, X-ICEC-Solicitud",
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Max-Age": "600",
+  "Vary": "Origin"
+};
+
 }
 
 function aplicarCORS(respuesta, request) {
-  const cabeceras = new Headers(respuesta.headers);
-  const headersCORS = obtenerHeadersCORS(request);
+  const cabeceras =
+    new Headers(respuesta.headers);
 
-  for (const [clave, valor] of Object.entries(headersCORS)) {
+  const headersCORS =
+    obtenerHeadersCORS(request);
+
+  for (
+    const [clave, valor]
+    of Object.entries(headersCORS)
+  ) {
     cabeceras.set(clave, valor);
   }
 
@@ -648,6 +1044,385 @@ function aplicarCORS(respuesta, request) {
   });
 }
 
+function validarOrigenPrivado(request) {
+  const origen = request.headers.get(
+    "Origin"
+  );
+
+  return (
+    origen !== null &&
+    ORIGENES_PERMITIDOS.includes(origen)
+  );
+}
+
+// ==========================================
+// LEER JSON
+// ==========================================
+
+async function leerJSON(request, maximo = 4096) {
+  const tipo = request.headers.get(
+    "content-type"
+  );
+
+  if (
+    !tipo?.toLowerCase()
+      .startsWith("application/json")
+  ) {
+    throw new Error(
+      "Se requiere JSON."
+    );
+  }
+
+  const cuerpo = await request.text();
+
+  if (
+    new TextEncoder().encode(cuerpo).length >
+    maximo
+  ) {
+    throw new Error(
+      "Solicitud demasiado grande."
+    );
+  }
+
+  const datos = JSON.parse(cuerpo);
+
+  if (
+    !datos ||
+    typeof datos !== "object" ||
+    Array.isArray(datos)
+  ) {
+    throw new Error(
+      "JSON no válido."
+    );
+  }
+
+  return datos;
+}
+
+// ==========================================
+// IDENTIFICAR USUARIO AUTENTICADO
+// ==========================================
+
+async function usuarioDeSesion(request, env) {
+  const token = obtenerCookieSesion(request);
+
+  const sesion = await verificarTokenSesion(
+    token,
+    env
+  );
+
+  if (!sesion) {
+    return null;
+  }
+
+  const usuario = await env.DB.prepare(
+    `SELECT
+       u.id,
+       u.correo,
+       u.rol,
+       u.activo,
+       p.id AS participante_id,
+       p.nombre_completo
+     FROM usuarios u
+     LEFT JOIN participantes p
+       ON p.usuario_id = u.id
+     WHERE u.id = ?`
+  ).bind(
+    sesion.usuarioId
+  ).first();
+
+  if (
+    !usuario ||
+    Number(usuario.activo) !== 1
+  ) {
+    return null;
+  }
+
+  return usuario;
+}
+
+// ==========================================
+// LÍMITE DE INTENTOS DE LOGIN
+// ==========================================
+
+async function limitarIntentosLogin(
+  request,
+  env
+) {
+  const ip = request.headers.get(
+    "CF-Connecting-IP"
+  );
+
+  if (!ip) {
+    return responder({
+      mensaje:
+        "No se pudo validar el origen de la solicitud."
+    }, 403);
+  }
+
+  // No guardamos la IP en texto plano.
+  const datos = new TextEncoder().encode(
+    `${env.LOGIN_SESSION_SECRET}:login:${ip}`
+  );
+
+  const digest = new Uint8Array(
+    await crypto.subtle.digest(
+      "SHA-256",
+      datos
+    )
+  );
+
+  const clave = Array.from(digest)
+    .map(n => n.toString(16).padStart(2, "0"))
+    .join("");
+
+  const ahora = Math.floor(Date.now() / 1000);
+
+  const vence = ahora + VENTANA_LOGIN_SEGUNDOS;
+
+  // Contador con actualización atómica en D1.
+  const fila = await env.DB.prepare(
+    `INSERT INTO login_intentos
+       (clave, intentos, vence)
+     VALUES (?, 1, ?)
+     ON CONFLICT(clave)
+     DO UPDATE SET
+       intentos = CASE
+         WHEN login_intentos.vence <= ?
+           THEN 1
+         ELSE login_intentos.intentos + 1
+       END,
+       vence = CASE
+         WHEN login_intentos.vence <= ?
+           THEN excluded.vence
+         ELSE login_intentos.vence
+       END
+     RETURNING intentos, vence`
+  ).bind(
+    clave,
+    vence,
+    ahora,
+    ahora
+  ).first();
+
+  if (
+    Number(fila.intentos) >
+    MAX_INTENTOS_LOGIN
+  ) {
+    const segundos = Math.max(
+      1,
+      Number(fila.vence) - ahora
+    );
+
+    const respuesta = responder({
+      mensaje:
+        "Demasiados intentos de acceso. " +
+        "Intenta nuevamente más tarde."
+    }, 429);
+
+    respuesta.headers.set(
+      "Retry-After",
+      String(segundos)
+    );
+
+    return respuesta;
+  }
+
+  return null;
+}
+
+// ==========================================
+// INICIO DE SESIÓN
+// ==========================================
+
+async function iniciarSesion(request, env) {
+  if (!validarOrigenPrivado(request)) {
+    return responder({
+      mensaje: "Origen no autorizado."
+    }, 403);
+  }
+
+  if (
+    request.headers.get(
+      "X-ICEC-Solicitud"
+    ) !== "web"
+  ) {
+    return responder({
+      mensaje:
+        "Solicitud no autorizada."
+    }, 403);
+  }
+
+  if (!env.LOGIN_SESSION_SECRET) {
+    return responder({
+      mensaje:
+        "El inicio de sesión no está configurado."
+    }, 503);
+  }
+
+  // Comprobar límite antes de validar credenciales.
+  const limite = await limitarIntentosLogin(
+    request,
+    env
+  );
+
+  if (limite) {
+    return limite;
+  }
+
+  let datos;
+
+  try {
+    datos = await leerJSON(request);
+  } catch {
+    return responder({
+      mensaje:
+        "Solicitud de inicio de sesión no válida."
+    }, 400);
+  }
+
+  // Turnstile obligatorio
+  const verificacion = await verificarTurnstile(
+    datos.turnstileToken,
+    request,
+    env
+  );
+
+  if (!verificacion.correcto) {
+    return responder({
+      mensaje: verificacion.mensaje
+    }, verificacion.estado);
+  }
+
+  const correo =
+    limpiar(datos.correo).toLowerCase();
+
+  const contrasena = datos.contrasena;
+
+  if (
+    correo.length > 150 ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) ||
+    typeof contrasena !== "string" ||
+    contrasena.length > 128
+  ) {
+    return responder({
+      mensaje:
+        "Correo o contraseña incorrectos."
+    }, 401);
+  }
+
+  const usuario = await env.DB.prepare(
+    `SELECT
+       id,
+       correo,
+       contrasena_hash,
+       rol,
+       activo
+     FROM usuarios
+     WHERE correo = ?`
+  ).bind(
+    correo
+  ).first();
+
+  const contrasenaCorrecta =
+    await verificarContrasena(
+      contrasena,
+      usuario?.contrasena_hash || ""
+    );
+
+  if (
+    !usuario ||
+    Number(usuario.activo) !== 1 ||
+    !contrasenaCorrecta
+  ) {
+    return responder({
+      mensaje:
+        "Correo o contraseña incorrectos."
+    }, 401);
+  }
+
+  const token = await crearTokenSesion(
+    usuario.id,
+    env
+  );
+
+  return respuestaConCookie(
+    {
+      mensaje:
+        "Sesión iniciada correctamente.",
+      rol: usuario.rol
+    },
+    200,
+    crearCookieSesion(token)
+  );
+}
+
+// ==========================================
+// CONSULTAR SESIÓN
+// ==========================================
+
+async function consultarSesion(request, env) {
+  if (!validarOrigenPrivado(request)) {
+    return responder({
+      mensaje: "Origen no autorizado."
+    }, 403);
+  }
+
+  const usuario = await usuarioDeSesion(
+    request,
+    env
+  );
+
+  if (!usuario) {
+    return responder({
+      autenticado: false,
+      mensaje:
+        "No has iniciado sesión."
+    }, 401);
+  }
+
+  return responder({
+    autenticado: true,
+    usuario: {
+      id: usuario.id,
+      correo: usuario.correo,
+      rol: usuario.rol,
+      participanteId: usuario.participante_id,
+      nombreCompleto: usuario.nombre_completo
+    }
+  });
+}
+
+// ==========================================
+// CERRAR SESIÓN
+// ==========================================
+
+function cerrarSesion(request) {
+  if (!validarOrigenPrivado(request)) {
+    return responder({
+      mensaje: "Origen no autorizado."
+    }, 403);
+  }
+
+  if (
+    request.headers.get(
+      "X-ICEC-Solicitud"
+    ) !== "web"
+  ) {
+    return responder({
+      mensaje: "Solicitud no autorizada."
+    }, 403);
+  }
+
+  return respuestaConCookie(
+    {
+      mensaje: "Sesión cerrada."
+    },
+    200,
+    eliminarCookieSesion()
+  );
+}
+
 // ==========================================
 // RUTAS DE LA API
 // ==========================================
@@ -655,8 +1430,23 @@ function aplicarCORS(respuesta, request) {
 async function manejarSolicitud(request, env) {
   const url = new URL(request.url);
 
+  if (
+  url.pathname === "/api/acompanantes" ||
+  /^\/api\/acompanantes\/[1-9]\d*$/.test(url.pathname)
+) {
+  return manejarAcompanantes(
+    request,
+    env,
+    {
+      usuarioDeSesion,
+      ORIGENES_PERMITIDOS
+    },
+    url.pathname
+  );
+}
+
   // ----------------------------------------
-  // ESTADO DEL BACKEND Y LA BASE DE DATOS
+  // ESTADO DEL BACKEND
   // ----------------------------------------
 
   if (url.pathname === "/api/estado") {
@@ -671,7 +1461,7 @@ async function manejarSolicitud(request, env) {
         `SELECT COUNT(*) AS total
          FROM sqlite_master
          WHERE type = 'table'
-         AND name NOT LIKE 'sqlite_%'`
+           AND name NOT LIKE 'sqlite_%'`
       ).first();
 
       return responder({
@@ -704,11 +1494,11 @@ async function manejarSolicitud(request, env) {
       }, 405);
     }
 
-    // Revisar el tipo de contenido.
+    const tipo =
+      request.headers.get("content-type");
 
     if (
-      !request.headers.get("content-type")
-        ?.toLowerCase()
+      !tipo?.toLowerCase()
         .startsWith("application/json")
     ) {
       return responder({
@@ -716,15 +1506,16 @@ async function manejarSolicitud(request, env) {
       }, 415);
     }
 
-    // Revisar tamaño de la solicitud.
-
     const tamano = Number(
-      request.headers.get("content-length") || 0
+      request.headers.get(
+        "content-length"
+      ) || 0
     );
 
     if (tamano > 16384) {
       return responder({
-        mensaje: "Solicitud demasiado grande."
+        mensaje:
+          "Solicitud demasiado grande."
       }, 413);
     }
 
@@ -734,10 +1525,12 @@ async function manejarSolicitud(request, env) {
       const cuerpo = await request.text();
 
       if (
-        new TextEncoder().encode(cuerpo).length > 16384
+        new TextEncoder()
+          .encode(cuerpo).length > 16384
       ) {
         return responder({
-          mensaje: "Solicitud demasiado grande."
+          mensaje:
+            "Solicitud demasiado grande."
         }, 413);
       }
 
@@ -755,41 +1548,35 @@ async function manejarSolicitud(request, env) {
       Array.isArray(datos)
     ) {
       return responder({
-        mensaje: "Los datos enviados no son válidos."
+        mensaje:
+          "Los datos enviados no son válidos."
       }, 400);
     }
 
-    // --------------------------------------
-    // VERIFICAR PERMISO PARA REGISTRAR
-    // --------------------------------------
-
-    // Opción 1:
     // Registro privado desde Postman.
-    // Se conserva para las pruebas internas.
-
-    const tokenPrivado = request.headers.get(
-      "X-Registro-Prueba"
-    );
+    const tokenPrivado =
+      request.headers.get(
+        "X-Registro-Prueba"
+      );
 
     const pruebaAutorizada =
       Boolean(env.REGISTRO_PRUEBA_TOKEN) &&
       Boolean(tokenPrivado) &&
-      tokenPrivado === env.REGISTRO_PRUEBA_TOKEN;
+      tokenPrivado ===
+        env.REGISTRO_PRUEBA_TOKEN;
 
-    // Opción 2:
-    // Registro desde el formulario público,
-    // utilizando Cloudflare Turnstile.
-
+    // Registro público protegido por Turnstile.
     if (!pruebaAutorizada) {
       const tokenTurnstile =
         datos.turnstileToken ||
         datos["cf-turnstile-response"];
 
-      const verificacion = await verificarTurnstile(
-        tokenTurnstile,
-        request,
-        env
-      );
+      const verificacion =
+        await verificarTurnstile(
+          tokenTurnstile,
+          request,
+          env
+        );
 
       if (!verificacion.correcto) {
         return responder({
@@ -797,10 +1584,6 @@ async function manejarSolicitud(request, env) {
         }, verificacion.estado);
       }
     }
-
-    // --------------------------------------
-    // GUARDAR PARTICIPANTE EN D1
-    // --------------------------------------
 
     try {
       return await registrarParticipante(
@@ -811,14 +1594,56 @@ async function manejarSolicitud(request, env) {
     } catch (error) {
       console.error(
         "Fallo inesperado en el registro:",
-        error?.name,
         error?.message
       );
 
       return responder({
-        mensaje: "Error interno del registro."
+        mensaje:
+          "Error interno del registro."
       }, 500);
     }
+  }
+
+  // ----------------------------------------
+  // INICIAR SESIÓN
+  // ----------------------------------------
+
+  if (url.pathname === "/api/login") {
+    if (request.method !== "POST") {
+      return responder({
+        mensaje: "Método no permitido."
+      }, 405);
+    }
+
+    return iniciarSesion(request, env);
+  }
+
+  // ----------------------------------------
+  // CONSULTAR SESIÓN
+  // ----------------------------------------
+
+  if (url.pathname === "/api/sesion") {
+    if (request.method !== "GET") {
+      return responder({
+        mensaje: "Método no permitido."
+      }, 405);
+    }
+
+    return consultarSesion(request, env);
+  }
+
+  // ----------------------------------------
+  // CERRAR SESIÓN
+  // ----------------------------------------
+
+  if (url.pathname === "/api/logout") {
+    if (request.method !== "POST") {
+      return responder({
+        mensaje: "Método no permitido."
+      }, 405);
+    }
+
+    return cerrarSesion(request);
   }
 
   return responder({
@@ -833,12 +1658,14 @@ async function manejarSolicitud(request, env) {
 export default {
   async fetch(request, env) {
 
-    // Responder a las verificaciones CORS.
-
+    // Responder a solicitudes CORS.
     if (request.method === "OPTIONS") {
-      const origen = request.headers.get("Origin");
+      const origen =
+        request.headers.get("Origin");
 
-      if (!ORIGENES_PERMITIDOS.includes(origen)) {
+      if (
+        !ORIGENES_PERMITIDOS.includes(origen)
+      ) {
         return new Response(null, {
           status: 403
         });
@@ -869,7 +1696,8 @@ export default {
 
       return aplicarCORS(
         responder({
-          mensaje: "Error interno del servidor."
+          mensaje:
+            "Error interno del servidor."
         }, 500),
         request
       );

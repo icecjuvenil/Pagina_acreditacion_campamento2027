@@ -1,846 +1,558 @@
-/* ==================================================
-   1. ELEMENTOS PRINCIPALES DE LA PÁGINA
-   ================================================== */
+
+/*
+ * ICEC 2027 - Registro de acompañantes
+ * Cloudflare Workers + D1
+ */
+
+const API_ACOMPANANTES =
+  //"https://icec-campamento-2027-api.brantemarco777.workers.dev";
+  "http://127.0.0.1:8787"
 
 const formularioAcompanante = document.getElementById(
-    "formulario-acompanante"
+  "formulario-acompanante"
 );
 
 const listaAcompanantes = document.getElementById(
-    "lista-acompanantes-guardados"
+  "lista-acompanantes-guardados"
 );
 
 const cantidadAcompanantes = document.getElementById(
-    "cantidad-acompanantes"
+  "cantidad-acompanantes"
 );
 
 const botonContinuar = document.getElementById(
-    "continuar-resumen"
+  "continuar-resumen"
 );
 
 const entradaFechaAcompanante = document.getElementById(
-    "fecha-acompanante"
+  "fecha-acompanante"
 );
 
 const salidaValorAcompanante = document.getElementById(
-    "valor-acompanante"
+  "valor-acompanante"
 );
 
-
-/* ==================================================
-   2. RECUPERACIÓN DE ACOMPAÑANTES GUARDADOS
-   ================================================== */
+const botonGuardar = document.getElementById(
+  "guardar-acompanante"
+);
 
 let acompanantesGuardados = [];
+let guardando = false;
 
-try {
-    const datosGuardados = JSON.parse(
-        sessionStorage.getItem("acompanantesCampamento") || "[]"
+// ==========================================
+// CONSULTAS AL BACKEND
+// ==========================================
+
+async function solicitarAPI(ruta, opciones = {}) {
+  let respuesta;
+
+  try {
+    respuesta = await fetch(
+      API_ACOMPANANTES + ruta,
+      {
+        credentials: "include",
+        cache: "no-store",
+        ...opciones
+      }
     );
-
-    acompanantesGuardados = Array.isArray(datosGuardados)
-        ? datosGuardados
-        : [];
-} catch (error) {
-    console.error(
-        "No fue posible recuperar los acompañantes:",
-        error
+  } catch {
+    throw new Error(
+      "No se pudo conectar con Cloudflare. " +
+      "Verifica tu conexión."
     );
+  }
 
-    acompanantesGuardados = [];
+  let datos;
+
+  try {
+    datos = await respuesta.json();
+  } catch {
+    throw new Error("Respuesta no válida del servidor.");
+  }
+
+  if (!respuesta.ok) {
+    if (respuesta.status === 401) {
+      throw new Error(
+        "Debes iniciar sesión antes de registrar acompañantes."
+      );
+    }
+
+    throw new Error(
+      datos.mensaje || "Ocurrió un error."
+    );
+  }
+
+  return datos;
 }
 
+// ==========================================
+// FECHA Y VALOR DE ACREDITACIÓN
+// ==========================================
 
-/* ==================================================
-   3. CAMPOS CONDICIONALES DE INFORMACIÓN DE SALUD
-   ================================================== */
-
-const preguntasSalud = document.querySelectorAll(
-    ".pregunta-salud-acompanante"
+const fechaCampamento = new Date(
+  2027, 0, 8
 );
 
-preguntasSalud.forEach((pregunta) => {
-    const campoDetalle = document.getElementById(
-        pregunta.dataset.campo
-    );
+function obtenerTarifa(fecha) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+    return null;
+  }
 
-    const entradaDetalle = document.getElementById(
-        pregunta.dataset.entrada
-    );
+  const [anio, mes, dia] = fecha.split("-").map(Number);
 
-    if (!campoDetalle || !entradaDetalle) {
-        return;
-    }
+  const nacimiento = new Date(
+    anio, mes - 1, dia
+  );
 
-    function actualizarCampoSalud() {
-        const respondioSi = pregunta.value === "si";
+  if (
+    nacimiento.getFullYear() !== anio ||
+    nacimiento.getMonth() !== mes - 1 ||
+    nacimiento.getDate() !== dia
+  ) {
+    return null;
+  }
 
-        campoDetalle.hidden = !respondioSi;
-        entradaDetalle.required = respondioSi;
+  if (
+    nacimiento > new Date() ||
+    nacimiento > fechaCampamento
+  ) {
+    return null;
+  }
 
-        if (!respondioSi) {
-            entradaDetalle.value = "";
-        }
-    }
+  let edad = 2027 - anio;
 
-    pregunta.addEventListener(
-        "change",
-        actualizarCampoSalud
-    );
+  if (mes > 1 || (mes === 1 && dia > 8)) {
+    edad--;
+  }
 
-    actualizarCampoSalud();
-});
+  const valor = edad <= 5
+    ? 0
+    : edad <= 10
+      ? 10000
+      : 20000;
 
-
-/* ==================================================
-   4. CÁLCULO DEL VALOR DE ACREDITACIÓN
-   ================================================== */
-
-const fechaInicioCampamento = new Date(
-    2027,
-    0,
-    8
-);
+  return { edad, valor };
+}
 
 function actualizarValorAcompanante() {
-    if (
-        !entradaFechaAcompanante ||
-        !salidaValorAcompanante
-    ) {
-        return;
-    }
+  if (!salidaValorAcompanante) return;
 
-    if (!entradaFechaAcompanante.value) {
-        salidaValorAcompanante.textContent =
-            "Seleccione la fecha de nacimiento";
+  const tarifa = obtenerTarifa(
+    entradaFechaAcompanante?.value || ""
+  );
 
-        salidaValorAcompanante.dataset.valor = "0";
-        return;
-    }
-
-    const partesFecha = entradaFechaAcompanante.value
-        .split("-")
-        .map(Number);
-
-    if (
-        partesFecha.length !== 3 ||
-        partesFecha.some((parte) => Number.isNaN(parte))
-    ) {
-        salidaValorAcompanante.textContent =
-            "Fecha de nacimiento no válida";
-
-        salidaValorAcompanante.dataset.valor = "0";
-        return;
-    }
-
-    const nacimiento = new Date(
-        partesFecha[0],
-        partesFecha[1] - 1,
-        partesFecha[2]
-    );
-
-    if (
-        Number.isNaN(nacimiento.getTime()) ||
-        nacimiento > fechaInicioCampamento
-    ) {
-        salidaValorAcompanante.textContent =
-            "Fecha de nacimiento no válida";
-
-        salidaValorAcompanante.dataset.valor = "0";
-        return;
-    }
-
-    let edad =
-        fechaInicioCampamento.getFullYear() -
-        nacimiento.getFullYear();
-
-    const aunNoCumple =
-        fechaInicioCampamento.getMonth() <
-            nacimiento.getMonth() ||
-        (
-            fechaInicioCampamento.getMonth() ===
-                nacimiento.getMonth() &&
-            fechaInicioCampamento.getDate() <
-                nacimiento.getDate()
-        );
-
-    if (aunNoCumple) {
-        edad--;
-    }
-
-    // Determina el valor según la edad al inicio del campamento
-
-    let valor;
-    let categoria;
-
-    if (edad >= 0 && edad <= 5) {
-        valor = 0;
-        categoria = "Sin costo";
-    } else if (edad >= 6 && edad <= 10) {
-        valor = 10000;
-        categoria = "Tarifa niño";
-    } else {
-        valor = 20000;
-        categoria = "Tarifa general";
-    }
-
-    // Muestra el valor, la edad y la categoría correspondiente
+  if (!tarifa) {
     salidaValorAcompanante.textContent =
-        `$${valor.toLocaleString("es-CL")} (${edad} años - ${categoria})`;
+      "Selecciona una fecha de nacimiento válida";
 
-    // Guarda el valor numérico para utilizarlo en el resumen y pago
-    salidaValorAcompanante.dataset.valor =
-        String(valor);
+    salidaValorAcompanante.dataset.valor = "";
+    return;
+  }
 
+  let categoria = "Tarifa general";
+
+  if (tarifa.valor === 0) {
+    categoria = "Sin costo";
+  } else if (tarifa.valor === 10000) {
+    categoria = "Tarifa niño";
+  }
+
+  salidaValorAcompanante.textContent =
+    `$${tarifa.valor.toLocaleString("es-CL")} ` +
+    `(${tarifa.edad} años - ${categoria})`;
+
+  salidaValorAcompanante.dataset.valor =
+    String(tarifa.valor);
 }
 
-if (
-    entradaFechaAcompanante &&
-    salidaValorAcompanante
-) {
-    entradaFechaAcompanante.addEventListener(
-        "input",
-        actualizarValorAcompanante
+// ==========================================
+// CAMPOS MÉDICOS CONDICIONALES
+// ==========================================
+
+const preguntasSalud = document.querySelectorAll(
+  ".pregunta-salud-acompanante"
+);
+
+function actualizarPreguntasSalud() {
+  preguntasSalud.forEach(pregunta => {
+    const campo = document.getElementById(
+      pregunta.dataset.campo
     );
 
-    entradaFechaAcompanante.addEventListener(
-        "change",
-        actualizarValorAcompanante
+    const entrada = document.getElementById(
+      pregunta.dataset.entrada
     );
 
-    actualizarValorAcompanante();
+    if (!campo || !entrada) return;
+
+    const mostrar = pregunta.value === "si";
+
+    campo.hidden = !mostrar;
+    entrada.required = mostrar;
+
+    if (!mostrar) {
+      entrada.value = "";
+    }
+  });
 }
 
+preguntasSalud.forEach(pregunta => {
+  pregunta.addEventListener(
+    "change",
+    actualizarPreguntasSalud
+  );
+});
 
-/* ==================================================
-   5. FUNCIONES DE NORMALIZACIÓN
-   ================================================== */
+// ==========================================
+// NORMALIZACIÓN
+// ==========================================
 
-/* Elimina puntos, guion y espacios de un RUT */
 function normalizarRut(rut) {
-    return String(rut || "")
-        .replace(/[^0-9kK]/g, "")
-        .toUpperCase();
+  return String(rut || "")
+    .replace(/[^0-9kK]/g, "")
+    .toUpperCase();
 }
 
-/* Normaliza un correo para poder compararlo */
 function normalizarCorreo(correo) {
-    return String(correo || "")
-        .trim()
-        .toLowerCase();
+  return String(correo || "")
+    .trim()
+    .toLowerCase();
 }
 
-/* Convierte una fecha desde aaaa-mm-dd a dd/mm/aaaa */
 function formatearFecha(fecha) {
-    if (!fecha) {
-        return "No informada";
-    }
+  if (!fecha) return "No informada";
 
-    const partes = fecha.split("-");
+  const [anio, mes, dia] = fecha.split("-");
 
-    if (partes.length !== 3) {
-        return fecha;
-    }
-
-    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  return `${dia}/${mes}/${anio}`;
 }
 
+// ==========================================
+// SINCRONIZACIÓN TEMPORAL DEL RESUMEN
+// ==========================================
 
-/* ==================================================
-   6. ALMACENAMIENTO TEMPORAL
-   ================================================== */
+function guardarResumenLocal() {
+  /*
+   * Mantiene compatibilidad con pago.js.
+   * Los datos médicos no se guardan aquí.
+   * D1 sigue siendo la fuente de datos real.
+   */
 
-function guardarAcompanantes() {
-    sessionStorage.setItem(
-        "acompanantesCampamento",
-        JSON.stringify(acompanantesGuardados)
-    );
+  const resumen = acompanantesGuardados.map(a => ({
+    id: a.id,
+    nombre: a.nombre,
+    rut: a.rut,
+    fechaNacimiento: a.fechaNacimiento,
+    genero: a.genero,
+    valorAcreditacion: a.valorAcreditacion
+  }));
+
+  sessionStorage.setItem(
+    "acompanantesCampamento",
+    JSON.stringify(resumen)
+  );
 }
 
+// ==========================================
+// CONTADOR Y LISTA
+// ==========================================
 
-/* ==================================================
-   7. CONTADOR DE ACOMPAÑANTES
-   ================================================== */
+function actualizarCantidad() {
+  if (!cantidadAcompanantes) return;
 
-function actualizarCantidadAcompanantes() {
-    if (!cantidadAcompanantes) {
-        return;
-    }
+  const cantidad = acompanantesGuardados.length;
 
-    const cantidad = acompanantesGuardados.length;
-
-    cantidadAcompanantes.textContent =
-        cantidad === 1
-            ? "1 acompañante"
-            : `${cantidad} acompañantes`;
+  cantidadAcompanantes.textContent =
+    cantidad === 1
+      ? "1 acompañante"
+      : `${cantidad} acompañantes`;
 }
 
+function crearTarjetaAcompanante(a) {
+  const tarjeta = document.createElement("article");
+  tarjeta.className = "tarjeta-acompanante";
 
-/* ==================================================
-   8. ELIMINACIÓN DE UN ACOMPAÑANTE
-   ================================================== */
+  const encabezado = document.createElement("div");
+  encabezado.className = "encabezado-acompanante";
 
-function eliminarAcompanante(indice) {
-    const acompanante = acompanantesGuardados[indice];
+  const resumen = document.createElement("div");
+  resumen.className = "resumen-acompanante-guardado";
 
-    if (!acompanante) {
-        return;
-    }
+  const avatar = document.createElement("div");
+  avatar.className = "avatar-acompanante";
+  avatar.setAttribute("aria-hidden", "true");
+  avatar.textContent = "●";
 
-    const confirmarEliminacion = window.confirm(
-        `¿Deseas eliminar a ${acompanante.nombre}?`
-    );
+  const datos = document.createElement("div");
+  datos.className = "datos-acompanante-guardado";
 
-    if (!confirmarEliminacion) {
-        return;
-    }
+  const titulo = document.createElement("h3");
+  titulo.textContent = a.nombre;
 
-    acompanantesGuardados.splice(
-        indice,
-        1
-    );
+  const informacion = document.createElement("p");
 
-    guardarAcompanantes();
-    mostrarAcompanantes();
+  informacion.textContent =
+    `RUT: ${a.rut} | ` +
+    `Nacimiento: ${formatearFecha(a.fechaNacimiento)} | ` +
+    `$${Number(a.valorAcreditacion).toLocaleString("es-CL")}`;
+
+  datos.append(titulo, informacion);
+  resumen.append(avatar, datos);
+
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "boton-eliminar-acompanante";
+  boton.textContent = "Eliminar";
+  boton.setAttribute(
+    "aria-label",
+    `Eliminar a ${a.nombre}`
+  );
+
+  boton.addEventListener("click", () => {
+    eliminarAcompanante(a);
+  });
+
+  encabezado.append(resumen, boton);
+  tarjeta.appendChild(encabezado);
+
+  return tarjeta;
 }
-
-
-/* ==================================================
-   9. CREACIÓN DE LA TARJETA DE UN ACOMPAÑANTE
-   ================================================== */
-
-function crearTarjetaAcompanante(
-    acompanante,
-    indice
-) {
-    const tarjeta = document.createElement("article");
-
-    tarjeta.classList.add(
-        "tarjeta-acompanante"
-    );
-
-    const encabezado = document.createElement("div");
-
-    encabezado.classList.add(
-        "encabezado-acompanante"
-    );
-
-    /* Información situada a la izquierda */
-    const resumen = document.createElement("div");
-
-    resumen.classList.add(
-        "resumen-acompanante-guardado"
-    );
-
-    const avatar = document.createElement("div");
-
-    avatar.classList.add(
-        "avatar-acompanante"
-    );
-
-    avatar.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    avatar.textContent = "●";
-
-    const datos = document.createElement("div");
-
-    datos.classList.add(
-        "datos-acompanante-guardado"
-    );
-
-    const titulo = document.createElement("h3");
-
-    titulo.textContent =
-        acompanante.nombre || "Acompañante";
-
-    const informacion = document.createElement("p");
-
-    const rut = acompanante.rut || "No informado";
-
-    const nacimiento = formatearFecha(
-        acompanante.fechaNacimiento
-    );
-
-    informacion.textContent =
-        `RUT: ${rut}  |  Nacimiento: ${nacimiento}`;
-
-    datos.append(
-        titulo,
-        informacion
-    );
-
-    resumen.append(
-        avatar,
-        datos
-    );
-
-    /* Botón situado a la derecha */
-    const botonEliminar =
-        document.createElement("button");
-
-    botonEliminar.type = "button";
-
-    botonEliminar.classList.add(
-        "boton-eliminar-acompanante"
-    );
-
-    botonEliminar.setAttribute(
-        "aria-label",
-        `Eliminar a ${acompanante.nombre}`
-    );
-
-    const iconoEliminar =
-        document.createElement("span");
-
-    iconoEliminar.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    iconoEliminar.textContent = "▣";
-
-    const textoEliminar =
-        document.createElement("span");
-
-    textoEliminar.textContent = "Eliminar";
-
-    botonEliminar.append(
-        iconoEliminar,
-        textoEliminar
-    );
-
-    botonEliminar.addEventListener(
-        "click",
-        () => {
-            eliminarAcompanante(indice);
-        }
-    );
-
-    encabezado.append(
-        resumen,
-        botonEliminar
-    );
-
-    tarjeta.appendChild(encabezado);
-
-    return tarjeta;
-}
-
-
-/* ==================================================
-   10. REPRESENTACIÓN DE LA LISTA
-   ================================================== */
 
 function mostrarAcompanantes() {
-    if (!listaAcompanantes) {
-        return;
+  if (!listaAcompanantes) return;
+
+  listaAcompanantes.replaceChildren();
+  actualizarCantidad();
+
+  if (acompanantesGuardados.length === 0) {
+    const mensaje = document.createElement("p");
+    mensaje.id = "mensaje-sin-acompanantes";
+    mensaje.className = "mensaje-sin-acompanantes";
+    mensaje.textContent =
+      "Todavía no has agregado acompañantes.";
+
+    listaAcompanantes.appendChild(mensaje);
+    return;
+  }
+
+  acompanantesGuardados.forEach(a => {
+    listaAcompanantes.appendChild(
+      crearTarjetaAcompanante(a)
+    );
+  });
+}
+
+function actualizarDesdeServidor(datos) {
+  acompanantesGuardados = Array.isArray(
+    datos.acompanantes
+  ) ? datos.acompanantes : [];
+
+  guardarResumenLocal();
+  mostrarAcompanantes();
+}
+
+// ==========================================
+// CARGAR ACOMPAÑANTES DESDE D1
+// ==========================================
+
+async function cargarAcompanantes() {
+  try {
+    const datos = await solicitarAPI(
+      "/api/acompanantes"
+    );
+
+    actualizarDesdeServidor(datos);
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
+}
+
+// ==========================================
+// AGREGAR ACOMPAÑANTE
+// ==========================================
+
+async function agregarAcompanante(evento) {
+  evento.preventDefault();
+
+  if (guardando) return;
+
+  if (!formularioAcompanante.reportValidity()) {
+    return;
+  }
+
+  const tarifa = obtenerTarifa(
+    entradaFechaAcompanante.value
+  );
+
+  // Un valor de $0 es válido para niños pequeños.
+  if (!tarifa) {
+    alert("Selecciona una fecha de nacimiento válida.");
+    entradaFechaAcompanante.focus();
+    return;
+  }
+
+  const datos = Object.fromEntries(
+    new FormData(formularioAcompanante).entries()
+  );
+
+  const rut = normalizarRut(datos.rut);
+  const correo = normalizarCorreo(datos.correo);
+
+  if (acompanantesGuardados.some(a =>
+    normalizarRut(a.rut) === rut
+  )) {
+    alert("Ya registraste un acompañante con ese RUT.");
+    return;
+  }
+
+  if (correo && acompanantesGuardados.some(a =>
+    normalizarCorreo(a.correo) === correo
+  )) {
+    alert("Ya registraste un acompañante con ese correo.");
+    return;
+  }
+
+  guardando = true;
+
+  if (botonGuardar) {
+    botonGuardar.disabled = true;
+  }
+
+  try {
+    const resultado = await solicitarAPI(
+      "/api/acompanantes",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-ICEC-Solicitud": "web"
+        },
+        body: JSON.stringify(datos)
+      }
+    );
+
+    actualizarDesdeServidor(resultado);
+
+    formularioAcompanante.reset();
+    actualizarPreguntasSalud();
+    actualizarValorAcompanante();
+
+    alert("Acompañante registrado correctamente en D1.");
+
+    document.getElementById(
+      "nombre-acompanante"
+    )?.focus();
+
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+
+  } finally {
+    guardando = false;
+
+    if (botonGuardar) {
+      botonGuardar.disabled = false;
     }
+  }
+}
 
-    listaAcompanantes.innerHTML = "";
+// ==========================================
+// ELIMINAR ACOMPAÑANTE
+// ==========================================
 
-    actualizarCantidadAcompanantes();
+async function eliminarAcompanante(a) {
+  const confirmar = confirm(
+    `¿Deseas eliminar a ${a.nombre} de la inscripción?`
+  );
+
+  if (!confirmar) return;
+
+  try {
+    const resultado = await solicitarAPI(
+      `/api/acompanantes/${a.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "X-ICEC-Solicitud": "web"
+        }
+      }
+    );
+
+    actualizarDesdeServidor(resultado);
+
+    alert("Acompañante eliminado correctamente.");
+
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
+}
+
+// ==========================================
+// CONTINUAR A RESUMEN Y PAGO
+// ==========================================
+
+async function continuarPago() {
+  try {
+    // Refresca datos antes del resumen.
+    const datos = await solicitarAPI(
+      "/api/acompanantes"
+    );
+
+    actualizarDesdeServidor(datos);
 
     if (acompanantesGuardados.length === 0) {
-        const mensaje = document.createElement("p");
-
-        mensaje.id = "mensaje-sin-acompanantes";
-
-        mensaje.classList.add(
-            "mensaje-sin-acompanantes"
-        );
-
-        mensaje.textContent =
-            "Todavía no has agregado acompañantes.";
-
-        listaAcompanantes.appendChild(
-            mensaje
-        );
-
-        return;
+      alert("Debes registrar al menos un acompañante.");
+      return;
     }
 
-    acompanantesGuardados.forEach(
-        (acompanante, indice) => {
-            const tarjeta = crearTarjetaAcompanante(
-                acompanante,
-                indice
-            );
-
-            listaAcompanantes.appendChild(
-                tarjeta
-            );
-        }
+    const parametros = new URLSearchParams(
+      window.location.search
     );
+
+    const modoQA = parametros.get("qa") === "1";
+
+    window.location.href = modoQA
+      ? "pago.html?qa=1"
+      : "pago.html";
+
+  } catch (error) {
+    alert(error.message);
+  }
 }
 
+// ==========================================
+// EVENTOS E INICIALIZACIÓN
+// ==========================================
 
-/* ==================================================
-   11. REGISTRO DE UN NUEVO ACOMPAÑANTE
-   ================================================== */
+if (entradaFechaAcompanante) {
+  entradaFechaAcompanante.addEventListener(
+    "input",
+    actualizarValorAcompanante
+  );
+
+  entradaFechaAcompanante.addEventListener(
+    "change",
+    actualizarValorAcompanante
+  );
+}
 
 if (formularioAcompanante) {
-    formularioAcompanante.addEventListener(
-        "submit",
-        (evento) => {
-            evento.preventDefault();
-
-            if (!formularioAcompanante.checkValidity()) {
-                formularioAcompanante.reportValidity();
-                return;
-            }
-
-            const valorAcreditacion = Number(
-                salidaValorAcompanante
-                    ?.dataset.valor || "0"
-            );
-
-            if (valorAcreditacion === 0) {
-                alert(
-                    "Selecciona una fecha de nacimiento válida."
-                );
-
-                entradaFechaAcompanante?.focus();
-                return;
-            }
-
-            const datosFormulario = new FormData(
-                formularioAcompanante
-            );
-
-            const nuevoAcompanante =
-                Object.fromEntries(
-                    datosFormulario.entries()
-                );
-
-            nuevoAcompanante.valorAcreditacion =
-                valorAcreditacion;
-
-            /* Recupera los datos de la persona principal */
-            let personaPrincipal = null;
-
-            try {
-                personaPrincipal = JSON.parse(
-                    sessionStorage.getItem(
-                        "personaPrincipalCampamento"
-                    ) || "null"
-                );
-            } catch (error) {
-                console.error(
-                    "No fue posible recuperar a la persona principal:",
-                    error
-                );
-
-                personaPrincipal = null;
-            }
-
-            const rutNuevo = normalizarRut(
-                nuevoAcompanante.rut
-            );
-
-            const correoNuevo = normalizarCorreo(
-                nuevoAcompanante.correo
-            );
-
-            const rutPrincipal = normalizarRut(
-                personaPrincipal?.rut
-            );
-
-            const correoPrincipal = normalizarCorreo(
-                personaPrincipal?.correo
-            );
-
-            /* Evita repetir el RUT de la persona principal */
-            if (
-                rutPrincipal &&
-                rutNuevo === rutPrincipal
-            ) {
-                alert(
-                    "Este RUT ya pertenece a la persona principal."
-                );
-
-                document
-                    .getElementById("rut-acompanante")
-                    ?.focus();
-
-                return;
-            }
-
-            /* Evita repetir su correo electrónico */
-            if (
-                correoNuevo &&
-                correoNuevo === correoPrincipal
-            ) {
-                alert(
-                    "Este correo ya pertenece a la persona principal."
-                );
-
-                document
-                    .getElementById("correo-acompanante")
-                    ?.focus();
-
-                return;
-            }
-
-            /* Evita repetir el RUT de otro acompañante */
-            const rutRepetido =
-                acompanantesGuardados.some(
-                    (acompanante) =>
-                        normalizarRut(
-                            acompanante.rut
-                        ) === rutNuevo
-                );
-
-            if (rutRepetido) {
-                alert(
-                    "Ya agregaste un acompañante con este RUT."
-                );
-
-                document
-                    .getElementById("rut-acompanante")
-                    ?.focus();
-
-                return;
-            }
-
-            /* Evita repetir el correo de otro acompañante */
-            const correoRepetido =
-                correoNuevo &&
-                acompanantesGuardados.some(
-                    (acompanante) =>
-                        normalizarCorreo(
-                            acompanante.correo
-                        ) === correoNuevo
-                );
-
-            if (correoRepetido) {
-                alert(
-                    "Ya agregaste un acompañante con este correo."
-                );
-
-                document
-                    .getElementById("correo-acompanante")
-                    ?.focus();
-
-                return;
-            }
-
-            /* Guarda el nuevo acompañante */
-            acompanantesGuardados.push(
-                nuevoAcompanante
-            );
-
-            guardarAcompanantes();
-            mostrarAcompanantes();
-
-            /* Limpia el formulario */
-            formularioAcompanante.reset();
-
-            preguntasSalud.forEach((pregunta) => {
-                pregunta.dispatchEvent(
-                    new Event("change", {
-                        bubbles: true
-                    })
-                );
-            });
-
-            actualizarValorAcompanante();
-
-            /*
-             * Lleva el foco al primer campo para permitir
-             * el ingreso de otro acompañante.
-             */
-            document
-                .getElementById("nombre-acompanante")
-                ?.focus();
-        }
-    );
+  formularioAcompanante.addEventListener(
+    "submit",
+    agregarAcompanante
+  );
 }
-
-
-/* ==================================================
-   12. CONTINUAR AL RESUMEN Y PAGO
-   ================================================== */
 
 if (botonContinuar) {
-    botonContinuar.addEventListener(
-        "click",
-        () => {
-            if (acompanantesGuardados.length === 0) {
-                alert(
-                    "Debes guardar al menos un acompañante."
-                );
-
-                return;
-            }
-
-            const parametrosActuales =
-                new URLSearchParams(
-                    window.location.search
-                );
-
-            const estaEnModoQA =
-                parametrosActuales.get("qa") === "1";
-
-            window.location.href = estaEnModoQA
-                ? "pago.html?qa=1"
-                : "pago.html";
-        }
-    );
+  botonContinuar.addEventListener(
+    "click",
+    continuarPago
+  );
 }
 
-
-/* ==================================================
-   13. CARGA INICIAL
-   ================================================== */
-
+actualizarPreguntasSalud();
+actualizarValorAcompanante();
 mostrarAcompanantes();
-
-
-/* ==================================================
-   14. DATOS AUTOMÁTICOS PARA PRUEBAS LOCALES
-   ================================================== */
-
-(() => {
-    const parametrosPagina = new URLSearchParams(
-        window.location.search
-    );
-
-    const sitioLocal = [
-        "localhost",
-        "127.0.0.1",
-        "::1"
-    ].includes(window.location.hostname);
-
-    const modoQA =
-        sitioLocal &&
-        parametrosPagina.get("qa") === "1";
-
-    if (!modoQA) {
-        return;
-    }
-
-    function asignarValorPrueba(id, valor) {
-        const elemento = document.getElementById(id);
-
-        if (!elemento) {
-            console.warn(
-                `No se encontró el campo: ${id}`
-            );
-
-            return;
-        }
-
-        elemento.value = valor;
-
-        elemento.dispatchEvent(
-            new Event("input", {
-                bubbles: true
-            })
-        );
-
-        elemento.dispatchEvent(
-            new Event("change", {
-                bubbles: true
-            })
-        );
-    }
-
-    /* Datos personales */
-    asignarValorPrueba(
-        "nombre-acompanante",
-        "Acompañante de prueba QA"
-    );
-
-    asignarValorPrueba(
-        "rut-acompanante",
-        "22.222.222-2"
-    );
-
-    asignarValorPrueba(
-        "fecha-acompanante",
-        "2018-01-01"
-    );
-
-    asignarValorPrueba(
-        "telefono-acompanante",
-        "+56 9 4444 4444"
-    );
-
-    asignarValorPrueba(
-        "correo-acompanante",
-        "acompanante.qa@ejemplo.test"
-    );
-
-    /* Información de salud */
-    asignarValorPrueba(
-        "tiene-alergias-acompanante",
-        "si"
-    );
-
-    asignarValorPrueba(
-        "detalle-alergias-acompanante",
-        "Alergia de demostración: frutos secos"
-    );
-
-    asignarValorPrueba(
-        "tiene-enfermedad-acompanante",
-        "si"
-    );
-
-    asignarValorPrueba(
-        "detalle-enfermedad-acompanante",
-        "Condición médica de demostración"
-    );
-
-    asignarValorPrueba(
-        "toma-medicamentos-acompanante",
-        "si"
-    );
-
-    asignarValorPrueba(
-        "detalle-medicamentos-acompanante",
-        "Medicamento de demostración, una vez al día"
-    );
-
-    asignarValorPrueba(
-        "restriccion-alimentaria-acompanante",
-        "si"
-    );
-
-    asignarValorPrueba(
-        "detalle-alimentacion-acompanante",
-        "Sin lactosa, dato de demostración"
-    );
-
-    /* Contacto de emergencia */
-    asignarValorPrueba(
-        "nombre-emergencia-acompanante",
-        "Contacto del acompañante"
-    );
-
-    /*
-     * Este valor debe coincidir con una opción
-     * del select de parentesco.
-     */
-    asignarValorPrueba(
-        "relacion-emergencia-acompanante",
-        "madre-padre"
-    );
-
-    asignarValorPrueba(
-        "telefono-emergencia-acompanante",
-        "+56 9 5555 5555"
-    );
-
-    asignarValorPrueba(
-        "telefono-alternativo-acompanante",
-        "+56 9 6666 6666"
-    );
-
-    console.log(
-        "Modo QA del acompañante cargado correctamente"
-    );
-})();
+cargarAcompanantes();

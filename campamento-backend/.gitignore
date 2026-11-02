@@ -34,3 +34,6 @@ build/
 
 # Credenciales privadas de MySQL
 /src/main/resources/application-local.properties
+
+
+.dev.vars
