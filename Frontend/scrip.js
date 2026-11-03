@@ -442,14 +442,6 @@ const formularioAcreditacion =
         "formulario-acreditacion"
     );
 
-/*
- * REGISTRO DEL PARTICIPANTE PRINCIPAL
- * Campamento Juvenil ICEC 2027
- */
-
-const formularioAcreditacion = document.getElementById(
-    "formulario-acreditacion"
-);
 
 if (formularioAcreditacion) {
     formularioAcreditacion.addEventListener(
