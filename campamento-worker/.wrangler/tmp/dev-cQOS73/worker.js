@@ -680,6 +680,531 @@ async function manejarAcompanantes(request, env, dependencias, pathname) {
 }
 __name(manejarAcompanantes, "manejarAcompanantes");
 
+// comprobantes-api.js
+var MAX_ARCHIVO = 5 * 1024 * 1024;
+var MAX_SOLICITUD = MAX_ARCHIVO + 256 * 1024;
+function responder(datos, estado = 200) {
+  return Response.json(datos, {
+    status: estado,
+    headers: {
+      "Cache-Control": "no-store"
+    }
+  });
+}
+__name(responder, "responder");
+async function leerFormularioLimitado(request) {
+  const lector = request.body?.getReader();
+  if (!lector) {
+    throw new Error("FORMULARIO_INVALIDO");
+  }
+  const partes = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await lector.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > MAX_SOLICITUD) {
+        throw new Error("ARCHIVO_GRANDE");
+      }
+      partes.push(value);
+    }
+  } finally {
+    await lector.cancel().catch(() => {
+    });
+  }
+  const cuerpo = new Uint8Array(total);
+  let posicion = 0;
+  for (const parte of partes) {
+    cuerpo.set(parte, posicion);
+    posicion += parte.byteLength;
+  }
+  const copia = new Request(request.url, {
+    method: "POST",
+    headers: {
+      "Content-Type": request.headers.get("Content-Type")
+    },
+    body: cuerpo
+  });
+  return copia.formData();
+}
+__name(leerFormularioLimitado, "leerFormularioLimitado");
+function identificarArchivo(archivo, bytes) {
+  const nombre = archivo.name.toLowerCase();
+  const pdf = bytes[0] === 37 && bytes[1] === 80 && bytes[2] === 68 && bytes[3] === 70 && bytes[4] === 45;
+  const png = [137, 80, 78, 71, 13, 10, 26, 10].every((valor, i) => bytes[i] === valor);
+  const jpg = bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
+  if (pdf && nombre.endsWith(".pdf") && archivo.type === "application/pdf") {
+    return {
+      extension: "pdf",
+      tipo: "application/pdf"
+    };
+  }
+  if (png && nombre.endsWith(".png") && archivo.type === "image/png") {
+    return {
+      extension: "png",
+      tipo: "image/png"
+    };
+  }
+  if (jpg && /\.(jpg|jpeg)$/.test(nombre) && archivo.type === "image/jpeg") {
+    return {
+      extension: "jpg",
+      tipo: "image/jpeg"
+    };
+  }
+  return null;
+}
+__name(identificarArchivo, "identificarArchivo");
+function fechaValida(fecha) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+    return false;
+  }
+  const valor = /* @__PURE__ */ new Date(fecha + "T00:00:00Z");
+  return !Number.isNaN(valor.getTime()) && valor.toISOString().slice(0, 10) === fecha && fecha <= (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+}
+__name(fechaValida, "fechaValida");
+async function manejarComprobantes(request, env, { usuarioDeSesion: usuarioDeSesion2, ORIGENES_PERMITIDOS: ORIGENES_PERMITIDOS2 }) {
+  if (request.method !== "POST") {
+    return responder({
+      mensaje: "M\xE9todo no permitido."
+    }, 405);
+  }
+  const origen = request.headers.get("Origin");
+  if (!origen || !ORIGENES_PERMITIDOS2.includes(origen) || request.headers.get("X-ICEC-Solicitud") !== "web") {
+    return responder({
+      mensaje: "Solicitud no autorizada."
+    }, 403);
+  }
+  if (!env.DB || !env.COMPROBANTES) {
+    return responder({
+      mensaje: "El almacenamiento no est\xE1 configurado."
+    }, 503);
+  }
+  const usuario = await usuarioDeSesion2(request, env);
+  if (!usuario) {
+    return responder({
+      mensaje: "Debes iniciar sesi\xF3n."
+    }, 401);
+  }
+  if (usuario.rol !== "PARTICIPANTE" || !Number.isInteger(Number(usuario.participante_id)) || Number(usuario.participante_id) <= 0) {
+    return responder({
+      mensaje: "No tienes permiso para esta operaci\xF3n."
+    }, 403);
+  }
+  const participanteId = Number(usuario.participante_id);
+  const pago = await env.DB.prepare(
+    `SELECT id, monto_total, monto_pagado,
+            estado, comprobante_key
+     FROM pagos
+     WHERE participante_id = ?
+     LIMIT 1`
+  ).bind(participanteId).first();
+  if (!pago) {
+    return responder({
+      mensaje: "No se encontr\xF3 la inscripci\xF3n."
+    }, 404);
+  }
+  if (pago.estado !== "PENDIENTE" || pago.comprobante_key || Number(pago.monto_pagado) !== 0) {
+    return responder({
+      mensaje: "Este pago ya tiene un comprobante o est\xE1 en revisi\xF3n."
+    }, 409);
+  }
+  if (Number(pago.monto_total) <= 0) {
+    return responder({
+      mensaje: "Esta inscripci\xF3n no requiere transferencia."
+    }, 409);
+  }
+  const tipo = request.headers.get("Content-Type") || "";
+  if (!/^multipart\/form-data\s*;/i.test(tipo)) {
+    return responder({
+      mensaje: "Debes enviar un formulario con archivo."
+    }, 415);
+  }
+  const longitud = Number(
+    request.headers.get("Content-Length") || 0
+  );
+  if (longitud > MAX_SOLICITUD) {
+    return responder({
+      mensaje: "El comprobante supera el tama\xF1o permitido."
+    }, 413);
+  }
+  let formulario;
+  try {
+    formulario = await leerFormularioLimitado(request);
+  } catch (error) {
+    return responder({
+      mensaje: error.message === "ARCHIVO_GRANDE" ? "El comprobante supera el tama\xF1o permitido." : "No se pudo leer el formulario."
+    }, error.message === "ARCHIVO_GRANDE" ? 413 : 400);
+  }
+  const titular = String(
+    formulario.get("titularTransferencia") || ""
+  ).trim();
+  const fecha = String(
+    formulario.get("fechaTransferencia") || ""
+  ).trim();
+  const archivo = formulario.get("comprobante");
+  if (titular.length < 3 || titular.length > 120 || /[\x00-\x1F\x7F]/.test(titular) || !fechaValida(fecha)) {
+    return responder({
+      mensaje: "Revisa el titular y la fecha de transferencia."
+    }, 400);
+  }
+  if (!(archivo instanceof File) || archivo.size === 0 || archivo.size > MAX_ARCHIVO) {
+    return responder({
+      mensaje: "Selecciona un archivo v\xE1lido de m\xE1ximo 5 MB."
+    }, 400);
+  }
+  const contenido = await archivo.arrayBuffer();
+  const formato = identificarArchivo(
+    archivo,
+    new Uint8Array(contenido)
+  );
+  if (!formato) {
+    return responder({
+      mensaje: "Solo se permiten archivos JPG, PNG o PDF v\xE1lidos."
+    }, 400);
+  }
+  const clave = `comprobantes/participante-${participanteId}/${crypto.randomUUID()}.${formato.extension}`;
+  let archivoGuardado = false;
+  try {
+    const resultadoR2 = await env.COMPROBANTES.put(
+      clave,
+      contenido,
+      {
+        httpMetadata: {
+          contentType: formato.tipo,
+          contentDisposition: "attachment",
+          cacheControl: "private, no-store"
+        }
+      }
+    );
+    if (!resultadoR2) {
+      throw new Error("No se pudo almacenar el archivo.");
+    }
+    archivoGuardado = true;
+    const actualizacion = await env.DB.prepare(
+      `UPDATE pagos
+       SET titular_transferencia = ?,
+           fecha_transferencia = ?,
+           comprobante_key = ?,
+           estado = 'EN_REVISION'
+       WHERE id = ?
+         AND participante_id = ?
+         AND estado = 'PENDIENTE'
+         AND comprobante_key IS NULL
+         AND monto_pagado = 0`
+    ).bind(
+      titular,
+      fecha,
+      clave,
+      pago.id,
+      participanteId
+    ).run();
+    if (actualizacion.meta?.changes !== 1) {
+      await env.COMPROBANTES.delete(clave);
+      return responder({
+        mensaje: "El pago cambi\xF3 de estado. Actualiza la p\xE1gina."
+      }, 409);
+    }
+    return responder({
+      mensaje: "Comprobante recibido correctamente.",
+      estado: "EN_REVISION"
+    }, 201);
+  } catch (error) {
+    console.error(
+      "Error al guardar comprobante:",
+      error?.message
+    );
+    if (archivoGuardado) {
+      try {
+        await env.COMPROBANTES.delete(clave);
+      } catch (errorLimpieza) {
+        console.error(
+          "No fue posible limpiar el archivo:",
+          errorLimpieza?.message
+        );
+      }
+    }
+    return responder({
+      mensaje: "No se pudo guardar el comprobante."
+    }, 500);
+  }
+}
+__name(manejarComprobantes, "manejarComprobantes");
+
+// resumen-api.js
+function responder2(datos, estado = 200) {
+  return Response.json(datos, {
+    status: estado,
+    headers: {
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff"
+    }
+  });
+}
+__name(responder2, "responder");
+async function manejarResumen(request, env, { usuarioDeSesion: usuarioDeSesion2, ORIGENES_PERMITIDOS: ORIGENES_PERMITIDOS2 }) {
+  if (request.method !== "GET") {
+    return responder2({
+      mensaje: "M\xE9todo no permitido."
+    }, 405);
+  }
+  const origen = request.headers.get("Origin");
+  if (!origen || !ORIGENES_PERMITIDOS2.includes(origen)) {
+    return responder2({
+      mensaje: "Origen no autorizado."
+    }, 403);
+  }
+  if (!env.DB) {
+    return responder2({
+      mensaje: "Base de datos no disponible."
+    }, 503);
+  }
+  try {
+    const usuario = await usuarioDeSesion2(
+      request,
+      env
+    );
+    if (!usuario) {
+      return responder2({
+        mensaje: "Debes iniciar sesi\xF3n."
+      }, 401);
+    }
+    if (usuario.rol !== "PARTICIPANTE") {
+      return responder2({
+        mensaje: "No tienes permiso para consultar esta inscripci\xF3n."
+      }, 403);
+    }
+    const participanteId = Number(usuario.participante_id);
+    if (!Number.isSafeInteger(participanteId) || participanteId <= 0) {
+      return responder2({
+        mensaje: "No se encontr\xF3 una inscripci\xF3n asociada a tu cuenta."
+      }, 404);
+    }
+    const participante = await env.DB.prepare(
+      `SELECT
+         p.id,
+         p.nombre_completo,
+         p.rut,
+         p.fecha_nacimiento,
+         p.valor_acreditacion,
+         u.correo
+       FROM participantes p
+       INNER JOIN usuarios u
+         ON u.id = p.usuario_id
+       WHERE p.id = ?
+         AND u.id = ?
+         AND u.activo = 1
+       LIMIT 1`
+    ).bind(
+      participanteId,
+      Number(usuario.id)
+    ).first();
+    if (!participante) {
+      return responder2({
+        mensaje: "No se encontr\xF3 tu inscripci\xF3n."
+      }, 404);
+    }
+    const [resultadoAcompanantes, pago] = await Promise.all([
+      env.DB.prepare(
+        `SELECT
+             id,
+             nombre_completo,
+             rut,
+             correo,
+             fecha_nacimiento,
+             valor_acreditacion
+           FROM acompanantes
+           WHERE participante_id = ?
+           ORDER BY id ASC`
+      ).bind(participanteId).all(),
+      env.DB.prepare(
+        `SELECT
+             id,
+             monto_total,
+             monto_pagado,
+             estado,
+             comprobante_key
+           FROM pagos
+           WHERE participante_id = ?
+           LIMIT 1`
+      ).bind(participanteId).first()
+    ]);
+    if (!pago) {
+      return responder2({
+        mensaje: "No se encontr\xF3 el registro del pago."
+      }, 404);
+    }
+    const acompanantes = (resultadoAcompanantes.results || []).map((persona) => ({
+      id: Number(persona.id),
+      nombreCompleto: persona.nombre_completo,
+      rut: persona.rut,
+      correo: persona.correo || "",
+      fechaNacimiento: persona.fecha_nacimiento,
+      valorAcreditacion: Number(persona.valor_acreditacion)
+    }));
+    return responder2({
+      estado: "OK",
+      participante: {
+        id: Number(participante.id),
+        nombreCompleto: participante.nombre_completo,
+        rut: participante.rut,
+        correo: participante.correo,
+        fechaNacimiento: participante.fecha_nacimiento,
+        valorAcreditacion: Number(participante.valor_acreditacion)
+      },
+      acompanantes,
+      cantidadInscritos: 1 + acompanantes.length,
+      pago: {
+        id: Number(pago.id),
+        montoTotal: Number(pago.monto_total),
+        montoPagado: Number(pago.monto_pagado),
+        estado: pago.estado,
+        comprobanteRecibido: Boolean(pago.comprobante_key)
+      }
+    });
+  } catch (error) {
+    console.error(
+      "Error al consultar resumen:",
+      error?.message
+    );
+    return responder2({
+      mensaje: "No fue posible recuperar la inscripci\xF3n."
+    }, 500);
+  }
+}
+__name(manejarResumen, "manejarResumen");
+
+// admin-api.js
+function responder3(datos, estado = 200) {
+  return Response.json(datos, {
+    status: estado,
+    headers: {
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff"
+    }
+  });
+}
+__name(responder3, "responder");
+async function manejarPagosAdmin(request, env, { usuarioDeSesion: usuarioDeSesion2, ORIGENES_PERMITIDOS: ORIGENES_PERMITIDOS2 }) {
+  if (request.method !== "GET") {
+    return responder3({
+      mensaje: "M\xE9todo no permitido."
+    }, 405);
+  }
+  const origen = request.headers.get("Origin");
+  if (!origen || !ORIGENES_PERMITIDOS2.includes(origen)) {
+    return responder3({
+      mensaje: "Origen no autorizado."
+    }, 403);
+  }
+  const usuario = await usuarioDeSesion2(
+    request,
+    env
+  );
+  if (!usuario) {
+    return responder3({
+      mensaje: "Debes iniciar sesi\xF3n."
+    }, 401);
+  }
+  if (usuario.rol !== "ADMINISTRADOR") {
+    return responder3({
+      mensaje: "No tienes permisos de administrador."
+    }, 403);
+  }
+  if (!env.DB) {
+    return responder3({
+      mensaje: "Base de datos no disponible."
+    }, 503);
+  }
+  try {
+    const resultado = await env.DB.prepare(
+      `SELECT
+         pg.id AS pago_id,
+         pg.participante_id,
+         p.nombre_completo,
+         p.rut,
+         u.correo,
+         pg.monto_total,
+         pg.monto_pagado,
+         pg.estado,
+         pg.titular_transferencia,
+         pg.fecha_transferencia,
+         pg.fecha_registro,
+         CASE
+           WHEN pg.comprobante_key IS NOT NULL
+           THEN 1
+           ELSE 0
+         END AS comprobante_recibido,
+         (
+           SELECT COUNT(*)
+           FROM acompanantes a
+           WHERE a.participante_id = p.id
+         ) AS cantidad_acompanantes
+       FROM pagos pg
+       INNER JOIN participantes p
+         ON p.id = pg.participante_id
+       INNER JOIN usuarios u
+         ON u.id = p.usuario_id
+       ORDER BY
+         CASE pg.estado
+           WHEN 'EN_REVISION' THEN 0
+           WHEN 'PENDIENTE' THEN 1
+           ELSE 2
+         END,
+         pg.id DESC
+       LIMIT 250`
+    ).all();
+    const pagos = (resultado.results || []).map((fila) => ({
+      pagoId: Number(fila.pago_id),
+      participanteId: Number(fila.participante_id),
+      nombreCompleto: fila.nombre_completo,
+      rut: fila.rut,
+      correo: fila.correo,
+      cantidadAcompanantes: Number(fila.cantidad_acompanantes),
+      montoTotal: Number(fila.monto_total),
+      montoPagado: Number(fila.monto_pagado),
+      estado: fila.estado,
+      titularTransferencia: fila.titular_transferencia || "",
+      fechaTransferencia: fila.fecha_transferencia || null,
+      fechaRegistro: fila.fecha_registro,
+      comprobanteRecibido: Number(fila.comprobante_recibido) === 1
+    }));
+    const resumen = {
+      totalInscripciones: pagos.length,
+      pendientes: pagos.filter(
+        (p) => p.estado === "PENDIENTE"
+      ).length,
+      enRevision: pagos.filter(
+        (p) => p.estado === "EN_REVISION"
+      ).length,
+      aprobados: pagos.filter(
+        (p) => p.estado === "APROBADO"
+      ).length,
+      rechazados: pagos.filter(
+        (p) => p.estado === "RECHAZADO"
+      ).length
+    };
+    return responder3({
+      estado: "OK",
+      administrador: {
+        id: Number(usuario.id),
+        correo: usuario.correo
+      },
+      resumen,
+      pagos
+    });
+  } catch (error) {
+    console.error(
+      "Error en consulta administrativa:",
+      error?.message
+    );
+    return responder3({
+      mensaje: "No fue posible consultar las inscripciones."
+    }, 500);
+  }
+}
+__name(manejarPagosAdmin, "manejarPagosAdmin");
+
 // worker.js
 var FECHA_CAMPAMENTO = "2027-01-08";
 var DURACION_SESION_SEGUNDOS = 8 * 60 * 60;
@@ -693,7 +1218,7 @@ var ORIGENES_PERMITIDOS = [
   "http://localhost:5501",
   "http://127.0.0.1:5501"
 ];
-function responder(datos, estado = 200) {
+function responder4(datos, estado = 200) {
   return Response.json(datos, {
     status: estado,
     headers: {
@@ -701,9 +1226,9 @@ function responder(datos, estado = 200) {
     }
   });
 }
-__name(responder, "responder");
+__name(responder4, "responder");
 function respuestaConCookie(datos, estado, cookie) {
-  const respuesta2 = responder(datos, estado);
+  const respuesta2 = responder4(datos, estado);
   respuesta2.headers.set("Set-Cookie", cookie);
   return respuesta2;
 }
@@ -1161,7 +1686,7 @@ __name(verificarTurnstile, "verificarTurnstile");
 async function registrarParticipante(datos, env) {
   const error = validarDatos2(datos);
   if (error) {
-    return responder({
+    return responder4({
       mensaje: error
     }, 400);
   }
@@ -1187,7 +1712,7 @@ async function registrarParticipante(datos, env) {
     rut
   ).first();
   if (duplicado.correos > 0 || duplicado.participantes > 0 || duplicado.acompanantes > 0) {
-    return responder({
+    return responder4({
       mensaje: "El correo o RUT ya est\xE1 registrado."
     }, 409);
   }
@@ -1334,7 +1859,7 @@ async function registrarParticipante(datos, env) {
         correo
       )
     ]);
-    return responder({
+    return responder4({
       mensaje: "Inscripci\xF3n registrada correctamente.",
       estado: "REGISTRADA",
       montoTotal: monto,
@@ -1352,11 +1877,11 @@ async function registrarParticipante(datos, env) {
     if (mensaje.includes("UNIQUE constraint") || mensaje.includes(
       "SQLITE_CONSTRAINT_UNIQUE"
     )) {
-      return responder({
+      return responder4({
         mensaje: "El correo o RUT ya est\xE1 registrado."
       }, 409);
     }
-    return responder({
+    return responder4({
       mensaje: "No se pudo completar la inscripci\xF3n."
     }, 500);
   }
@@ -1458,7 +1983,7 @@ async function limitarIntentosLogin(request, env) {
     "CF-Connecting-IP"
   );
   if (!ip) {
-    return responder({
+    return responder4({
       mensaje: "No se pudo validar el origen de la solicitud."
     }, 403);
   }
@@ -1502,7 +2027,7 @@ async function limitarIntentosLogin(request, env) {
       1,
       Number(fila.vence) - ahora
     );
-    const respuesta2 = responder({
+    const respuesta2 = responder4({
       mensaje: "Demasiados intentos de acceso. Intenta nuevamente m\xE1s tarde."
     }, 429);
     respuesta2.headers.set(
@@ -1516,19 +2041,19 @@ async function limitarIntentosLogin(request, env) {
 __name(limitarIntentosLogin, "limitarIntentosLogin");
 async function iniciarSesion(request, env) {
   if (!validarOrigenPrivado(request)) {
-    return responder({
+    return responder4({
       mensaje: "Origen no autorizado."
     }, 403);
   }
   if (request.headers.get(
     "X-ICEC-Solicitud"
   ) !== "web") {
-    return responder({
+    return responder4({
       mensaje: "Solicitud no autorizada."
     }, 403);
   }
   if (!env.LOGIN_SESSION_SECRET) {
-    return responder({
+    return responder4({
       mensaje: "El inicio de sesi\xF3n no est\xE1 configurado."
     }, 503);
   }
@@ -1543,7 +2068,7 @@ async function iniciarSesion(request, env) {
   try {
     datos = await leerJSON(request);
   } catch {
-    return responder({
+    return responder4({
       mensaje: "Solicitud de inicio de sesi\xF3n no v\xE1lida."
     }, 400);
   }
@@ -1553,14 +2078,14 @@ async function iniciarSesion(request, env) {
     env
   );
   if (!verificacion.correcto) {
-    return responder({
+    return responder4({
       mensaje: verificacion.mensaje
     }, verificacion.estado);
   }
   const correo = limpiar(datos.correo).toLowerCase();
   const contrasena = datos.contrasena;
   if (correo.length > 150 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) || typeof contrasena !== "string" || contrasena.length > 128) {
-    return responder({
+    return responder4({
       mensaje: "Correo o contrase\xF1a incorrectos."
     }, 401);
   }
@@ -1581,7 +2106,7 @@ async function iniciarSesion(request, env) {
     usuario?.contrasena_hash || ""
   );
   if (!usuario || Number(usuario.activo) !== 1 || !contrasenaCorrecta) {
-    return responder({
+    return responder4({
       mensaje: "Correo o contrase\xF1a incorrectos."
     }, 401);
   }
@@ -1601,7 +2126,7 @@ async function iniciarSesion(request, env) {
 __name(iniciarSesion, "iniciarSesion");
 async function consultarSesion(request, env) {
   if (!validarOrigenPrivado(request)) {
-    return responder({
+    return responder4({
       mensaje: "Origen no autorizado."
     }, 403);
   }
@@ -1610,12 +2135,12 @@ async function consultarSesion(request, env) {
     env
   );
   if (!usuario) {
-    return responder({
+    return responder4({
       autenticado: false,
       mensaje: "No has iniciado sesi\xF3n."
     }, 401);
   }
-  return responder({
+  return responder4({
     autenticado: true,
     usuario: {
       id: usuario.id,
@@ -1629,14 +2154,14 @@ async function consultarSesion(request, env) {
 __name(consultarSesion, "consultarSesion");
 function cerrarSesion(request) {
   if (!validarOrigenPrivado(request)) {
-    return responder({
+    return responder4({
       mensaje: "Origen no autorizado."
     }, 403);
   }
   if (request.headers.get(
     "X-ICEC-Solicitud"
   ) !== "web") {
-    return responder({
+    return responder4({
       mensaje: "Solicitud no autorizada."
     }, 403);
   }
@@ -1651,6 +2176,36 @@ function cerrarSesion(request) {
 __name(cerrarSesion, "cerrarSesion");
 async function manejarSolicitud(request, env) {
   const url = new URL(request.url);
+  if (url.pathname === "/api/admin/pagos") {
+    return manejarPagosAdmin(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      }
+    );
+  }
+  if (url.pathname === "/api/resumen") {
+    return manejarResumen(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      }
+    );
+  }
+  if (url.pathname === "/api/comprobantes") {
+    return manejarComprobantes(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      }
+    );
+  }
   if (url.pathname === "/api/acompanantes" || /^\/api\/acompanantes\/[1-9]\d*$/.test(url.pathname)) {
     return manejarAcompanantes(
       request,
@@ -1664,7 +2219,7 @@ async function manejarSolicitud(request, env) {
   }
   if (url.pathname === "/api/estado") {
     if (request.method !== "GET") {
-      return responder({
+      return responder4({
         mensaje: "M\xE9todo no permitido."
       }, 405);
     }
@@ -1675,7 +2230,7 @@ async function manejarSolicitud(request, env) {
          WHERE type = 'table'
            AND name NOT LIKE 'sqlite_%'`
       ).first();
-      return responder({
+      return responder4({
         estado: "OK",
         baseDatos: "Conectada",
         tablas: resultado.total
@@ -1685,7 +2240,7 @@ async function manejarSolicitud(request, env) {
         "Error de conexi\xF3n D1:",
         error?.message
       );
-      return responder({
+      return responder4({
         estado: "ERROR",
         baseDatos: "No disponible"
       }, 500);
@@ -1693,13 +2248,13 @@ async function manejarSolicitud(request, env) {
   }
   if (url.pathname === "/api/registro") {
     if (request.method !== "POST") {
-      return responder({
+      return responder4({
         mensaje: "M\xE9todo no permitido."
       }, 405);
     }
     const tipo = request.headers.get("content-type");
     if (!tipo?.toLowerCase().startsWith("application/json")) {
-      return responder({
+      return responder4({
         mensaje: "Se requiere JSON."
       }, 415);
     }
@@ -1709,7 +2264,7 @@ async function manejarSolicitud(request, env) {
       ) || 0
     );
     if (tamano > 16384) {
-      return responder({
+      return responder4({
         mensaje: "Solicitud demasiado grande."
       }, 413);
     }
@@ -1717,18 +2272,18 @@ async function manejarSolicitud(request, env) {
     try {
       const cuerpo = await request.text();
       if (new TextEncoder().encode(cuerpo).length > 16384) {
-        return responder({
+        return responder4({
           mensaje: "Solicitud demasiado grande."
         }, 413);
       }
       datos = JSON.parse(cuerpo);
     } catch {
-      return responder({
+      return responder4({
         mensaje: "JSON no v\xE1lido."
       }, 400);
     }
     if (!datos || typeof datos !== "object" || Array.isArray(datos)) {
-      return responder({
+      return responder4({
         mensaje: "Los datos enviados no son v\xE1lidos."
       }, 400);
     }
@@ -1744,7 +2299,7 @@ async function manejarSolicitud(request, env) {
         env
       );
       if (!verificacion.correcto) {
-        return responder({
+        return responder4({
           mensaje: verificacion.mensaje
         }, verificacion.estado);
       }
@@ -1759,14 +2314,14 @@ async function manejarSolicitud(request, env) {
         "Fallo inesperado en el registro:",
         error?.message
       );
-      return responder({
+      return responder4({
         mensaje: "Error interno del registro."
       }, 500);
     }
   }
   if (url.pathname === "/api/login") {
     if (request.method !== "POST") {
-      return responder({
+      return responder4({
         mensaje: "M\xE9todo no permitido."
       }, 405);
     }
@@ -1774,7 +2329,7 @@ async function manejarSolicitud(request, env) {
   }
   if (url.pathname === "/api/sesion") {
     if (request.method !== "GET") {
-      return responder({
+      return responder4({
         mensaje: "M\xE9todo no permitido."
       }, 405);
     }
@@ -1782,13 +2337,13 @@ async function manejarSolicitud(request, env) {
   }
   if (url.pathname === "/api/logout") {
     if (request.method !== "POST") {
-      return responder({
+      return responder4({
         mensaje: "M\xE9todo no permitido."
       }, 405);
     }
     return cerrarSesion(request);
   }
-  return responder({
+  return responder4({
     mensaje: "Ruta no encontrada."
   }, 404);
 }
@@ -1822,7 +2377,7 @@ var worker_default = {
         error?.message
       );
       return aplicarCORS(
-        responder({
+        responder4({
           mensaje: "Error interno del servidor."
         }, 500),
         request
@@ -1878,7 +2433,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-kirbnX/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-cz26w9/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1910,7 +2465,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-kirbnX/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-cz26w9/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

@@ -27,7 +27,7 @@ function obtenerDatosGuardados(
 
 
 /* Persona inscrita mediante acreditacion.html */
-const personaPrincipal = obtenerDatosGuardados(
+let personaPrincipal = obtenerDatosGuardados(
     "personaPrincipalCampamento",
     null
 );
@@ -334,7 +334,7 @@ const valorAcompanantes = acompanantes.reduce(
     0
 );
 
-const totalInscripcion =
+let totalInscripcion =
     valorPersonaPrincipal +
     valorAcompanantes;
 
@@ -612,6 +612,14 @@ if (entradaComprobante) {
    12. ENVÍO DEL COMPROBANTE
    ================================================== */
 
+
+/* ==================================================
+   12. ENVÍO REAL DEL COMPROBANTE A CLOUDFLARE R2
+   ================================================== */
+
+// Dirección de pruebas. No publicar así en producción.
+const API_PAGOS = "http://127.0.0.1:8787";
+
 if (
     formularioComprobante &&
     entradaComprobante &&
@@ -620,19 +628,15 @@ if (
 ) {
     formularioComprobante.addEventListener(
         "submit",
-        (evento) => {
+        async (evento) => {
             evento.preventDefault();
 
             if (!personaPrincipal) {
-                alert(
-                    "No se encontraron los datos de la inscripción."
-                );
-
+                alert("No se encontraron los datos de la inscripción.");
                 return;
             }
 
-            if (!formularioComprobante.checkValidity()) {
-                formularioComprobante.reportValidity();
+            if (!formularioComprobante.reportValidity()) {
                 return;
             }
 
@@ -652,93 +656,356 @@ if (
                 return;
             }
 
-            entradaFechaTransferencia.setCustomValidity(
-                ""
-            );
+            entradaFechaTransferencia.setCustomValidity("");
 
-            const archivo =
-                entradaComprobante.files[0];
+            const archivo = entradaComprobante.files[0];
 
-            /*
-             * En esta etapa solo se guarda la información
-             * del archivo. La carga real corresponde al backend.
-             */
-            const datosComprobante = {
-                titularTransferencia:
-                    entradaTitularTransferencia
-                        .value
-                        .trim(),
+            const botonEnviar =
+                formularioComprobante.querySelector(
+                    'button[type="submit"]'
+                );
 
-                fechaTransferencia:
-                    entradaFechaTransferencia.value,
-
-                nombreArchivo:
-                    archivo.name,
-
-                tipoArchivo:
-                    archivo.type,
-
-                tamanioArchivo:
-                    archivo.size,
-
-                totalEsperado:
-                    totalInscripcion,
-
-                estado:
-                    "pendiente_revision"
-            };
-
-            sessionStorage.setItem(
-                "pagoCampamento",
-                JSON.stringify(
-                    datosComprobante
-                )
-            );
-
-           /* Muestra el estado pendiente en la página de pago */
-            if (estadoPago) {
-                estadoPago.hidden = false;
-
-                estadoPago.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
+            if (botonEnviar) {
+                botonEnviar.disabled = true;
+                botonEnviar.setAttribute("aria-busy", "true");
             }
 
-            /* Informa que el comprobante fue registrado */
-            if (mensajeEstadoPago) {
-                mensajeEstadoPago.textContent =
-                "Comprobante recibido. " +
-                "El pago está pendiente de revisión.";
+            let envioExitoso = false;
+
+            try {
+                // Comprobar la sesión real antes de enviar.
+                const respuestaSesion = await fetch(
+                    `${API_PAGOS}/api/sesion`,
+                    {
+                        method: "GET",
+                        credentials: "include",
+                        cache: "no-store"
+                    }
+                );
+
+                const sesion = await respuestaSesion
+                    .json()
+                    .catch(() => null);
+
+                if (
+                    !respuestaSesion.ok ||
+                    sesion?.autenticado !== true
+                ) {
+                    throw new Error(
+                        "Debes iniciar sesión antes de enviar el comprobante."
+                    );
+                }
+
+                // Evitar enviar el comprobante desde
+                // una sesión perteneciente a otro usuario.
+                const correoInscripcion = String(
+                    personaPrincipal.correo || ""
+                ).trim().toLowerCase();
+
+                const correoSesion = String(
+                    sesion.usuario?.correo || ""
+                ).trim().toLowerCase();
+
+                if (
+                    !correoInscripcion ||
+                    correoInscripcion !== correoSesion
+                ) {
+                    throw new Error(
+                        "La sesión iniciada no corresponde a esta inscripción. " +
+                        "Inicia sesión con la cuenta correcta."
+                    );
+                }
+
+                // Crear el formulario que recibirá el Worker.
+                const datosEnvio = new FormData();
+
+                datosEnvio.append(
+                    "titularTransferencia",
+                    entradaTitularTransferencia.value.trim()
+                );
+
+                datosEnvio.append(
+                    "fechaTransferencia",
+                    entradaFechaTransferencia.value
+                );
+
+                datosEnvio.append(
+                    "comprobante",
+                    archivo,
+                    archivo.name
+                );
+
+                // Enviar el archivo al backend.
+                const respuesta = await fetch(
+                    `${API_PAGOS}/api/comprobantes`,
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "X-ICEC-Solicitud": "web"
+                        },
+                        body: datosEnvio
+                    }
+                );
+
+                const resultado = await respuesta
+                    .json()
+                    .catch(() => null);
+
+                if (
+                    !respuesta.ok ||
+                    resultado?.estado !== "EN_REVISION"
+                ) {
+                    throw new Error(
+                        resultado?.mensaje ||
+                        "No fue posible guardar el comprobante."
+                    );
+                }
+
+                // Guardar un resumen local únicamente
+                // después de la confirmación del backend.
+                sessionStorage.setItem(
+                    "pagoCampamento",
+                    JSON.stringify({
+                        titularTransferencia:
+                            entradaTitularTransferencia.value.trim(),
+                        fechaTransferencia:
+                            entradaFechaTransferencia.value,
+                        nombreArchivo: archivo.name,
+                        estado: "pendiente_revision"
+                    })
+                );
+
+                envioExitoso = true;
+
+                if (estadoPago) {
+                    estadoPago.hidden = false;
+                    estadoPago.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                }
+
+                if (mensajeEstadoPago) {
+                    mensajeEstadoPago.textContent =
+                        "Comprobante guardado correctamente. " +
+                        "Tu pago está pendiente de revisión.";
+                }
+
+                alert(
+                    "¡Comprobante recibido correctamente! " +
+                    "Tu pago quedó pendiente de revisión."
+                );
+
+                // Por ahora permanecemos en pago.html.
+                // La redirección se activará cuando
+                // informacion.html valide la sesión
+                // y el estado real de acreditación.
+
+            } catch (error) {
+                console.error(
+                    "Error al enviar comprobante:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "No se pudo enviar el comprobante."
+                );
+
+            } finally {
+                if (botonEnviar) {
+                    botonEnviar.removeAttribute("aria-busy");
+
+                    if (!envioExitoso) {
+                        botonEnviar.disabled = false;
+                    }
+                }
             }
-
-            /*
-            * Después de registrar el comprobante,
-            * abre la información privada del campamento.
-            */
-            setTimeout(() => {
-                window.location.href = "informacion.html";
-            }, 1200);
-
-            /*if (mensajeEstadoPago) {
-                mensajeEstadoPago.textContent =
-                    "Comprobante recibido. " +
-                    "El pago está pendiente de revisión.";*/
-            
         }
     );
 }
+
 
 
 /* ==================================================
    13. CARGA INICIAL
    ================================================== */
 
-mostrarPersonaPrincipal();
-mostrarAcompanantes();
-mostrarTotal();
-configurarEnlaceVolver();
-mostrarNombreArchivo();
+
+/* ==================================================
+   13. CARGA DEL RESUMEN DESDE CLOUDFLARE D1
+   ================================================== */
+
+async function cargarResumenDesdeD1() {
+
+    // Ocultar el formulario mientras se
+    // recuperan los datos del servidor.
+    if (formularioComprobante) {
+        formularioComprobante.hidden = true;
+    }
+
+    try {
+        const respuesta = await fetch(
+            "http://127.0.0.1:8787/api/resumen",
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+        const datos = await respuesta
+            .json()
+            .catch(() => null);
+
+        if (!respuesta.ok) {
+            throw new Error(
+                datos?.mensaje ||
+                "No se pudo recuperar la inscripción."
+            );
+        }
+
+        if (
+            datos?.estado !== "OK" ||
+            !datos.participante ||
+            !Array.isArray(datos.acompanantes) ||
+            !datos.pago
+        ) {
+            throw new Error(
+                "El servidor entregó un resumen incompleto."
+            );
+        }
+
+        // Recuperar los datos del participante
+        // que realmente inició sesión.
+        personaPrincipal = datos.participante;
+
+        // Actualizar la lista de acompañantes
+        // con los registros de D1.
+        acompanantes.splice(
+            0,
+            acompanantes.length,
+            ...datos.acompanantes
+        );
+
+        // Utilizar el total calculado en D1,
+        // nunca uno almacenado en el navegador.
+        const montoServidor =
+            Number(datos.pago.montoTotal);
+
+        if (
+            !Number.isSafeInteger(montoServidor) ||
+            montoServidor < 0
+        ) {
+            throw new Error(
+                "El monto de la inscripción no es válido."
+            );
+        }
+
+        totalInscripcion = montoServidor;
+
+        // Actualizar los elementos de la página.
+        mostrarPersonaPrincipal();
+        mostrarAcompanantes();
+        mostrarTotal();
+        configurarEnlaceVolver();
+        mostrarNombreArchivo();
+
+        // Mientras no exista edición del perfil,
+        // evitar que este enlace lleve a crear
+        // una segunda inscripción.
+        if (enlaceVolver) {
+            enlaceVolver.href = "acompanantes.html";
+            enlaceVolver.textContent =
+                "← Volver a acompañantes";
+        }
+
+        // Solo permitir enviar comprobantes
+        // cuando el pago siga pendiente.
+        const puedeEnviarComprobante =
+            datos.pago.estado === "PENDIENTE" &&
+            datos.pago.comprobanteRecibido === false &&
+            Number(datos.pago.montoPagado) === 0 &&
+            totalInscripcion > 0;
+
+        if (formularioComprobante) {
+            formularioComprobante.hidden =
+                !puedeEnviarComprobante;
+        }
+
+        if (
+            !puedeEnviarComprobante &&
+            mensajeEstadoPago
+        ) {
+            if (datos.pago.comprobanteRecibido) {
+                mensajeEstadoPago.textContent =
+                    "Ya recibimos tu comprobante. " +
+                    "Tu pago está pendiente de revisión.";
+            } else if (
+                datos.pago.estado === "APROBADO"
+            ) {
+                mensajeEstadoPago.textContent =
+                    "Tu pago está aprobado.";
+            } else if (totalInscripcion === 0) {
+                mensajeEstadoPago.textContent =
+                    "Esta inscripción no requiere transferencia.";
+            } else {
+                mensajeEstadoPago.textContent =
+                    "No es posible enviar un comprobante " +
+                    "con el estado actual del pago.";
+            }
+
+            if (estadoPago) {
+                estadoPago.hidden = false;
+            }
+        }
+
+        console.log(
+            "Resumen recuperado desde D1:",
+            {
+                participante:
+                    personaPrincipal.nombreCompleto,
+                acompanantes: acompanantes.length,
+                total: totalInscripcion,
+                estadoPago: datos.pago.estado
+            }
+        );
+
+    } catch (error) {
+        console.error(
+            "Error al recuperar inscripción:",
+            error
+        );
+
+        if (resumenPersonaPrincipal) {
+            const mensaje = document.createElement("p");
+            mensaje.className = "mensaje-sin-datos-pago";
+            mensaje.textContent = error.message;
+
+            resumenPersonaPrincipal.replaceChildren(
+                mensaje
+            );
+        }
+
+        if (salidaTotal) {
+            salidaTotal.textContent = "No disponible";
+        }
+
+        if (totalTransferenciaBancaria) {
+            totalTransferenciaBancaria.textContent =
+                "No disponible";
+        }
+
+        if (formularioComprobante) {
+            formularioComprobante.hidden = true;
+        }
+    }
+}
+
+// Consultar automáticamente cuando abre pago.html.
+cargarResumenDesdeD1();
+
 
 
 /* ==================================================

@@ -14,6 +14,9 @@
 // CONFIGURACIÓN
 // ==========================================
 import { manejarAcompanantes } from "./acompanantes-api.js";
+import { manejarComprobantes } from "./comprobantes-api.js";
+import { manejarResumen } from "./resumen-api.js";
+import { manejarPagosAdmin } from "./admin-api.js";
 
 const FECHA_CAMPAMENTO = "2027-01-08";
 
@@ -1429,6 +1432,49 @@ function cerrarSesion(request) {
 
 async function manejarSolicitud(request, env) {
   const url = new URL(request.url);
+    // ==========================================
+  // ADMINISTRACIÓN DE PAGOS
+  // ==========================================
+
+  if (url.pathname === "/api/admin/pagos") {
+    return manejarPagosAdmin(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      }
+    );
+  }
+  // ==========================================
+  // RESUMEN PRIVADO DE INSCRIPCIÓN
+  // ==========================================
+
+  if (url.pathname === "/api/resumen") {
+    return manejarResumen(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      }
+    );
+  }
+
+    // ==========================================
+  // COMPROBANTES DE TRANSFERENCIA
+  // ==========================================
+
+  if (url.pathname === "/api/comprobantes") {
+    return manejarComprobantes(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      }
+    );
+  }
 
   if (
   url.pathname === "/api/acompanantes" ||
