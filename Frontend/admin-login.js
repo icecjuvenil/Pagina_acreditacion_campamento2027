@@ -8,7 +8,7 @@
  * solamente será necesario cambiar esta constante.
  */
 
-const URL_LOGIN_ADMIN = "/api/admin/login";
+const URL_LOGIN_ADMIN = "http://127.0.0.1:8787/api/login";
 
 /* ==================================================
    ELEMENTOS DE LA PÁGINA
@@ -166,10 +166,23 @@ async function iniciarSesionAdministrador(evento) {
         return;
     }
 
-    const datosAcceso = {
-        correo: correoAdmin.value.trim(),
-        contrasena: contrasenaAdmin.value
-    };
+    // Obtener el token de Cloudflare Turnstile
+const tokenTurnstile =
+    window.turnstile?.getResponse();
+
+if (!tokenTurnstile) {
+    mostrarMensajeAdmin(
+        "Completa la verificación de seguridad."
+    );
+    return;
+}
+
+// Datos enviados al backend
+const datosAcceso = {
+    correo: correoAdmin.value.trim(),
+    contrasena: contrasenaAdmin.value,
+    turnstileToken: tokenTurnstile
+};
 
     cambiarEstadoBotonAdmin(true);
 
@@ -180,7 +193,8 @@ async function iniciarSesionAdministrador(evento) {
 
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/json"
+                "Accept": "application/json",
+                "X-ICEC-Solicitud": "web"
             },
 
             /*
@@ -209,11 +223,35 @@ async function iniciarSesionAdministrador(evento) {
             throw new Error(mensaje);
         }
 
-        /*
-         * No guardamos contraseñas ni tokens en localStorage.
-         * La sesión debe ser administrada por el backend.
-         */
-        window.location.href = "admin.html";
+       
+if (resultado.rol !== "ADMINISTRADOR") {
+
+    // Cerrar la sesión si corresponde a un participante
+    try {
+        await fetch(
+            "http://127.0.0.1:8787/api/logout",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "X-ICEC-Solicitud": "web"
+                }
+            }
+        );
+    } catch (error) {
+        console.error(
+            "No fue posible cerrar la sesión:",
+            error
+        );
+    }
+
+    throw new Error(
+        "Acceso denegado. Esta sección es exclusiva para administradores."
+    );
+}
+
+// Acceso permitido
+window.location.href = "admin.html";
 
     } catch (error) {
 

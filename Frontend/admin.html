@@ -1,0 +1,1009 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Panel de administración | ICEC Juvenil 2027</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="pagina-admin">
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado">
+
+        <a href="index.html" class="marca">
+            <img
+                src="Logos/logo-elegidos.png"
+                alt="Logo Elegidos ICEC Juvenil">
+
+            <span>ICEC Juvenil</span>
+        </a>
+
+        <nav class="menu-principal admin-menu"
+             aria-label="Navegación administrativa">
+
+            <a href="index.html">Inicio</a>
+
+            <a href="admin.html" aria-current="page">
+                Administración
+            </a>
+        </nav>
+    </header>
+
+    <!-- BANNER -->
+    <section class="admin-portada"
+             aria-labelledby="titulo-panel">
+
+        <img src="Logos/imagen.png" alt="">
+
+        <div class="admin-portada-contenido">
+            <span class="admin-etiqueta-privada">
+                Área privada · ICEC Juvenil
+            </span>
+
+            <h1 id="titulo-panel">
+                Panel de administración
+            </h1>
+
+            <p>
+                Campamento Juvenil 2027
+                · Gestión de inscripciones y pagos
+            </p>
+       
+        </div>
+
+        <!-- Terminación ondulada del banner -->
+        <svg
+            class="admin-portada-onda"
+            viewBox="0 0 1440 48"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false">
+
+            <path d="
+                M 0 26
+                C 80 5, 125 14, 200 25
+                S 340 11, 430 24
+                S 580 12, 680 26
+                S 820 5, 920 24
+                S 1080 12, 1160 24
+                S 1340 8, 1440 25
+                L 1440 48
+                L 0 48
+                Z
+            "></path>
+
+        </svg>
+
+    </section>
+
+    <main class="admin-contenido">
+
+
+        <!-- PRESENTACIÓN -->
+        <section class="admin-cabecera">
+
+            <div>
+                <p class="admin-subtitulo">
+                    Gestión del campamento
+                </p>
+
+                <h2>Resumen general</h2>
+
+                <p>
+                    Consulta las inscripciones registradas
+                    y el estado de sus pagos.
+                </p>
+            </div>
+
+            <span id="admin-identidad"
+                  class="admin-identidad"
+                  hidden>
+            </span>
+        </section>
+
+        <!-- MENSAJES -->
+        <p id="admin-mensaje"
+           class="admin-mensaje"
+           role="status"
+           aria-live="polite">
+            Verificando sesión y cargando información...
+        </p>
+
+        <!-- DATOS PROTEGIDOS -->
+        <div id="admin-datos" hidden>
+
+            <!-- INDICADORES -->
+            <section class="admin-indicadores"
+                     aria-label="Resumen de pagos">
+
+                <article class="admin-indicador">
+                    <span>Inscripciones</span>
+                    <strong id="admin-total">0</strong>
+                    <small>Total registrado</small>
+                </article>
+
+                <article class="admin-indicador admin-indicador--pendiente">
+                    <span>Pendientes</span>
+                    <strong id="admin-pendientes">0</strong>
+                    <small>Sin comprobante aprobado</small>
+                </article>
+
+                <article class="admin-indicador admin-indicador--revision">
+                    <span>En revisión</span>
+                    <strong id="admin-revision">0</strong>
+                    <small>Por verificar</small>
+                </article>
+
+                <article class="admin-indicador admin-indicador--aprobado">
+                    <span>Aprobados</span>
+                    <strong id="admin-aprobados">0</strong>
+                    <small>Pagos validados</small>
+                </article>
+
+                <article class="admin-indicador admin-indicador--rechazado">
+                    <span>Rechazados</span>
+                    <strong id="admin-rechazados">0</strong>
+                    <small>Pagos rechazados</small>
+                </article>
+
+            </section>
+
+            <!-- LISTADO DE INSCRIPCIONES -->
+            <section class="admin-panel"
+                     aria-labelledby="titulo-inscripciones">
+
+                <div class="admin-panel-cabecera">
+
+                    <div>
+                        <h2 id="titulo-inscripciones">
+                            Inscripciones registradas
+                        </h2>
+
+                        <p>
+                            Información recuperada desde
+                            Cloudflare D1.
+                        </p>
+                    </div>
+
+                    <div class="admin-acciones">
+
+                        <button
+                            id="admin-actualizar"
+                            type="button"
+                            class="admin-boton admin-boton--principal">
+                            Actualizar
+                        </button>
+
+                        <!-- Funcionalidad pendiente -->
+                        
+                    <button
+                        id="admin-cerrar-sesion"
+                        type="button"
+                        class="admin-boton admin-boton--salir">
+                        Cerrar sesión
+                    </button>
+
+
+                    </div>
+                </div>
+
+                <!-- TABLA -->
+                <div class="admin-tabla-contenedor">
+
+                    <table class="admin-tabla">
+
+                        <thead>
+                            <tr>
+                                <th scope="col">Participante</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Acompañantes</th>
+                                <th scope="col">Monto total</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Comprobante</th>
+                                <th scope="col">Acciones</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody id="admin-tabla-cuerpo">
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <p id="admin-sin-datos"
+                   class="admin-sin-datos"
+                   hidden>
+                    Todavía no existen inscripciones registradas.
+                </p>
+
+                <div class="admin-panel-pie">
+                    <span>
+                        Campamento Juvenil ICEC 2027
+                    </span>
+
+                    <span>
+                        Acceso exclusivo para administradores
+                    </span>
+                </div>
+
+            </section>
+
+        </div>
+
+<!-- ==========================================
+     DETALLE DE INSCRIPCIÓN
+     ========================================== -->
+
+<section
+    id="admin-detalle"
+    class="admin-panel admin-detalle"
+    aria-labelledby="admin-detalle-titulo"
+    hidden>
+
+    <div class="admin-panel-cabecera">
+
+        <div>
+            <h2 id="admin-detalle-titulo">
+                Detalle de inscripción
+            </h2>
+
+            <p>
+                Información del participante,
+                acompañantes y pago.
+            </p>
+        </div>
+
+        <button
+            id="admin-cerrar-detalle"
+            type="button"
+            class="admin-boton admin-boton--salir">
+            Cerrar detalles
+        </button>
+
+    </div>
+
+    <div id="admin-detalle-contenido"
+         class="admin-detalle-contenido">
+
+        <!--
+          Aquí mostraremos los datos obtenidos
+          desde /api/admin/inscripciones/:id
+        -->
+
+    </div>
+
+    <p
+        id="admin-detalle-mensaje"
+        class="admin-mensaje"
+        role="status"
+        aria-live="polite"
+        hidden>
+    </p>
+
+</section>
+
+    </main>
+
+    <!-- LÓGICA DEL PANEL -->
+    <script>
+
+        const API_ADMIN =
+            "http://127.0.0.1:8787/api/admin/pagos";
+
+        const mensaje = document.getElementById(
+            "admin-mensaje"
+        );
+
+        const datosPanel = document.getElementById(
+            "admin-datos"
+        );
+
+        const tabla = document.getElementById(
+            "admin-tabla-cuerpo"
+        );
+
+        const botonActualizar = document.getElementById(
+            "admin-actualizar"
+        );
+
+        const identidad = document.getElementById(
+            "admin-identidad"
+        );
+
+        const formatoPesos = new Intl.NumberFormat(
+            "es-CL",
+            {
+                style: "currency",
+                currency: "CLP",
+                maximumFractionDigits: 0
+            }
+        );
+
+        // Mostrar mensajes
+        function mostrarMensaje(texto, error = false) {
+
+            mensaje.textContent = texto;
+
+            mensaje.classList.toggle(
+                "admin-mensaje--error",
+                error
+            );
+
+            mensaje.hidden = false;
+        }
+
+        // Agregar celdas de forma segura
+        function agregarCelda(fila, valor) {
+
+            const celda = document.createElement("td");
+
+            celda.textContent = String(valor ?? "");
+
+            fila.appendChild(celda);
+
+            return celda;
+        }
+
+        // Estados de pago
+        function obtenerEstado(estado) {
+
+            const estados = {
+
+                PENDIENTE: [
+                    "Pendiente",
+                    "admin-estado--pendiente"
+                ],
+
+                EN_REVISION: [
+                    "En revisión",
+                    "admin-estado--revision"
+                ],
+
+                APROBADO: [
+                    "Aprobado",
+                    "admin-estado--aprobado"
+                ],
+
+                RECHAZADO: [
+                    "Rechazado",
+                    "admin-estado--rechazado"
+                ]
+            };
+
+            return estados[estado] || [
+                "No informado",
+                "admin-estado--pendiente"
+            ];
+        }
+
+        // Mostrar indicadores
+        function mostrarResumen(resumen) {
+
+            const indicadores = {
+
+                "admin-total":
+                    resumen.totalInscripciones,
+
+                "admin-pendientes":
+                    resumen.pendientes,
+
+                "admin-revision":
+                    resumen.enRevision,
+
+                "admin-aprobados":
+                    resumen.aprobados,
+
+                "admin-rechazados":
+                    resumen.rechazados
+            };
+
+            for (const [id, valor] of
+                 Object.entries(indicadores)) {
+
+                document.getElementById(id).textContent =
+                    Number(valor ?? 0);
+            }
+        }
+
+        // Mostrar inscripciones
+        function mostrarPagos(pagos) {
+
+            tabla.replaceChildren();
+
+            document.getElementById(
+                "admin-sin-datos"
+            ).hidden = pagos.length !== 0;
+
+            for (const pago of pagos) {
+
+                const fila = document.createElement("tr");
+
+                agregarCelda(
+                    fila,
+                    pago.nombreCompleto
+                );
+
+                agregarCelda(
+                    fila,
+                    pago.correo
+                );
+
+                agregarCelda(
+                    fila,
+                    pago.cantidadAcompanantes
+                );
+
+                agregarCelda(
+                    fila,
+                    formatoPesos.format(pago.montoTotal)
+                );
+
+                // Etiqueta de estado
+                const celdaEstado = agregarCelda(
+                    fila,
+                    ""
+                );
+
+                const etiqueta = document.createElement(
+                    "span"
+                );
+
+                const [texto, clase] = obtenerEstado(
+                    pago.estado
+                );
+
+                etiqueta.textContent = texto;
+
+                etiqueta.className =
+                    "admin-estado " + clase;
+
+                celdaEstado.appendChild(etiqueta);
+
+               
+                // Comprobante
+                agregarCelda(
+                    fila,
+                    pago.comprobanteRecibido
+                        ? "Recibido"
+                        : "No enviado"
+                );
+
+                // =====================================
+                // BOTÓN VER DETALLES
+                // =====================================
+
+                const celdaAcciones =
+                    document.createElement("td");
+
+                const botonDetalles =
+                    document.createElement("button");
+
+                botonDetalles.type = "button";
+                botonDetalles.textContent = "Ver detalles";
+
+                botonDetalles.className =
+                    "admin-boton admin-boton--principal";
+
+                
+botonDetalles.addEventListener(
+    "click",
+    async () => {
+
+        const panel = document.getElementById(
+            "admin-detalle"
+        );
+
+        const contenido = document.getElementById(
+            "admin-detalle-contenido"
+        );
+
+        const mensajeDetalle = document.getElementById(
+            "admin-detalle-mensaje"
+        );
+
+        const botonCerrar = document.getElementById(
+            "admin-cerrar-detalle"
+        );
+
+        panel.hidden = false;
+        contenido.replaceChildren();
+
+        mensajeDetalle.textContent =
+            "Cargando información de la inscripción...";
+
+        mensajeDetalle.hidden = false;
+
+        panel.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        botonCerrar.onclick = () => {
+            panel.hidden = true;
+            contenido.replaceChildren();
+        };
+
+        // Crear campos de información
+        function agregarCampo(contenedor, nombre, valor) {
+            const parrafo = document.createElement("p");
+
+            const etiqueta = document.createElement("strong");
+            etiqueta.textContent = nombre + ": ";
+
+            const texto = document.createTextNode(
+                valor === null ||
+                valor === undefined ||
+                valor === ""
+                    ? "No registrado"
+                    : String(valor)
+            );
+
+            parrafo.append(etiqueta, texto);
+            contenedor.appendChild(parrafo);
+        }
+
+        function respuestaSiNo(valor) {
+            if (valor === null || valor === undefined) {
+                return "No registrado";
+            }
+            return valor ? "Sí" : "No";
+        }
+
+        // Información individual
+        function mostrarPersona(persona, titulo) {
+
+            const seccion = document.createElement("section");
+            seccion.className = "admin-persona-detalle";
+
+            const encabezado = document.createElement("h3");
+            encabezado.textContent = titulo;
+
+            seccion.appendChild(encabezado);
+
+            agregarCampo(
+                seccion,
+                "Nombre",
+                persona.nombreCompleto
+            );
+
+            agregarCampo(
+                seccion,
+                "Teléfono",
+                persona.telefono
+            );
+
+            agregarCampo(
+                seccion,
+                "Habitación",
+                persona.habitacion?.nombre ?? "Sin asignar"
+            );
+
+            const salud = document.createElement("h4");
+            salud.textContent = "Información de salud";
+            seccion.appendChild(salud);
+
+            if (persona.salud) {
+
+                const s = persona.salud;
+
+                agregarCampo(
+                    seccion,
+                    "Alergias",
+                    respuestaSiNo(s.tieneAlergias)
+                );
+
+                if (s.tieneAlergias) {
+                    agregarCampo(
+                        seccion,
+                        "Detalle de alergias",
+                        s.detalleAlergias
+                    );
+                }
+
+                agregarCampo(
+                    seccion,
+                    "Enfermedades",
+                    respuestaSiNo(s.tieneEnfermedad)
+                );
+
+                if (s.tieneEnfermedad) {
+                    agregarCampo(
+                        seccion,
+                        "Detalle de enfermedades",
+                        s.detalleEnfermedad
+                    );
+                }
+
+                agregarCampo(
+                    seccion,
+                    "Medicamentos",
+                    respuestaSiNo(s.tomaMedicamentos)
+                );
+
+                if (s.tomaMedicamentos) {
+                    agregarCampo(
+                        seccion,
+                        "Detalle de medicamentos",
+                        s.detalleMedicamentos
+                    );
+                }
+
+                agregarCampo(
+                    seccion,
+                    "Restricciones alimentarias",
+                    respuestaSiNo(s.restriccionAlimentaria)
+                );
+
+                if (s.restriccionAlimentaria) {
+                    agregarCampo(
+                        seccion,
+                        "Detalle de alimentación",
+                        s.detalleAlimentacion
+                    );
+                }
+
+            } else {
+                agregarCampo(
+                    seccion,
+                    "Salud",
+                    "Información no registrada"
+                );
+            }
+
+            const emergencia = document.createElement("h4");
+            emergencia.textContent = "Contacto de emergencia";
+            seccion.appendChild(emergencia);
+
+            const e = persona.contactoEmergencia;
+
+            if (e) {
+                agregarCampo(seccion, "Nombre", e.nombreCompleto);
+                agregarCampo(seccion, "Parentesco", e.parentesco);
+                agregarCampo(seccion, "Teléfono", e.telefonoPrincipal);
+                agregarCampo(
+                    seccion,
+                    "Teléfono alternativo",
+                    e.telefonoAlternativo
+                );
+            } else {
+                agregarCampo(
+                    seccion,
+                    "Contacto",
+                    "No registrado"
+                );
+            }
+
+            contenido.appendChild(seccion);
+        }
+
+        try {
+
+            const respuesta = await fetch(
+                `http://127.0.0.1:8787/api/admin/inscripciones/${pago.participanteId}`,
+                {
+                    method: "GET",
+                    credentials: "include",
+                    cache: "no-store"
+                }
+            );
+
+            if (!respuesta.ok) {
+                throw new Error(
+                    "No se pudo consultar la inscripción."
+                );
+            }
+
+            const resultado = await respuesta.json();
+
+            if (
+                resultado.estado !== "OK" ||
+                !resultado.inscripcion
+            ) {
+                throw new Error(
+                    "Respuesta inesperada del servidor."
+                );
+            }
+
+            const inscripcion = resultado.inscripcion;
+
+            // PARTICIPANTE PRINCIPAL
+            mostrarPersona(
+                inscripcion.participante,
+                "Participante principal"
+            );
+
+            // ACOMPAÑANTES
+            const tituloAcompanantes =
+                document.createElement("h3");
+
+            tituloAcompanantes.textContent =
+                "Acompañantes registrados";
+
+            contenido.appendChild(tituloAcompanantes);
+
+            if (inscripcion.acompanantes.length === 0) {
+
+                const vacio = document.createElement("p");
+                vacio.textContent =
+                    "Esta inscripción no tiene acompañantes.";
+
+                contenido.appendChild(vacio);
+
+            } else {
+
+                inscripcion.acompanantes.forEach(
+                    (acompanante, indice) => {
+
+                        mostrarPersona(
+                            acompanante,
+                            `Acompañante ${indice + 1}`
+                        );
+
+                    }
+                );
+            }
+
+            // PAGO
+            const seccionPago = document.createElement("section");
+            seccionPago.className = "admin-persona-detalle";
+
+            const tituloPago = document.createElement("h3");
+            tituloPago.textContent = "Pago de inscripción";
+
+            seccionPago.appendChild(tituloPago);
+
+            const pagoDetalle = inscripcion.pago;
+
+            if (pagoDetalle) {
+
+                agregarCampo(
+                    seccionPago,
+                    "Total a cancelar",
+                    formatoPesos.format(pagoDetalle.montoTotal)
+                );
+
+                agregarCampo(
+                    seccionPago,
+                    "Monto pagado registrado",
+                    formatoPesos.format(pagoDetalle.montoPagado)
+                );
+
+                agregarCampo(
+                    seccionPago,
+                    "Estado",
+                    pagoDetalle.estado
+                );
+
+                agregarCampo(
+                    seccionPago,
+                    "Titular de transferencia",
+                    pagoDetalle.titularTransferencia
+                );
+
+                agregarCampo(
+                    seccionPago,
+                    "Fecha de transferencia",
+                    pagoDetalle.fechaTransferencia
+                );
+
+                agregarCampo(
+                    seccionPago,
+                    "Comprobante",
+                    pagoDetalle.comprobanteRecibido
+                        ? "Recibido"
+                        : "No enviado"
+                );
+
+            } else {
+
+                agregarCampo(
+                    seccionPago,
+                    "Pago",
+                    "No registrado"
+                );
+            }
+
+            contenido.appendChild(seccionPago);
+
+            mensajeDetalle.hidden = true;
+
+        } catch (error) {
+
+            console.error(error.message);
+
+            mensajeDetalle.textContent =
+                "No fue posible cargar los detalles.";
+
+            mensajeDetalle.hidden = false;
+        }
+    }
+);
+
+
+                celdaAcciones.appendChild(botonDetalles);
+                fila.appendChild(celdaAcciones);
+
+                tabla.appendChild(fila);
+
+            }
+        }
+
+        // Consultar backend
+        async function cargarPanel() {
+
+            botonActualizar.disabled = true;
+
+            datosPanel.hidden = true;
+            identidad.hidden = true;
+
+            mostrarMensaje(
+                "Verificando sesión y cargando información..."
+            );
+
+            try {
+
+                const respuesta = await fetch(
+                    API_ADMIN,
+                    {
+                        method: "GET",
+                        credentials: "include",
+                        cache: "no-store"
+                    }
+                );
+
+                if (respuesta.status === 401) {
+
+                    mostrarMensaje(
+                        "Debes iniciar sesión para acceder al panel.",
+                        true
+                    );
+
+                    return;
+                }
+
+                if (respuesta.status === 403) {
+
+                    mostrarMensaje(
+                        "Acceso denegado. Esta sección es exclusiva para administradores.",
+                        true
+                    );
+
+                    return;
+                }
+
+                if (!respuesta.ok) {
+
+                    throw new Error(
+                        "Error del servidor: " +
+                        respuesta.status
+                    );
+                }
+
+                const resultado =
+                    await respuesta.json();
+
+                if (
+                    resultado.estado !== "OK" ||
+                    !resultado.resumen ||
+                    !Array.isArray(resultado.pagos) ||
+                    !resultado.administrador
+                ) {
+                    throw new Error(
+                        "Respuesta inesperada del servidor."
+                    );
+                }
+
+                mostrarResumen(resultado.resumen);
+
+                mostrarPagos(resultado.pagos);
+
+                identidad.textContent =
+                    "Administrador: " +
+                    resultado.administrador.correo;
+
+                identidad.hidden = false;
+
+                datosPanel.hidden = false;
+
+                mensaje.hidden = true;
+
+            } catch (error) {
+
+                console.error(error);
+
+                mostrarMensaje(
+                    "No fue posible cargar el panel administrativo.",
+                    true
+                );
+
+            } finally {
+
+                botonActualizar.disabled = false;
+            }
+        }
+
+        // Actualización manual
+        botonActualizar.addEventListener(
+            "click",
+            cargarPanel
+        );
+
+// =====================================
+// CERRAR SESIÓN ADMINISTRATIVA
+// =====================================
+
+const botonCerrarSesion =
+    document.getElementById("admin-cerrar-sesion");
+
+botonCerrarSesion.addEventListener(
+    "click",
+    async () => {
+
+        botonCerrarSesion.disabled = true;
+        botonCerrarSesion.textContent =
+            "Cerrando sesión...";
+
+        try {
+
+            const respuesta = await fetch(
+                "http://127.0.0.1:8787/api/logout",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    cache: "no-store",
+                    headers: {
+                        "X-ICEC-Solicitud": "web"
+                    }
+                }
+            );
+
+            if (!respuesta.ok) {
+                throw new Error(
+                    "No fue posible cerrar la sesión."
+                );
+            }
+
+            // Ocultar los datos administrativos
+            datosPanel.hidden = true;
+            identidad.hidden = true;
+            tabla.replaceChildren();
+
+            // Regresar al acceso administrativo
+            window.location.replace(
+                "admin-login.html"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Error al cerrar sesión:",
+                error
+            );
+
+            mostrarMensaje(
+                "No se pudo cerrar la sesión. Inténtalo nuevamente.",
+                true
+            );
+
+            botonCerrarSesion.disabled = false;
+            botonCerrarSesion.textContent =
+                "Cerrar sesión";
+        }
+    }
+);
+
+
+        // Carga inicial
+        cargarPanel();
+
+    </script>
+
+</body>
+</html>

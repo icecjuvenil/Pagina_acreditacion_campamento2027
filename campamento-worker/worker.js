@@ -17,6 +17,8 @@ import { manejarAcompanantes } from "./acompanantes-api.js";
 import { manejarComprobantes } from "./comprobantes-api.js";
 import { manejarResumen } from "./resumen-api.js";
 import { manejarPagosAdmin } from "./admin-api.js";
+import { manejarDetalleAdmin } from "./admin-detalle-api.js";
+
 
 const FECHA_CAMPAMENTO = "2027-01-08";
 
@@ -1435,6 +1437,28 @@ async function manejarSolicitud(request, env) {
     // ==========================================
   // ADMINISTRACIÓN DE PAGOS
   // ==========================================
+
+
+  // ==========================================
+  // DETALLE DE INSCRIPCIONES ADMINISTRATIVAS
+  // ==========================================
+
+  const rutaDetalleAdmin = url.pathname.match(
+    /^\/api\/admin\/inscripciones\/([1-9]\d*)$/
+  );
+
+  if (rutaDetalleAdmin) {
+    return manejarDetalleAdmin(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      },
+      rutaDetalleAdmin[1]
+    );
+  }
+
 
   if (url.pathname === "/api/admin/pagos") {
     return manejarPagosAdmin(

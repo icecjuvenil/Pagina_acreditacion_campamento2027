@@ -4192,3 +4192,685 @@ body.pagina-login .boton-login:hover {
         height: 54px;
     }
 }
+
+
+
+/* ==================================================
+   24. PANEL DE ADMINISTRACIÓN ICEC 2027
+   ================================================== */
+
+.pagina-admin {
+    background:
+        url("Logos/fondo-bosque.svg")
+        center bottom / 100% 340px no-repeat,
+        linear-gradient(
+            180deg,
+            var(--crema),
+            #fbf8ef 55%,
+            #eee8d4
+        );
+    min-height: 100vh;
+}
+
+/* MENÚ */
+.pagina-admin .admin-menu {
+    width: auto;
+    gap: 34px;
+}
+
+/* BANNER */
+.pagina-admin .admin-portada {
+    position: relative;
+    min-height: 235px;
+    overflow: hidden;
+    background-color: var(--verde-profundo);
+}
+
+.pagina-admin .admin-portada img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 55%;
+}
+
+.pagina-admin .admin-portada::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(15, 44, 18, 0.90),
+        rgba(15, 44, 18, 0.48)
+    );
+}
+
+.pagina-admin .admin-portada-contenido {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+
+    width: min(1180px, calc(100% - 36px));
+    min-height: 235px;
+    margin: 0 auto;
+    padding: 30px 0;
+    color: var(--blanco);
+}
+
+.pagina-admin .admin-etiqueta-privada {
+    padding: 6px 14px;
+    border: 1px solid rgba(228, 198, 116, 0.6);
+    border-radius: 100px;
+    color: var(--dorado-claro);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.pagina-admin .admin-portada h1 {
+    color: var(--blanco);
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    line-height: 1;
+}
+
+.pagina-admin .admin-portada p {
+    color: #f7ecd4;
+    font-size: 1rem;
+}
+
+/* CONTENIDO */
+
+.pagina-admin .admin-contenido {
+    width: calc(100% - 48px);
+    max-width: none;
+    margin: 0 auto;
+    padding: 38px 0 90px;
+}
+
+@media (max-width: 650px) {
+    .pagina-admin .admin-contenido {
+        width: calc(100% - 24px);
+    }
+}
+
+
+.pagina-admin .admin-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.pagina-admin .admin-subtitulo {
+    color: var(--dorado-medio);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.pagina-admin .admin-cabecera h2 {
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    font-weight: 800;
+}
+
+.pagina-admin .admin-cabecera p:last-child {
+    color: #5f605a;
+}
+
+.pagina-admin .admin-identidad {
+    padding: 10px 15px;
+    color: var(--verde-profundo);
+    background: #e9f1e5;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+}
+
+/* MENSAJES */
+.pagina-admin .admin-mensaje {
+    margin-bottom: 22px;
+    padding: 14px 18px;
+    color: var(--verde-profundo);
+    background: #e9f1e5;
+    border-radius: 10px;
+}
+
+.pagina-admin .admin-mensaje--error {
+    color: #8e2d2d;
+    background: #fbe9e9;
+    border: 1px solid #edc4c4;
+}
+
+/* INDICADORES */
+.pagina-admin .admin-indicadores {
+    display: grid;
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.pagina-admin .admin-indicador {
+    min-width: 0;
+    padding: 22px 20px;
+    background: rgba(255, 255, 255, 0.97);
+    border-top: 4px solid var(--verde-profundo);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.09);
+}
+
+.pagina-admin .admin-indicador > span {
+    display: block;
+    color: #5b5e55;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pagina-admin .admin-indicador strong {
+    display: block;
+    margin: 8px 0 3px;
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 2.3rem;
+    font-weight: 800;
+}
+
+.pagina-admin .admin-indicador small {
+    color: #777971;
+    font-size: 0.77rem;
+}
+
+.pagina-admin .admin-indicador--pendiente {
+    border-top-color: var(--dorado-medio);
+}
+
+.pagina-admin .admin-indicador--revision {
+    border-top-color: #477d65;
+}
+
+.pagina-admin .admin-indicador--aprobado {
+    border-top-color: var(--verde-principal);
+}
+
+.pagina-admin .admin-indicador--rechazado {
+    border-top-color: #ae5750;
+}
+
+/* PANEL DE INSCRIPCIONES */
+.pagina-admin .admin-panel {
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
+}
+
+.pagina-admin .admin-panel-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 24px;
+}
+
+.pagina-admin .admin-panel-cabecera h2 {
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.pagina-admin .admin-panel-cabecera p {
+    color: #6b6d65;
+    font-size: 0.86rem;
+}
+
+/* BOTONES */
+.pagina-admin .admin-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pagina-admin .admin-boton {
+    min-height: 42px;
+    padding: 10px 17px;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.pagina-admin .admin-boton--principal {
+    color: var(--color-oscuro);
+    background: var(--dorado-claro);
+    border: 1px solid var(--dorado-medio);
+}
+
+.pagina-admin .admin-boton--principal:hover {
+    background: var(--dorado-medio);
+    color: var(--blanco);
+}
+
+.pagina-admin .admin-boton--salir {
+    color: #953b32;
+    background: #fff8f6;
+    border: 1px solid #d9a7a0;
+}
+
+.pagina-admin .admin-boton:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.pagina-admin .admin-boton:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+}
+
+/* TABLA */
+.pagina-admin .admin-tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.pagina-admin .admin-tabla {
+    width: 100%;
+    min-width: 780px;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.88rem;
+}
+
+.pagina-admin .admin-tabla thead {
+    color: var(--verde-profundo);
+    background: #edf2e9;
+}
+
+.pagina-admin .admin-tabla th,
+.pagina-admin .admin-tabla td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #e9e9e2;
+}
+
+.pagina-admin .admin-tabla th {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.pagina-admin .admin-tabla td {
+    color: var(--texto);
+    overflow-wrap: anywhere;
+}
+
+.pagina-admin .admin-tabla tbody tr:hover {
+    background: #faf8f0;
+}
+
+/* ESTADOS */
+.pagina-admin .admin-estado {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 100px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.pagina-admin .admin-estado--pendiente {
+    color: #815c0c;
+    background: #fff0cb;
+}
+
+.pagina-admin .admin-estado--revision {
+    color: #245f48;
+    background: #dff0e7;
+}
+
+.pagina-admin .admin-estado--aprobado {
+    color: #17633a;
+    background: #d7f3df;
+}
+
+.pagina-admin .admin-estado--rechazado {
+    color: #982e2e;
+    background: #fbe4e4;
+}
+
+/* PIE DEL PANEL */
+.pagina-admin .admin-panel-pie {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 24px;
+    color: #707268;
+    background: #faf8f0;
+    font-size: 0.78rem;
+}
+
+.pagina-admin .admin-sin-datos {
+    padding: 30px;
+    color: #6b6d65;
+    text-align: center;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1050px) {
+    .pagina-admin .admin-indicadores {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .pagina-admin .admin-indicadores {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .pagina-admin .admin-portada,
+    .pagina-admin .admin-portada-contenido {
+        min-height: 200px;
+    }
+
+    .pagina-admin .admin-panel-cabecera {
+        padding: 20px 16px;
+    }
+
+    .pagina-admin .admin-menu {
+        gap: 18px;
+    }
+}
+
+@media (max-width: 380px) {
+    .pagina-admin .admin-indicadores {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ==================================================
+   25. BANNER ADMINISTRATIVO CON ONDA
+   ================================================== */
+
+/* Ampliar ligeramente la imagen */
+.pagina-admin .admin-portada {
+    position: relative;
+    min-height: 285px;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* Mantener el tono verde sobre la fotografía */
+.pagina-admin .admin-portada::after {
+    z-index: 1;
+}
+
+/* Mantener el contenido por encima del fondo */
+.pagina-admin .admin-portada-contenido {
+    position: relative;
+    z-index: 2;
+
+    min-height: 285px;
+    padding-top: 36px;
+    padding-bottom: 65px;
+}
+
+/* Onda inferior del banner */
+.pagina-admin .admin-portada-onda {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    z-index: 3;
+
+    display: block;
+
+    width: 100%;
+    height: 48px;
+
+    fill: var(--crema);
+
+    pointer-events: none;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 650px) {
+
+    .pagina-admin .admin-portada,
+    .pagina-admin .admin-portada-contenido {
+        min-height: 250px;
+    }
+
+    .pagina-admin .admin-portada-onda {
+        height: 30px;
+    }
+
+    .pagina-admin .admin-portada-contenido {
+        padding-bottom: 48px;
+    }
+}
+
+
+/* ==========================================
+   26. DETALLES DE INSCRIPCIÓN ADMINISTRATIVA
+   ========================================== */
+
+/* Separación del panel respecto a la tabla */
+.pagina-admin .admin-detalle {
+    margin-top: 24px;
+    padding-bottom: 25px;
+}
+
+/* Contenedor de las tarjetas */
+.pagina-admin .admin-detalle-contenido {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    padding: 10px 26px 28px;
+}
+
+/* Tarjetas de cada persona y pago */
+.pagina-admin .admin-persona-detalle {
+    min-width: 0;
+    padding: 24px;
+
+    background: #fffdf8;
+    border: 1px solid #e6dfcf;
+    border-top: 4px solid var(--dorado-medio);
+    border-radius: 14px;
+
+    box-shadow: 0 5px 18px rgba(37, 30, 23, 0.06);
+
+}
+
+/* La tarjeta del participante principal ocupa toda la fila */
+.pagina-admin .admin-detalle-contenido > .admin-persona-detalle:first-child {
+    grid-column: 1 / -1;
+}
+
+/* Títulos de las tarjetas */
+.pagina-admin .admin-persona-detalle h3 {
+    margin: 0 0 20px;
+    padding-bottom: 13px;
+
+    color: var(--verde-profundo);
+    border-bottom: 2px solid #e9e4d8;
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+/* Subtítulos: Salud y Emergencia */
+.pagina-admin .admin-persona-detalle h4 {
+    margin: 23px 0 12px;
+    padding: 10px 14px;
+
+    color: var(--verde-profundo);
+    background: #edf3e8;
+    border-left: 4px solid var(--verde-principal);
+    border-radius: 6px;
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* Cada dato */
+.pagina-admin .admin-persona-detalle p {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+
+    margin: 0;
+    padding: 11px 3px;
+
+    color: #50554b;
+    border-bottom: 1px solid #eeeae0;
+
+    font-size: 0.9rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Nombre del campo */
+.pagina-admin .admin-persona-detalle p strong {
+    flex: 0 0 45%;
+    color: var(--verde-profundo);
+    font-weight: 700;
+}
+
+/* Encabezado de acompañantes */
+.pagina-admin .admin-detalle-contenido > h3 {
+    grid-column: 1 / -1;
+
+    margin: 8px 0 0;
+    padding: 13px 18px;
+
+    color: var(--verde-profundo);
+    background: #e9f0e4;
+    border-left: 5px solid var(--dorado-medio);
+    border-radius: 8px;
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+/* Tarjeta de pago */
+.pagina-admin .admin-persona-detalle:last-child {
+    border-top-color: var(--verde-principal);
+}
+
+/* Mensajes dentro del detalle */
+.pagina-admin .admin-detalle-contenido > p {
+    grid-column: 1 / -1;
+    padding: 14px;
+    color: #62665c;
+}
+
+/* Mensaje de carga o error */
+.pagina-admin .admin-detalle > .admin-mensaje {
+    margin: 0 26px 22px;
+}
+
+/* ==========================================
+   ADAPTACIÓN A CELULARES
+   ========================================== */
+
+@media (max-width: 800px) {
+
+    .pagina-admin .admin-detalle-contenido {
+        grid-template-columns: 1fr;
+        padding: 10px 16px 24px;
+        gap: 16px;
+    }
+
+    .pagina-admin .admin-persona-detalle {
+        padding: 19px;
+    }
+
+    .pagina-admin .admin-persona-detalle p {
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .pagina-admin .admin-persona-detalle p strong {
+        flex-basis: auto;
+    }
+}
+
+
+/* ==========================================
+   ADMIN A ANCHO COMPLETO
+   ========================================== */
+
+.pagina-admin .admin-hero-contenido,
+.pagina-admin .admin-resumen-wrapper,
+.pagina-admin .admin-tabla-wrapper,
+.pagina-admin .admin-detalle-wrapper {
+    width: calc(100% - 48px);
+    max-width: none !important;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+/* Si el contenedor general del admin también limita el ancho */
+.pagina-admin .admin-contenedor,
+.pagina-admin .admin-layout,
+.pagina-admin .admin-main {
+    width: 100%;
+    max-width: none !important;
+}
+
+/* Tarjeta de detalle más amplia */
+.pagina-admin .admin-detalle-contenido {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+}
+
+/* Participante principal a todo el ancho */
+.pagina-admin .admin-detalle-contenido > .admin-persona-detalle:first-child {
+    grid-column: 1 / -1;
+}
+
+/* Título de acompañantes a todo el ancho */
+.pagina-admin .admin-detalle-contenido > .admin-subtitulo-seccion {
+    grid-column: 1 / -1;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .pagina-admin .admin-hero-contenido,
+    .pagina-admin .admin-resumen-wrapper,
+    .pagina-admin .admin-tabla-wrapper,
+    .pagina-admin .admin-detalle-wrapper {
+        width: calc(100% - 24px);
+    }
+
+    .pagina-admin .admin-detalle-contenido {
+        grid-template-columns: 1fr;
+    }
+
+    .pagina-admin .admin-detalle-contenido > .admin-persona-detalle:first-child,
+    .pagina-admin .admin-detalle-contenido > .admin-subtitulo-seccion {
+        grid-column: auto;
+    }
+}

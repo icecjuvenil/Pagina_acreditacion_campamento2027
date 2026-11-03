@@ -8,11 +8,18 @@
     <!-- Hoja de estilos principal -->
     <link rel="stylesheet" href="style.css">
 
+<!-- Verificación de seguridad Cloudflare Turnstile -->
+<script
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer>
+</script>
+
     <!-- Funcionalidad del acceso administrativo -->
      <script src="admin-login.js" defer></script>
 </head>
 
-<body class="pagina-admin-login"></body>
+<body class="pagina-admin-login">
 
 <!-- ==================================================
          ENCABEZADO ADMINISTRATIVO
@@ -60,10 +67,6 @@
                         aria-hidden="true">
                         🔒
                     </div>
-                    
-                    <form
-                        id="formulario-admin-login"
-                        class="formulario-admin-login">
                     
                 </div>
 
@@ -157,6 +160,11 @@
                         </div>
                      </div>
 
+                    <!-- Verificación de seguridad para administradores -->
+                    <div class="cf-turnstile"
+                        data-sitekey="1x00000000000000000000AA">
+                    </div>
+
                       <!-- Mensaje de error o confirmación -->
                        <p
                             id="mensaje-admin-login"
@@ -188,9 +196,5 @@
             </section>
          </main>
 
-    
-</body>
-<body>
-    
 </body>
 </html>
