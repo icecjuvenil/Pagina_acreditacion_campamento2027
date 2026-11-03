@@ -4192,3 +4192,833 @@ body.pagina-login .boton-login:hover {
         height: 54px;
     }
 }
+
+/* ==================================================
+   24. SELECCIÓN DE PIEZAS
+   ================================================== */
+
+/* Fondo general de la página */
+.pagina-piezas {
+    min-height: 100vh;
+    background:
+        linear-gradient(
+            rgba(247, 236, 212, 0.96),
+            rgba(247, 236, 212, 0.92)
+        ),
+        url("Logos/fondo-bosque.svg") bottom center / 100% auto no-repeat;
+}
+
+
+/* ==================================================
+   CONTENIDO PRINCIPAL
+   ================================================== */
+
+.pagina-piezas .contenido-piezas {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 48px clamp(24px, 5vw, 80px) 80px;
+    box-sizing: border-box;
+}
+
+/* Las secciones interiores utilizan todo el espacio disponible */
+.pagina-piezas .selector-participante-pieza,
+.pagina-piezas .seccion-mapa-piezas,
+.pagina-piezas .resumen-seleccion-pieza {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ==================================================
+   TÍTULO DE LA PÁGINA
+   ================================================== */
+
+.pagina-piezas .cabecera-piezas {
+    max-width: 900px;
+    margin: 0 auto 36px;
+    text-align: center;
+}
+
+.pagina-piezas .etiqueta-piezas {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 14px;
+    padding: 9px 20px;
+
+    color: var(--verde-profundo);
+    background-color: rgba(59, 152, 51, 0.1);
+    border-radius: 999px;
+
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.pagina-piezas .cabecera-piezas h1 {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+.pagina-piezas .cabecera-piezas h1::after {
+    content: "";
+    display: block;
+
+    width: 68px;
+    height: 4px;
+    margin: 20px auto;
+
+    background-color: var(--dorado-claro);
+    border-radius: 999px;
+}
+
+.pagina-piezas .cabecera-piezas p {
+    max-width: 760px;
+    margin: 0 auto;
+
+    color: rgba(37, 30, 23, 0.78);
+    font-size: 1.08rem;
+    line-height: 1.55;
+}
+
+
+/* ==================================================
+   SELECCIÓN DEL PARTICIPANTE
+   ================================================== */
+
+.pagina-piezas .selector-participante-pieza {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+    align-items: end;
+    gap: 28px;
+
+    margin-bottom: 26px;
+    padding: 26px 30px;
+
+    background-color: var(--blanco);
+    border: 1px solid rgba(171, 129, 65, 0.18);
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(37, 30, 23, 0.08);
+}
+
+.pagina-piezas .selector-participante-pieza h2 {
+    margin: 0 0 6px;
+
+    color: var(--verde-profundo);
+    font-size: 1.4rem;
+}
+
+.pagina-piezas .selector-participante-pieza p {
+    margin: 0;
+    color: rgba(37, 30, 23, 0.72);
+    line-height: 1.45;
+}
+
+.pagina-piezas .grupo-selector-participante {
+    display: grid;
+    gap: 8px;
+}
+
+.pagina-piezas .grupo-selector-participante label {
+    color: var(--texto);
+    font-weight: 700;
+}
+
+.pagina-piezas #participante-pieza {
+    width: 100%;
+    min-height: 56px;
+    padding: 0 18px;
+
+    color: var(--texto);
+    background-color: var(--blanco);
+    border: 1px solid rgba(37, 30, 23, 0.28);
+    border-radius: 12px;
+
+    font: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.pagina-piezas #participante-pieza:focus {
+    border-color: var(--dorado-medio);
+    outline: 3px solid rgba(228, 198, 116, 0.3);
+}
+
+.pagina-piezas .informacion-genero-pieza {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 10px;
+
+    color: var(--verde-profundo);
+    font-size: 0.94rem;
+    font-weight: 700;
+}
+
+.pagina-piezas #genero-participante-pieza {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 28px;
+    height: 28px;
+    padding: 0 9px;
+
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+    border-radius: 999px;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+
+/* ==================================================
+   MENSAJE DE AYUDA
+   ================================================== */
+
+.pagina-piezas #mensaje-seleccion-pieza {
+    margin: 0 0 24px;
+    padding: 15px 20px;
+
+    color: var(--verde-profundo);
+    background-color: rgba(59, 152, 51, 0.08);
+    border: 1px solid rgba(59, 152, 51, 0.2);
+    border-radius: 12px;
+
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+/* ==================================================
+   CONTENEDOR DEL MAPA
+   ================================================== */
+
+.pagina-piezas .seccion-mapa-piezas {
+    padding: 30px;
+
+    background-color: var(--blanco);
+    border: 1px solid rgba(171, 129, 65, 0.18);
+    border-radius: 22px;
+    box-shadow: 0 14px 34px rgba(37, 30, 23, 0.09);
+}
+
+.pagina-piezas .encabezado-mapa-piezas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 26px;
+}
+
+.pagina-piezas .encabezado-mapa-piezas h2 {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-size: 1.55rem;
+}
+
+.pagina-piezas #contador-piezas-disponibles {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+    padding: 0 17px;
+
+    color: var(--verde-profundo);
+    background-color: rgba(59, 152, 51, 0.1);
+    border-radius: 999px;
+
+    font-size: 0.92rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+/* ==================================================
+   MAPA DE PIEZAS
+   ================================================== */
+
+.pagina-piezas #mapa-piezas {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+
+    padding: 22px;
+
+    background:
+        linear-gradient(
+            rgba(22, 58, 22, 0.04),
+            rgba(22, 58, 22, 0.08)
+        );
+    border: 1px solid rgba(22, 58, 22, 0.16);
+    border-radius: 18px;
+}
+
+
+/* ==================================================
+   TARJETAS DE LAS PIEZAS
+   ================================================== */
+
+.pagina-piezas .tarjeta-pieza {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    min-width: 0;
+    min-height: 148px;
+    padding: 17px;
+
+    color: var(--texto);
+    text-align: left;
+
+    background-color: var(--blanco);
+    border: 2px solid rgba(36, 95, 33, 0.34);
+    border-radius: 13px;
+    box-shadow: 0 5px 14px rgba(37, 30, 23, 0.06);
+
+    font: inherit;
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.pagina-piezas .tarjeta-pieza:hover:not(:disabled) {
+    transform: translateY(-3px);
+
+    border-color: var(--verde-intermedio);
+    box-shadow: 0 10px 20px rgba(22, 58, 22, 0.14);
+}
+
+.pagina-piezas .tarjeta-pieza:focus-visible {
+    outline: 4px solid rgba(228, 198, 116, 0.65);
+    outline-offset: 3px;
+}
+
+.pagina-piezas .codigo-pieza,
+.pagina-piezas .tarjeta-pieza > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 38px;
+    min-height: 28px;
+    margin-bottom: 11px;
+    padding: 0 9px;
+
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+    border-radius: 7px;
+
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+
+.pagina-piezas .nombre-pieza {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--verde-profundo);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.pagina-piezas .capacidad-pieza {
+    display: block;
+    margin-bottom: 14px;
+
+    color: rgba(37, 30, 23, 0.68);
+    font-size: 0.88rem;
+    line-height: 1.35;
+}
+
+.pagina-piezas .estado-pieza {
+    display: inline-flex;
+    align-items: center;
+
+    margin-top: auto;
+    padding: 6px 10px;
+
+    color: var(--verde-profundo);
+    background-color: rgba(59, 152, 51, 0.11);
+    border-radius: 999px;
+
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+
+/* ==================================================
+   PIEZAS ANCHAS Y PASILLO
+   ================================================== */
+
+.pagina-piezas .pieza-ancha {
+    grid-column: span 2;
+}
+
+.pagina-piezas .pasillo-mapa-piezas {
+    display: grid;
+    place-items: center;
+
+    min-height: 148px;
+    padding: 12px;
+
+    color: rgba(22, 58, 22, 0.56);
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            rgba(22, 58, 22, 0.04),
+            rgba(22, 58, 22, 0.04) 8px,
+            rgba(22, 58, 22, 0.08) 8px,
+            rgba(22, 58, 22, 0.08) 16px
+        );
+    border: 1px dashed rgba(22, 58, 22, 0.25);
+    border-radius: 12px;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+
+/* ==================================================
+   PIEZA SELECCIONADA
+   ================================================== */
+
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada {
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+    border-color: var(--dorado-claro);
+    box-shadow:
+        0 0 0 4px rgba(228, 198, 116, 0.3),
+        0 12px 24px rgba(22, 58, 22, 0.24);
+}
+
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada .codigo-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada > span:first-child {
+    color: var(--verde-profundo);
+    background-color: var(--dorado-claro);
+}
+
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada .nombre-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada .capacidad-pieza {
+    color: var(--blanco);
+}
+
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada .estado-pieza {
+    color: var(--verde-profundo);
+    background-color: var(--dorado-claro);
+}
+
+
+/* ==================================================
+   PIEZAS BLOQUEADAS O COMPLETAS
+   ================================================== */
+
+.pagina-piezas .tarjeta-pieza:disabled,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada,
+.pagina-piezas .tarjeta-pieza.pieza-completa {
+    color: rgba(37, 30, 23, 0.48);
+    background-color: #eeeeea;
+    border-color: rgba(37, 30, 23, 0.12);
+    box-shadow: none;
+
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.68;
+}
+
+.pagina-piezas .tarjeta-pieza:disabled .codigo-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada .codigo-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-completa .codigo-pieza {
+    background-color: #77776f;
+}
+
+.pagina-piezas .tarjeta-pieza:disabled .nombre-pieza,
+.pagina-piezas .tarjeta-pieza:disabled .capacidad-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada .nombre-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada .capacidad-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-completa .nombre-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-completa .capacidad-pieza {
+    color: rgba(37, 30, 23, 0.5);
+}
+
+.pagina-piezas .tarjeta-pieza:disabled .estado-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada .estado-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-completa .estado-pieza {
+    color: #5d5d57;
+    background-color: rgba(37, 30, 23, 0.08);
+}
+
+
+/* ==================================================
+   LEYENDA DE ESTADOS
+   ================================================== */
+
+.pagina-piezas .leyenda-piezas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px 28px;
+
+    margin: 24px 0 0;
+    padding: 18px;
+
+    background-color: rgba(247, 236, 212, 0.55);
+    border-radius: 13px;
+}
+
+.pagina-piezas .item-leyenda-pieza {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: rgba(37, 30, 23, 0.78);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pagina-piezas .punto-leyenda {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+}
+
+.pagina-piezas .punto-disponible {
+    background-color: var(--verde-principal);
+}
+
+.pagina-piezas .punto-seleccionada {
+    background-color: var(--dorado-medio);
+}
+
+.pagina-piezas .punto-bloqueada {
+    background-color: #999990;
+}
+
+.pagina-piezas .punto-completa {
+    background-color: #7a3623;
+}
+
+
+/* ==================================================
+   RESUMEN DE LA SELECCIÓN
+   ================================================== */
+
+.pagina-piezas .resumen-seleccion-pieza {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 30px;
+
+    margin-top: 28px;
+    padding: 27px 30px;
+
+    color: var(--blanco);
+    background:
+        linear-gradient(
+            100deg,
+            var(--verde-profundo),
+            var(--verde-intermedio)
+        );
+    border-radius: 20px;
+    box-shadow: 0 14px 32px rgba(22, 58, 22, 0.2);
+}
+
+.pagina-piezas .resumen-seleccion-pieza h2 {
+    margin: 0 0 7px;
+
+    color: var(--blanco);
+    font-size: 1.35rem;
+}
+
+.pagina-piezas .resumen-seleccion-pieza p {
+    margin: 4px 0;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.pagina-piezas #nombre-pieza-seleccionada {
+    color: var(--dorado-claro);
+    font-weight: 800;
+}
+
+.pagina-piezas #cupos-pieza-seleccionada {
+    color: var(--blanco);
+    font-weight: 700;
+}
+
+
+/* ==================================================
+   BOTÓN PARA CONFIRMAR
+   ================================================== */
+
+.pagina-piezas #boton-confirmar-pieza {
+    min-width: 245px;
+    min-height: 58px;
+    padding: 0 28px;
+
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
+    border: 2px solid rgba(255, 255, 255, 0.72);
+    border-radius: 13px;
+
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.pagina-piezas #boton-confirmar-pieza:hover:not(:disabled) {
+    background-color: var(--dorado-medio);
+    transform: translateY(-2px);
+    box-shadow: 0 9px 18px rgba(0, 0, 0, 0.2);
+}
+
+.pagina-piezas #boton-confirmar-pieza:disabled {
+    color: rgba(37, 30, 23, 0.48);
+    background-color: #d7d5cc;
+    border-color: transparent;
+
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.pagina-piezas #boton-confirmar-pieza:focus-visible {
+    outline: 4px solid rgba(228, 198, 116, 0.55);
+    outline-offset: 4px;
+}
+
+
+/* ==================================================
+   ENLACE PARA VOLVER
+   ================================================== */
+
+.pagina-piezas .volver-desde-piezas {
+    display: flex;
+    justify-content: center;
+    margin-top: 26px;
+}
+
+.pagina-piezas .volver-desde-piezas a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 46px;
+    padding: 0 20px;
+
+    color: var(--verde-profundo);
+    text-decoration: none;
+    font-weight: 700;
+
+    border: 2px solid var(--verde-profundo);
+    border-radius: 10px;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.pagina-piezas .volver-desde-piezas a:hover {
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+}
+
+.pagina-piezas .volver-desde-piezas a:focus-visible {
+    outline: 4px solid rgba(228, 198, 116, 0.5);
+    outline-offset: 3px;
+}
+
+
+/* ==================================================
+   ADAPTACIÓN PARA TABLETAS
+   ================================================== */
+
+@media (max-width: 980px) {
+
+    .pagina-piezas .selector-participante-pieza {
+        grid-template-columns: 1fr;
+    }
+
+    .pagina-piezas #mapa-piezas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pagina-piezas .pieza-ancha {
+        grid-column: span 1;
+    }
+
+    .pagina-piezas .pasillo-mapa-piezas {
+        grid-column: 1 / -1;
+        min-height: 70px;
+    }
+
+    .pagina-piezas .resumen-seleccion-pieza {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .pagina-piezas #boton-confirmar-pieza {
+        width: 100%;
+    }
+}
+
+
+/* ==================================================
+   ADAPTACIÓN PARA CELULARES
+   ================================================== */
+
+@media (max-width: 620px) {
+
+    .pagina-piezas .contenido-piezas {
+        width: 100%;
+        padding: 34px 14px 60px;
+
+    }
+
+    .pagina-piezas .cabecera-piezas {
+        margin-bottom: 28px;
+    }
+
+    .pagina-piezas .cabecera-piezas p {
+        font-size: 1rem;
+    }
+
+    .pagina-piezas .selector-participante-pieza,
+    .pagina-piezas .seccion-mapa-piezas,
+    .pagina-piezas .resumen-seleccion-pieza {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .pagina-piezas .encabezado-mapa-piezas {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .pagina-piezas #mapa-piezas {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .pagina-piezas .pieza-ancha,
+    .pagina-piezas .pasillo-mapa-piezas {
+        grid-column: span 1;
+    }
+
+    .pagina-piezas .tarjeta-pieza {
+        min-height: 138px;
+    }
+
+    .pagina-piezas .leyenda-piezas {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .pagina-piezas #boton-confirmar-pieza {
+        min-width: 0;
+    }
+}
+
+/* ==================================================
+   BOTÓN PARA SELECCIONAR PIEZAS
+   ================================================== */
+
+/* Agrupa el botón y su texto de ayuda */
+.acceso-seleccion-piezas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 28px;
+}
+
+/* Botón que abre la selección de alojamiento */
+.boton-seleccionar-pieza {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-width: 250px;
+    padding: 15px 28px;
+
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
+
+    border: 2px solid var(--dorado-medio);
+    border-radius: 12px;
+
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+
+    box-shadow: 0 8px 20px rgba(37, 30, 23, 0.12);
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Efecto al pasar el cursor */
+.boton-seleccionar-pieza:hover {
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(37, 30, 23, 0.2);
+}
+
+/* Accesibilidad mediante teclado */
+.boton-seleccionar-pieza:focus-visible {
+    outline: 3px solid var(--verde-principal);
+    outline-offset: 4px;
+}
+
+/* Texto explicativo debajo del botón */
+.acceso-seleccion-piezas small {
+    color: rgba(37, 30, 23, 0.7);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 560px) {
+
+    .boton-seleccionar-pieza {
+        width: 100%;
+        min-width: 0;
+    }
+}

@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <!-- Configuración general de la página -->
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Selección de piezas para participantes acreditados del Campamento ICEC Juvenil 2027.">
+
+    <title>
+        Selección de pieza | Elegidos ICEC Juvenil
+    </title>
+
+    <!-- Hoja de estilos principal -->
+    <link
+        rel="stylesheet"
+        href="style.css">
+
+    <!-- JavaScript de la selección de piezas -->
+    <script
+        src="piezas.js"
+        defer>
+    </script>
+
+</head>
+
+
+<body class="pagina-piezas">
+
+    <!-- ==================================================
+         ENCABEZADO Y MENÚ PRINCIPAL
+         ================================================== -->
+
+    <header class="encabezado">
+
+        <!-- Logo y nombre de la organización -->
+        <a
+            href="index.html"
+            class="marca">
+
+            <img
+                src="Logos/logo-elegidos.png"
+                alt="Logo Elegidos ICEC Juvenil">
+
+            <span class="nombre-marca">
+                ICEC Juvenil
+            </span>
+
+        </a>
+
+
+        <!-- Menú principal -->
+        <nav
+            class="menu-principal"
+            aria-label="Navegación principal">
+
+            <a href="index.html">
+                Inicio
+            </a>
+
+            <a href="informacion.html">
+                Información
+            </a>
+
+            <a
+                href="login.html"
+                aria-current="page">
+                Acreditación
+            </a>
+
+            <a href="index.html#contacto">
+                Contacto
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- ==================================================
+         CONTENIDO PRINCIPAL
+         ================================================== -->
+
+    <main class="contenido-piezas">
+
+        <!-- ==================================================
+             PRESENTACIÓN DE LA PÁGINA
+             ================================================== -->
+
+        <section class="cabecera-piezas">
+
+            <span class="etiqueta-piezas">
+                Alojamiento
+            </span>
+
+            <h1>
+                Selección de pieza
+            </h1>
+
+            <p>
+                Elige una pieza disponible según el género registrado
+                de cada participante.
+            </p>
+
+        </section>
+
+
+        <!-- ==================================================
+             SELECCIÓN DEL PARTICIPANTE
+             ================================================== -->
+
+        <section
+            class="selector-participante-pieza"
+            aria-labelledby="titulo-selector-participante">
+
+            <!-- Explicación del selector -->
+            <div class="informacion-selector-pieza">
+
+                <h2 id="titulo-selector-participante">
+                    Participante que será asignado
+                </h2>
+
+                <p>
+                    Selecciona una persona para mostrar solamente las
+                    piezas que le corresponden.
+                </p>
+
+                <!-- Género registrado de la persona seleccionada -->
+                <div
+                    class="informacion-genero-pieza"
+                    aria-live="polite">
+
+                    <span
+                        id="genero-participante-pieza"
+                        aria-hidden="true">
+                        —
+                    </span>
+
+                    <span id="texto-genero-participante">
+                        Primero selecciona un participante.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Lista de participantes -->
+            <div class="grupo-selector-participante">
+
+                <label for="participante-pieza">
+                    Persona que será asignada
+                </label>
+
+                <select id="participante-pieza">
+
+                    <option value="">
+                        Seleccione un participante
+                    </option>
+
+                </select>
+
+            </div>
+
+        </section>
+
+
+        <!-- Mensaje de orientación -->
+        <p
+            id="mensaje-seleccion-pieza"
+            aria-live="polite">
+
+            Selecciona primero una persona para mostrar las piezas
+            correspondientes.
+
+        </p>
+
+
+        <!-- ==================================================
+             MAPA DE PIEZAS
+             ================================================== -->
+
+        <section
+            class="seccion-mapa-piezas"
+            aria-labelledby="titulo-mapa-piezas">
+
+            <!-- Encabezado del mapa -->
+            <div class="encabezado-mapa-piezas">
+
+                <h2 id="titulo-mapa-piezas">
+                    Piezas disponibles
+                </h2>
+
+                <span id="contador-piezas-disponibles">
+                    17 piezas
+                </span>
+
+            </div>
+
+
+            <!-- ==================================================
+                 DISTRIBUCIÓN DE LAS PIEZAS
+                 ================================================== -->
+
+            <div id="mapa-piezas">
+
+                <!-- ==============================================
+                     PIEZAS PARA MUJERES
+                     ============================================== -->
+
+                <!-- Pieza M5 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M5"
+                    data-nombre="Gracia"
+                    data-genero="femenino"
+                    data-capacidad="3"
+                    data-disponibles="3"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M5
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Gracia
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        3 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M4 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M4"
+                    data-nombre="Sangre de Cristo"
+                    data-genero="femenino"
+                    data-capacidad="3"
+                    data-disponibles="3"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M4
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Sangre de Cristo
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        3 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M3 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M3"
+                    data-nombre="Sacrificio"
+                    data-genero="femenino"
+                    data-capacidad="4"
+                    data-disponibles="4"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M3
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Sacrificio
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        4 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M2 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M2"
+                    data-nombre="Expiación"
+                    data-genero="femenino"
+                    data-capacidad="4"
+                    data-disponibles="4"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M2
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Expiación
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        4 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M1 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M1"
+                    data-nombre="Redención"
+                    data-genero="femenino"
+                    data-capacidad="4"
+                    data-disponibles="4"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M1
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Redención
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        4 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M6 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M6"
+                    data-nombre="Perdón"
+                    data-genero="femenino"
+                    data-capacidad="4"
+                    data-disponibles="4"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M6
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Perdón
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        4 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M7 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M7"
+                    data-nombre="Reconciliación"
+                    data-genero="femenino"
+                    data-capacidad="4"
+                    data-disponibles="4"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M7
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Reconciliación
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        4 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M8 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M8"
+                    data-nombre="Justificación"
+                    data-genero="femenino"
+                    data-capacidad="4"
+                    data-disponibles="4"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M8
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Justificación
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        4 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M9 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M9"
+                    data-nombre="Amor de Dios"
+                    data-genero="femenino"
+                    data-capacidad="4"
+                    data-disponibles="4"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M9
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Amor de Dios
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        4 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza M10 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="M10"
+                    data-nombre="Sustitución"
+                    data-genero="femenino"
+                    data-capacidad="2"
+                    data-disponibles="2"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        M10
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Sustitución
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        2 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- ==============================================
+                     PIEZAS PARA HOMBRES
+                     ============================================== -->
+
+                <!-- Pieza H1 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="H1"
+                    data-nombre="Muerte y resurrección"
+                    data-genero="masculino"
+                    data-capacidad="2"
+                    data-disponibles="2"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        H1
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Muerte y resurrección
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        2 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza H2 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="H2"
+                    data-nombre="Victoria"
+                    data-genero="masculino"
+                    data-capacidad="4"
+                    data-disponibles="4"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        H2
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Victoria
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        4 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza H3 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="H3"
+                    data-nombre="Salvación"
+                    data-genero="masculino"
+                    data-capacidad="3"
+                    data-disponibles="3"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        H3
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Salvación
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        3 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza H4 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="H4"
+                    data-nombre="Fe"
+                    data-genero="masculino"
+                    data-capacidad="3"
+                    data-disponibles="3"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        H4
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Fe
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        3 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza H5 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza"
+                    data-codigo="H5"
+                    data-nombre="Humildad y obediencia"
+                    data-genero="masculino"
+                    data-capacidad="3"
+                    data-disponibles="3"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        H5
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Humildad y obediencia
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        3 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pieza H7 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza pieza-ancha"
+                    data-codigo="H7"
+                    data-nombre="Nuevo pacto"
+                    data-genero="masculino"
+                    data-capacidad="6"
+                    data-disponibles="6"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        H7
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Nuevo pacto
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        6 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+
+                <!-- Pasillo central -->
+                <div
+                    class="pasillo-mapa-piezas"
+                    aria-label="Pasillo central">
+
+                    Pasillo
+
+                </div>
+
+
+                <!-- Pieza H6 -->
+                <button
+                    type="button"
+                    class="tarjeta-pieza pieza-ancha"
+                    data-codigo="H6"
+                    data-nombre="Cruz diaria"
+                    data-genero="masculino"
+                    data-capacidad="3"
+                    data-disponibles="3"
+                    aria-pressed="false">
+
+                    <span class="codigo-pieza">
+                        H6
+                    </span>
+
+                    <strong class="nombre-pieza">
+                        Cruz diaria
+                    </strong>
+
+                    <span class="capacidad-pieza">
+                        3 personas
+                    </span>
+
+                    <span class="estado-pieza">
+                        Disponible
+                    </span>
+
+                </button>
+
+            </div>
+            <!-- Fin de #mapa-piezas -->
+
+
+            <!-- ==================================================
+                 LEYENDA DEL MAPA
+                 ================================================== -->
+
+            <div
+                class="leyenda-piezas"
+                aria-label="Leyenda de disponibilidad de las piezas">
+
+                <span class="item-leyenda-pieza">
+
+                    <span
+                        class="punto-leyenda punto-disponible">
+                    </span>
+
+                    Disponible
+
+                </span>
+
+
+                <span class="item-leyenda-pieza">
+
+                    <span
+                        class="punto-leyenda punto-seleccionada">
+                    </span>
+
+                    Pieza seleccionada
+
+                </span>
+
+
+                <span class="item-leyenda-pieza">
+
+                    <span
+                        class="punto-leyenda punto-completa">
+                    </span>
+
+                    Completa
+
+                </span>
+
+
+                <span class="item-leyenda-pieza">
+
+                    <span
+                        class="punto-leyenda punto-bloqueada">
+                    </span>
+
+                    No corresponde al género
+
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             RESUMEN DE LA SELECCIÓN
+             ================================================== -->
+
+        <section
+            class="resumen-seleccion-pieza"
+            aria-labelledby="titulo-resumen-pieza">
+
+            <div class="informacion-resumen-pieza">
+
+                <h2 id="titulo-resumen-pieza">
+
+                    Pieza seleccionada:
+
+                    <span id="nombre-pieza-seleccionada">
+                        Ninguna
+                    </span>
+
+                </h2>
+
+                <p id="cupos-pieza-seleccionada">
+                    Selecciona una pieza disponible para continuar.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="boton-confirmar-pieza"
+                disabled>
+
+                Confirmar pieza
+
+            </button>
+
+        </section>
+
+
+        <!-- ==================================================
+             ENLACE PARA VOLVER
+             ================================================== -->
+
+        <div class="volver-desde-piezas">
+
+            <a href="informacion.html">
+                Volver a la información
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>
