@@ -3114,3 +3114,1081 @@ body.pagina-login .boton-login:hover {
         margin-top: 3px;
     }
 }
+
+/* ==================================================
+   22. PÁGINA DE INFORMACIÓN PARA ACREDITADOS
+   ================================================== */
+
+/* Fondo general de la página */
+.pagina-informacion {
+    background:
+        url("Logos/fondo-bosque.svg")
+        center bottom / 100% 340px no-repeat,
+        linear-gradient(
+            180deg,
+            var(--crema) 0%,
+            #fbf8ef 55%,
+            #eee8d4 100%
+        );
+}
+
+
+/* ==================================================
+   BANNER DE INFORMACIÓN
+   ================================================== */
+
+/* Conserva la proporción de la imagen panorámica */
+.pagina-informacion .banner-informacion {
+    position: relative;
+
+    width: 100%;
+    height: clamp(330px, 27vw, 440px);
+
+    background-color: var(--verde-profundo);
+    overflow: hidden;
+}
+
+/* Imagen del banner */
+.pagina-informacion .banner-informacion img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center 58%;
+}
+
+
+
+
+/* ==================================================
+   CONTENEDOR PRINCIPAL
+   ================================================== */
+
+.pagina-informacion .contenido-informacion {
+    width: calc(100% - 48px);
+    max-width: 1300px;
+
+    margin-left: auto;
+    margin-right: auto;
+    padding: 42px 0 80px;
+
+    box-sizing: border-box;
+}
+
+
+/* ==================================================
+   MENSAJE DE ACCESO RESTRINGIDO
+   ================================================== */
+
+.pagina-informacion .mensaje-acceso-informacion {
+    padding: 42px 30px;
+
+    background-color: rgba(255, 255, 255, 0.97);
+    border-radius: 16px;
+
+    box-shadow: 0 10px 28px rgba(37, 30, 23, 0.12);
+
+    text-align: center;
+}
+
+.pagina-informacion
+.mensaje-acceso-informacion
+.icono-mensaje-informacion {
+    display: grid;
+    place-items: center;
+
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 18px;
+
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+    border-radius: 50%;
+
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.pagina-informacion
+.mensaje-acceso-informacion h1 {
+    margin: 0 0 12px;
+
+    color: var(--verde-profundo);
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.1;
+}
+
+.pagina-informacion
+.mensaje-acceso-informacion p {
+    max-width: 680px;
+    margin: 0 auto 24px;
+
+    color: #5f605a;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.pagina-informacion
+.boton-acceso-acreditacion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+    padding: 12px 28px;
+
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
+
+    border: 2px solid var(--dorado-medio);
+    border-radius: 9px;
+
+    font-weight: 700;
+    text-decoration: none;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        transform 0.2s;
+}
+
+.pagina-informacion
+.boton-acceso-acreditacion:hover {
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+    border-color: var(--color-oscuro);
+
+    transform: translateY(-2px);
+}
+/* Adaptación para tabletas */
+@media (max-width: 900px) {
+
+    .pagina-informacion .banner-informacion {
+        height: 320px;
+    }
+}
+
+/* Adaptación para celulares */
+@media (max-width: 600px) {
+
+    .pagina-informacion .banner-informacion {
+        height: 230px;
+    }
+
+    .pagina-informacion .banner-informacion img {
+        object-position: center;
+    }
+}
+
+/* ==================================================
+   INFORMACIÓN PRIVADA DEL CAMPAMENTO
+   ================================================== */
+
+.pagina-informacion .informacion-acreditado {
+    display: grid;
+    width: 100%;
+    gap: 24px;
+}
+
+
+/* Presentación de la información */
+.pagina-informacion .cabecera-informacion {
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.pagina-informacion
+.estado-acreditacion-informacion {
+    display: inline-flex;
+    align-items: center;
+
+    margin: 0 0 12px;
+    padding: 7px 16px;
+
+    color: var(--verde-profundo);
+    background-color: #eef5e9;
+    border-radius: 999px;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.pagina-informacion
+.cabecera-informacion h1 {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-size: clamp(2.3rem, 5vw, 3.6rem);
+    line-height: 1;
+}
+
+.pagina-informacion
+.cabecera-informacion h1::after {
+    content: "";
+    display: block;
+
+    width: 58px;
+    height: 4px;
+    margin: 14px auto;
+
+    background-color: var(--dorado-claro);
+    border-radius: 999px;
+}
+
+.pagina-informacion
+.cabecera-informacion > p:last-child {
+    max-width: 760px;
+    margin: 0 auto;
+
+    color: #5f605a;
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+
+/* ==================================================
+   TARJETAS DE INFORMACIÓN
+   ================================================== */
+
+.pagina-informacion
+.tarjeta-informacion-acreditado {
+    padding: 24px 28px;
+
+    background-color: rgba(255, 255, 255, 0.97);
+    border-radius: 15px;
+
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.1);
+}
+
+.pagina-informacion
+.cabecera-tarjeta-informacion {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+.pagina-informacion
+.tarjeta-informacion-acreditado
+.icono-mensaje-informacion,
+.pagina-informacion
+.icono-tarjeta-informacion {
+    display: grid;
+    place-items: center;
+    flex: 0 0 52px;
+
+    width: 52px;
+    height: 52px;
+
+    color: #85610f;
+    background-color: #fbefd0;
+    border-radius: 50%;
+
+    font-family: "Segoe UI Symbol", Arial, sans-serif;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.pagina-informacion
+.cabecera-tarjeta-informacion h2 {
+    margin: 0 0 3px;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.pagina-informacion
+.cabecera-tarjeta-informacion p {
+    margin: 0;
+
+    color: #66665f;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+
+/* ==================================================
+   FECHA Y HORARIO
+   ================================================== */
+
+.pagina-informacion
+.contenido-horario-campamento {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.pagina-informacion
+.fecha-campamento-informacion,
+.pagina-informacion
+.horario-salida-campamento {
+    padding: 18px 20px;
+
+    background-color: #f8f5eb;
+    border: 1px solid #ded9ca;
+    border-radius: 11px;
+}
+
+.pagina-informacion
+.contenido-horario-campamento strong {
+    display: block;
+
+    color: var(--verde-profundo);
+    font-size: 1.15rem;
+}
+
+.pagina-informacion
+.contenido-horario-campamento span {
+    display: block;
+    margin-top: 4px;
+
+    color: #5f605a;
+}
+
+
+/* ==================================================
+   LISTA VISUAL DE ELEMENTOS NECESARIOS
+   ================================================== */
+
+.pagina-informacion
+.lista-elementos-campamento {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 28px;
+
+    margin: 24px 0 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.pagina-informacion
+.lista-elementos-campamento li {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+
+    color: #4f504a;
+    font-weight: 400;
+    line-height: 1.45;
+
+    break-inside: avoid;
+}
+
+/* Elimina la antigua marca de verificación */
+.pagina-informacion
+.lista-elementos-campamento li::before {
+    content: none;
+}
+
+/* Evita que las chalas queden destacadas */
+.pagina-informacion
+.lista-elementos-campamento strong {
+    font-weight: 400;
+}
+
+/* Contenedor de cada icono ilustrativo */
+.pagina-informacion .icono-elemento {
+    display: grid;
+    place-items: center;
+
+    width: 44px;
+    height: 44px;
+
+    background-color: rgba(228, 198, 116, 0.28);
+    border: 1px solid rgba(171, 129, 65, 0.25);
+    border-radius: 12px;
+
+    font-family:
+        "Segoe UI Emoji",
+        "Apple Color Emoji",
+        sans-serif;
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+
+/* ==================================================
+   SALUD Y MEDICAMENTOS
+   ================================================== */
+
+.pagina-informacion
+.aviso-importante-campamento {
+    padding: 18px 20px;
+
+    background-color: #fff8e7;
+    border-left: 5px solid var(--dorado-medio);
+    border-radius: 8px;
+}
+
+.pagina-informacion
+.aviso-importante-campamento > strong {
+    display: block;
+    margin-bottom: 8px;
+
+    color: #815c0c;
+    font-size: 1.05rem;
+}
+
+.pagina-informacion
+.aviso-importante-campamento p {
+    margin: 6px 0 0;
+
+    color: #5d5a51;
+    line-height: 1.5;
+}
+
+
+/* ==================================================
+   CELULARES Y OBJETOS DE VALOR
+   ================================================== */
+
+.pagina-informacion
+.restricciones-campamento {
+    display: grid;
+    gap: 16px;
+}
+
+.pagina-informacion
+.restriccion-destacada {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    padding: 18px 20px;
+
+    background-color: #f4f7f0;
+    border: 1px solid #d8dfd2;
+    border-radius: 10px;
+}
+
+/* Círculo del símbolo de prohibición */
+.pagina-informacion .simbolo-prohibido {
+    position: relative;
+    display: block;
+    flex: 0 0 58px;
+
+    width: 58px;
+    height: 58px;
+    padding: 0;
+
+    color: transparent;
+    background-color: var(--verde-profundo);
+    border-radius: 50%;
+
+    font-size: 0;
+}
+/* Círculo blanco interior */
+.pagina-informacion .simbolo-prohibido::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 27px;
+    height: 27px;
+
+    border: 3px solid var(--blanco);
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+}
+/* Línea diagonal del símbolo de prohibición */
+.pagina-informacion .simbolo-prohibido::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 31px;
+    height: 3px;
+
+    background-color: var(--blanco);
+    border-radius: 999px;
+
+    transform: translate(-50%, -50%) rotate(-52deg);
+    transform-origin: center;
+}
+
+.pagina-informacion
+.restriccion-destacada strong {
+    color: var(--verde-profundo);
+}
+
+.pagina-informacion
+.restriccion-destacada p {
+    margin: 4px 0 0;
+
+    color: #5f605a;
+    line-height: 1.45;
+}
+
+.pagina-informacion
+.restricciones-campamento ul {
+    display: grid;
+    gap: 8px;
+
+    margin: 0;
+    padding-left: 22px;
+
+    color: #53544e;
+}
+
+
+/* ==================================================
+   MENSAJE FINAL
+   ================================================== */
+
+.pagina-informacion
+.mensaje-final-informacion {
+    padding: 28px;
+
+    color: var(--blanco);
+    background: linear-gradient(
+        90deg,
+        var(--verde-profundo),
+        var(--verde-intermedio)
+    );
+
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(37, 30, 23, 0.14);
+
+    text-align: center;
+}
+
+.pagina-informacion
+.mensaje-final-informacion h2 {
+    margin: 0 0 7px;
+
+    color: var(--dorado-claro);
+    font-size: 2rem;
+}
+
+.pagina-informacion
+.mensaje-final-informacion p {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.9);
+}
+
+
+/* ==================================================
+   ADAPTACIÓN PARA TABLETAS
+   ================================================== */
+
+@media (max-width: 760px) {
+
+    .pagina-informacion
+    .banner-informacion {
+        height: 240px;
+        aspect-ratio: auto;
+    }
+
+    .pagina-informacion
+    .banner-informacion img {
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .pagina-informacion
+    .contenido-informacion {
+        width: calc(100% - 24px);
+        padding: 28px 0 55px;
+    }
+
+    .pagina-informacion
+    .lista-elementos-campamento {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
+
+
+/* ==================================================
+   ADAPTACIÓN PARA CELULARES
+   ================================================== */
+
+@media (max-width: 560px) {
+
+    .pagina-informacion
+    .banner-informacion {
+        height: 210px;
+    }
+
+    .pagina-informacion
+    .tarjeta-informacion-acreditado {
+        padding: 20px 16px;
+        border-radius: 12px;
+    }
+
+    .pagina-informacion
+    .cabecera-tarjeta-informacion {
+        align-items: flex-start;
+    }
+
+    .pagina-informacion
+    .contenido-horario-campamento {
+        grid-template-columns: 1fr;
+    }
+
+    .pagina-informacion
+    .restriccion-destacada {
+        align-items: center;
+        padding: 16px;
+    }
+
+    .pagina-informacion
+    .simbolo-prohibido {
+        flex-basis: 52px;
+        width: 52px;
+        height: 52px;
+    }
+
+    .pagina-informacion
+    .simbolo-prohibido::before {
+        font-size: 1.8rem;
+    }
+
+    .pagina-informacion
+    .mensaje-final-informacion {
+        padding: 24px 16px;
+    }
+
+    .pagina-informacion
+    .mensaje-acceso-informacion {
+        padding: 32px 18px;
+    }
+}
+
+/* ==================================================
+   23. ACCESO ADMINISTRATIVO
+   ================================================== */
+
+/* Fondo general de la página */
+.pagina-admin-login {
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            rgba(22, 58, 22, 0.78),
+            rgba(22, 58, 22, 0.88)
+        ),
+        url("Logos/imagen.png") center / cover fixed;
+
+    color: var(--texto);
+}
+
+/* Encabezado específico del acceso administrativo */
+.pagina-admin-login .encabezado-admin {
+    width: 100%;
+    margin: 0;
+}
+
+/* Enlace para regresar al sitio público */
+.pagina-admin-login .enlace-volver-sitio {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 16px;
+
+    color: var(--verde-profundo);
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        border-color 0.2s;
+}
+
+.pagina-admin-login .enlace-volver-sitio:hover {
+    color: var(--color-oscuro);
+    background-color: rgba(228, 198, 116, 0.24);
+    border-color: var(--dorado-medio);
+}
+
+/* ==================================================
+   CONTENEDOR DEL FORMULARIO
+   ================================================== */
+
+.pagina-admin-login .contenido-admin-login {
+    display: grid;
+    place-items: center;
+
+    width: 100%;
+    min-height: calc(100vh - 116px);
+    padding: 48px 24px;
+
+    box-sizing: border-box;
+}
+
+/* Tarjeta central del acceso */
+.pagina-admin-login .tarjeta-admin-login {
+    width: min(620px, 100%);
+    padding: 38px 42px;
+
+    background-color: rgba(255, 255, 255, 0.97);
+    border: 1px solid rgba(171, 129, 65, 0.26);
+    border-radius: 20px;
+
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.3);
+
+    box-sizing: border-box;
+}
+
+/* ==================================================
+   CABECERA DEL ACCESO
+   ================================================== */
+
+.pagina-admin-login .cabecera-admin-login {
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+/* Círculo del candado */
+.pagina-admin-login .icono-admin-login {
+    display: grid;
+    place-items: center;
+
+    width: 66px;
+    height: 66px;
+    margin: 0 auto 14px;
+
+    color: var(--dorado-claro);
+    background-color: var(--verde-profundo);
+    border-radius: 50%;
+
+    font-size: 1.75rem;
+    line-height: 1;
+}
+
+/* Etiqueta “Área privada” */
+.pagina-admin-login .etiqueta-admin-login {
+    display: inline-flex;
+
+    margin: 0 0 10px;
+    padding: 6px 15px;
+
+    color: var(--verde-profundo);
+    background-color: #eef5e9;
+    border-radius: 999px;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* Título principal */
+.pagina-admin-login .cabecera-admin-login h1 {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-size: clamp(2.2rem, 5vw, 3.1rem);
+    line-height: 1;
+}
+
+/* Línea dorada bajo el título */
+.pagina-admin-login .cabecera-admin-login h1::after {
+    content: "";
+    display: block;
+
+    width: 58px;
+    height: 4px;
+    margin: 14px auto;
+
+    background-color: var(--dorado-claro);
+    border-radius: 999px;
+}
+
+/* Texto introductorio */
+.pagina-admin-login .cabecera-admin-login > p:last-child {
+    max-width: 470px;
+    margin: 0 auto;
+
+    color: #5f605a;
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+/* ==================================================
+   FORMULARIO ADMINISTRATIVO
+   ================================================== */
+
+.pagina-admin-login .formulario-admin-login {
+    display: grid;
+    gap: 20px;
+}
+
+/* Cada campo del formulario */
+.pagina-admin-login .campo-admin-login {
+    display: grid;
+    gap: 8px;
+}
+
+/* Etiquetas de los campos */
+.pagina-admin-login .campo-admin-login label {
+    color: var(--verde-profundo);
+    font-size: 0.98rem;
+    font-weight: 700;
+}
+
+/* Asteriscos de campos obligatorios */
+.pagina-admin-login .campo-admin-login label span {
+    color: #b32d2d;
+}
+
+/* Contenedor del icono y el campo */
+.pagina-admin-login .control-admin-login {
+    position: relative;
+}
+
+/* Icono situado a la izquierda */
+.pagina-admin-login .icono-control-admin {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+
+    display: grid;
+    place-items: center;
+
+    color: #747a72;
+    font-size: 1.15rem;
+
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Campos de correo y contraseña */
+.pagina-admin-login .control-admin-login input {
+    width: 100%;
+    height: 58px;
+    padding: 0 54px 0 48px;
+
+    color: var(--texto);
+    background-color: #fffdf8;
+
+    border: 1px solid #b8bbb3;
+    border-radius: 10px;
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1rem;
+
+    box-sizing: border-box;
+    outline: none;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        background-color 0.2s;
+}
+
+.pagina-admin-login .control-admin-login input::placeholder {
+    color: #777b75;
+}
+
+/* Campo activo */
+.pagina-admin-login .control-admin-login input:focus {
+    background-color: var(--blanco);
+    border-color: var(--dorado-medio);
+
+    box-shadow:
+        0 0 0 4px rgba(228, 198, 116, 0.3);
+}
+
+/* Botón para mostrar u ocultar la contraseña */
+.pagina-admin-login .boton-mostrar-contrasena-admin {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+
+    display: grid;
+    place-items: center;
+
+    width: 38px;
+    height: 38px;
+    padding: 0;
+
+    color: var(--verde-profundo);
+    background-color: transparent;
+    border: 0;
+    border-radius: 8px;
+
+    font-size: 1.2rem;
+    cursor: pointer;
+
+    transform: translateY(-50%);
+}
+
+.pagina-admin-login .boton-mostrar-contrasena-admin:hover {
+    background-color: rgba(228, 198, 116, 0.25);
+}
+
+/* ==================================================
+   MENSAJES DEL FORMULARIO
+   ================================================== */
+
+.pagina-admin-login .mensaje-admin-login {
+    margin: 0;
+    padding: 12px 14px;
+
+    color: #8a1d1d;
+    background-color: #fff0f0;
+    border: 1px solid #e4b5b5;
+    border-radius: 8px;
+
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+/* Botón principal de ingreso */
+.pagina-admin-login .boton-ingresar-admin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+
+    width: 100%;
+    min-height: 56px;
+    padding: 12px 24px;
+
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
+
+    border: 2px solid var(--dorado-medio);
+    border-radius: 10px;
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        border-color 0.2s,
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.pagina-admin-login .boton-ingresar-admin:hover {
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+    border-color: var(--color-oscuro);
+
+    box-shadow: 0 8px 18px rgba(37, 30, 23, 0.2);
+    transform: translateY(-2px);
+}
+
+/* ==================================================
+   AVISO DE SEGURIDAD
+   ================================================== */
+
+.pagina-admin-login .aviso-seguridad-admin {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    margin-top: 26px;
+    padding: 14px 16px;
+
+    color: #4f554d;
+    background-color: #eef5e9;
+    border: 1px solid #d7e2d0;
+    border-radius: 10px;
+}
+
+.pagina-admin-login .aviso-seguridad-admin > span {
+    flex-shrink: 0;
+
+    color: var(--verde-profundo);
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.pagina-admin-login .aviso-seguridad-admin p {
+    margin: 0;
+
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Indicadores visibles para navegación con teclado */
+.pagina-admin-login .enlace-volver-sitio:focus-visible,
+.pagina-admin-login .boton-mostrar-contrasena-admin:focus-visible,
+.pagina-admin-login .boton-ingresar-admin:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+}
+
+/* ==================================================
+   ADAPTACIÓN PARA TABLETAS Y CELULARES
+   ================================================== */
+
+@media (max-width: 760px) {
+
+    .pagina-admin-login .encabezado-admin {
+        gap: 16px;
+    }
+
+    .pagina-admin-login .enlace-volver-sitio {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .pagina-admin-login .contenido-admin-login {
+        min-height: calc(100vh - 96px);
+        padding: 30px 16px;
+    }
+
+    .pagina-admin-login .tarjeta-admin-login {
+        padding: 30px 24px;
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .pagina-admin-login .encabezado-admin {
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+
+    .pagina-admin-login .tarjeta-admin-login {
+        padding: 26px 18px;
+    }
+
+    .pagina-admin-login .icono-admin-login {
+        width: 58px;
+        height: 58px;
+        font-size: 1.5rem;
+    }
+
+    .pagina-admin-login .cabecera-admin-login h1 {
+        font-size: 2.25rem;
+    }
+
+    .pagina-admin-login .control-admin-login input {
+        height: 54px;
+    }
+}
