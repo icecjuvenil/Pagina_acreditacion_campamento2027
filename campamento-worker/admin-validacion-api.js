@@ -5,6 +5,8 @@
  * Acceso exclusivo para administradores
  */
 
+import { enviarCorreo } from "./correo-api.js";
+
 function responder(datos, codigo = 200) {
     return Response.json(datos, {
         status: codigo,
@@ -129,6 +131,50 @@ export async function manejarValidacionPagoAdmin(
             return responder({
                 mensaje: "El pago no está disponible para esta revisión. Actualiza el panel."
             }, 409);
+        }
+
+        // ==========================================
+        // NOTIFICACIÓN DE RECHAZO - PRUEBA LOCAL
+        // ==========================================
+
+        if (
+            accion === "RECHAZAR" &&
+            env.ENTORNO === "local" &&
+            env.RESEND_TEST_EMAIL
+        ) {
+            try {
+                const participante = await env.DB.prepare(`
+                    SELECT p.nombre_completo
+                    FROM pagos pg
+                    INNER JOIN participantes p
+                        ON p.id = pg.participante_id
+                    WHERE pg.id = ?
+                    LIMIT 1
+                `).bind(id).first();
+
+                await enviarCorreo(env, {
+                    destinatario: env.RESEND_TEST_EMAIL.trim(),
+                    asunto: "Comprobante rechazado - ICEC Juvenil 2027",
+                    mensaje:
+                        `Campamento Juvenil ICEC 2027\n\n` +
+                        `Participante: ${participante?.nombre_completo || "No identificado"}\n\n` +
+                        `Tu comprobante de pago fue rechazado.\n\n` +
+                        `Motivo del rechazo:\n${motivo}\n\n` +
+                        `Para corregirlo, inicia sesión en la plataforma ` +
+                        `y sube un nuevo comprobante.\n\n` +
+                        `ICEC Juvenil 2027`
+                });
+
+                console.log(
+                    "Notificación de rechazo aceptada por Resend."
+                );
+
+            } catch (errorCorreo) {
+                console.error(
+                    "No se pudo enviar la notificación de rechazo:",
+                    errorCorreo?.message
+                );
+            }
         }
 
         return responder({

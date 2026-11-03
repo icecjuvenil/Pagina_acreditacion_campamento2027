@@ -1522,7 +1522,7 @@ async function manejarSolicitud(request, env) {
   );
 }
 
-    if (request.method !== "GET") {
+    if (!["GET", "POST"].includes(request.method)) {
       return Response.json(
         { mensaje: "Método no permitido." },
         { status: 405 }
@@ -1556,6 +1556,55 @@ async function manejarSolicitud(request, env) {
         { status: 403 }
       );
     }
+
+
+if (request.method === "POST") {
+  if (env.ENTORNO !== "local") {
+    return Response.json(
+      { mensaje: "Ruta no disponible." },
+      { status: 404 }
+    );
+  }
+
+  if (request.headers.get("X-ICEC-Solicitud") !== "web") {
+    return Response.json(
+      { mensaje: "Solicitud no autorizada." },
+      { status: 403 }
+    );
+  }
+
+  const destinatario = env.RESEND_TEST_EMAIL?.trim();
+
+  if (!destinatario) {
+    return Response.json(
+      { mensaje: "Falta RESEND_TEST_EMAIL." },
+      { status: 503 }
+    );
+  }
+
+  try {
+    const resultado = await enviarCorreo(env, {
+      destinatario,
+      asunto: "Prueba de correo - ICEC Juvenil 2027",
+      mensaje:
+        "Este es un correo de prueba enviado desde Cloudflare Workers mediante Resend."
+    });
+
+    return Response.json({
+      estado: "OK",
+      mensaje: "Resend aceptó el envío de prueba.",
+      id: resultado.id
+    });
+  } catch (error) {
+    console.error("Error al enviar correo de prueba.");
+
+    return Response.json(
+      { mensaje: "No fue posible enviar el correo." },
+      { status: 502 }
+    );
+  }
+}
+
 
     const configurado =
       typeof env.RESEND_API_KEY === "string" &&
