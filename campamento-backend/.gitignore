@@ -35,5 +35,25 @@ build/
 # Credenciales privadas de MySQL
 /src/main/resources/application-local.properties
 
+# ==========================================
+# ICEC 2027 - Archivos privados y temporales
+# ==========================================
 
+# Variables y credenciales privadas
 .dev.vars
+.dev.vars.*
+
+# Archivos temporales de Cloudflare Wrangler
+**/.wrangler/
+
+# Bases de datos locales
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Comprobantes de prueba
+/campamento-worker/comprobantes/
+/campamento-worker/comprobante_recuperado_icec.png
+
+# Dependencias
+node_modules/
