@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso administrativo | Elegidos ICEC Juvenil</title>
+
+    <!-- Hoja de estilos principal -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Funcionalidad del acceso administrativo -->
+     <script src="admin-login.js" defer></script>
+</head>
+
+<body class="pagina-admin-login"></body>
+
+<!-- ==================================================
+         ENCABEZADO ADMINISTRATIVO
+         ================================================== -->
+
+         <header class="encabezado encabezado-admin">
+
+            <!-- Logo y nombre de la organización -->
+             <a href="index.html" class="marca">
+
+                <img 
+                    src="Logos/logo-elegidos.png" 
+                    alt="Logo Elegidos ICEC Juvenil">
+
+                <span>ICEC Juvenil</span>
+             </a>
+
+             <!--Regreso al sitio público-->
+
+             <a 
+                href="index.html"
+                class="enlace-volver-sitio">
+
+                <span aria-hidden="true"></span>
+                Volver al sitio
+            </a>
+         </header>
+
+          <!-- ==================================================
+                CONTENIDO PRINCIPAL
+         ================================================== -->
+
+         <main class="contenido-admin-login">
+
+            <!-- Presentación del acceso administrativo -->
+            <section
+                class="tarjeta-admin-login"
+                aria-labelledby="titulo-admin-login">
+
+                <!-- Encabezado del formulario -->
+                 <div class="cabecera-admin-login">
+
+                    <div
+                        class="icono-admin-login"
+                        aria-hidden="true">
+                        🔒
+                    </div>
+                    
+                    <form
+                        id="formulario-admin-login"
+                        class="formulario-admin-login">
+                    
+                </div>
+
+                <p class="etiqueta-admin-login">
+                    Área privada
+                </p>
+
+                <h1 id="titulo-admin-login">
+                    Acceso administrativo
+                </h1>
+
+                <p>
+                    Ingresa con tu cuenta autorizada para administrar
+                    las acreditaciones del Campamento ICEC 2027.
+                </p>
+            </div>
+
+            <!-- ==================================================
+                 FORMULARIO DE ACCESO
+                 ================================================== -->
+
+                 <form 
+                    id="formulario-admin-login"
+                    class="formulario-admin-login">
+
+                    <!--Correo electrónico-->
+                    <div class="campo-admin-login">
+                        
+                        <label for="correo-admin">
+                            Correo electrónico
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <div class="control-admin-login">
+
+                            <span
+                                class="icono-control-admin"
+                                aria-hidden="true">
+                                ✉
+                            </span>
+
+                            <input 
+                                type="email"
+                                id="correo-admin"
+                                name="correoAdmin"
+                                placeholder="administrador@ejemplo.cl"
+                                autocomplete="username"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Contraseña -->
+                     <div class="campo-admin-login">
+
+                        <label for="contrasena-admin">
+                            Contraseña
+
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <div class="control-admin-login">
+
+                            <span
+                                class="icono-control-admin"
+                                aria-hidden="true">
+                                🔒
+                            </span>
+
+                            <input 
+                                type="password"
+                                id="contrasena-admin"
+                                name="contrasenaAdmin"
+                                placeholder="Ingresa tu contraseña"
+                                autocomplete="current-password"
+                                minlength="8"
+                                required>
+
+                            <!-- El JavaScript permitirá mostrar u ocultar la contraseña -->
+
+                            <button
+                                type="button"
+                                id="boton-mostrar-contrasena-admin"
+                                class="boton-mostrar-contrasena-admin"
+                                aria-label="Mostrar contraseña"
+                                aria-pressed="false">
+
+                                <span aria-hidden="true">◉</span>
+                            </button>
+                        </div>
+                     </div>
+
+                      <!-- Mensaje de error o confirmación -->
+                       <p
+                            id="mensaje-admin-login"
+                            class="mensaje-admin-login"
+                            role="alert"
+                            aria-live="polite"
+                            hidden>
+                       </p>
+
+                       <!-- Botón de ingreso -->
+                       <button
+                            type="submit"
+                            class="boton-ingresar-admin">
+
+                            <span aria-hidden="true"></span>
+                            Ingresar al panel
+                       </button>
+                    </form>
+
+                    <!--Aviso de seguridad -->
+                    <div class="aviso-seguridad-admin">
+                        <span aria-hidden="true">ⓘ</span>
+
+                        <p>
+                            Este acceso es exclusivo para personal autorizado.
+                            No compartas tus credenciales.
+                        </p>
+                    </div>
+            </section>
+         </main>
+
+    
+</body>
+<body>
+    
+</body>
+</html>
