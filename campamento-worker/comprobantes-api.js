@@ -196,11 +196,13 @@ export async function manejarComprobantes(
     }, 404);
   }
 
-  if (
-    pago.estado !== "PENDIENTE" ||
-    pago.comprobante_key ||
-    Number(pago.monto_pagado) !== 0
-  ) {
+  
+if (
+  !["PENDIENTE", "RECHAZADO"].includes(pago.estado) ||
+  (pago.estado === "PENDIENTE" && pago.comprobante_key) ||
+  Number(pago.monto_pagado) !== 0
+) {
+
     return responder({
       mensaje: "Este pago ya tiene un comprobante o está en revisión."
     }, 409);
@@ -311,24 +313,30 @@ export async function manejarComprobantes(
 
     archivoGuardado = true;
 
-    const actualizacion = await env.DB.prepare(
-      `UPDATE pagos
-       SET titular_transferencia = ?,
-           fecha_transferencia = ?,
-           comprobante_key = ?,
-           estado = 'EN_REVISION'
-       WHERE id = ?
-         AND participante_id = ?
-         AND estado = 'PENDIENTE'
-         AND comprobante_key IS NULL
-         AND monto_pagado = 0`
-    ).bind(
-      titular,
-      fecha,
-      clave,
-      pago.id,
-      participanteId
-    ).run();
+    
+const actualizacion = await env.DB.prepare(
+  `UPDATE pagos
+   SET titular_transferencia = ?,
+       fecha_transferencia = ?,
+       comprobante_key = ?,
+       estado = 'EN_REVISION',
+       observaciones = NULL,
+       fecha_revision = NULL
+   WHERE id = ?
+     AND participante_id = ?
+     AND (
+       (estado = 'PENDIENTE' AND comprobante_key IS NULL)
+       OR estado = 'RECHAZADO'
+     )
+     AND monto_pagado = 0`
+).bind(
+  titular,
+  fecha,
+  clave,
+  pago.id,
+  participanteId
+).run();
+
 
     if (actualizacion.meta?.changes !== 1) {
       await env.COMPROBANTES.delete(clave);
@@ -337,6 +345,27 @@ export async function manejarComprobantes(
         mensaje: "El pago cambió de estado. Actualiza la página."
       }, 409);
     }
+
+    
+    // Eliminar el comprobante anterior solo después
+    // de confirmar que D1 guardó el nuevo archivo.
+    if (
+      pago.estado === "RECHAZADO" &&
+      pago.comprobante_key &&
+      pago.comprobante_key !== clave
+    ) {
+      try {
+        await env.COMPROBANTES.delete(
+          pago.comprobante_key
+        );
+      } catch (errorLimpieza) {
+        console.error(
+          "No se pudo eliminar el comprobante anterior:",
+          errorLimpieza?.message
+        );
+      }
+    }
+
 
     return responder({
       mensaje: "Comprobante recibido correctamente.",

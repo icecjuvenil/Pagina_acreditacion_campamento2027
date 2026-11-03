@@ -341,3 +341,139 @@ export async function manejarDetalleAdmin(
         }, 500);
     }
 }
+
+
+// ==========================================
+// DESCARGAR COMPROBANTE PARA REVISIÓN
+// SOLO ADMINISTRADORES
+// ==========================================
+
+export async function manejarComprobanteAdmin(
+    request,
+    env,
+    { usuarioDeSesion, ORIGENES_PERMITIDOS },
+    pagoId
+) {
+
+    if (request.method !== "GET") {
+        return responder({
+            mensaje: "Método no permitido."
+        }, 405);
+    }
+
+    const origen = request.headers.get("Origin");
+
+    if (
+        !origen ||
+        !ORIGENES_PERMITIDOS.includes(origen)
+    ) {
+        return responder({
+            mensaje: "Origen no autorizado."
+        }, 403);
+    }
+
+    if (!env.DB || !env.COMPROBANTES) {
+        return responder({
+            mensaje: "Almacenamiento no disponible."
+        }, 503);
+    }
+
+    let usuario;
+
+    try {
+        usuario = await usuarioDeSesion(request, env);
+    } catch {
+        return responder({
+            mensaje: "Error al verificar la sesión."
+        }, 500);
+    }
+
+    if (!usuario) {
+        return responder({
+            mensaje: "Debes iniciar sesión."
+        }, 401);
+    }
+
+    if (usuario.rol !== "ADMINISTRADOR") {
+        return responder({
+            mensaje: "Acceso denegado."
+        }, 403);
+    }
+
+    const id = Number(pagoId);
+
+    if (!Number.isSafeInteger(id) || id <= 0) {
+        return responder({
+            mensaje: "Identificador inválido."
+        }, 400);
+    }
+
+    try {
+
+        const pago = await env.DB.prepare(`
+            SELECT comprobante_key
+            FROM pagos
+            WHERE id = ?
+        `).bind(id).first();
+
+        if (!pago || !pago.comprobante_key) {
+            return responder({
+                mensaje: "Comprobante no encontrado."
+            }, 404);
+        }
+
+        const archivo = await env.COMPROBANTES.get(
+            pago.comprobante_key
+        );
+
+        if (!archivo) {
+            return responder({
+                mensaje: "Archivo no disponible."
+            }, 404);
+        }
+
+        const tiposPermitidos = [
+            "application/pdf",
+            "image/png",
+            "image/jpeg"
+        ];
+
+        const tipo = archivo.httpMetadata?.contentType;
+
+        if (!tiposPermitidos.includes(tipo)) {
+            return responder({
+                mensaje: "Formato no permitido."
+            }, 415);
+        }
+
+        const extension = {
+            "application/pdf": "pdf",
+            "image/png": "png",
+            "image/jpeg": "jpg"
+        }[tipo];
+
+        return new Response(archivo.body, {
+            status: 200,
+            headers: {
+                "Content-Type": tipo,
+                "Content-Disposition":
+                    `attachment; filename="comprobante-${id}.${extension}"`,
+                "Cache-Control": "private, no-store",
+                "X-Content-Type-Options": "nosniff",
+                "Content-Security-Policy": "sandbox"
+            }
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Error al recuperar comprobante:",
+            error?.message
+        );
+
+        return responder({
+            mensaje: "No se pudo obtener el comprobante."
+        }, 500);
+    }
+}
+

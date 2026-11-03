@@ -474,6 +474,9 @@
                         ? "Recibido"
                         : "No enviado"
                 );
+                
+                
+
 
                 // =====================================
                 // BOTÓN VER DETALLES
@@ -780,6 +783,18 @@ botonDetalles.addEventListener(
                     "Estado",
                     pagoDetalle.estado
                 );
+                
+if (
+    pagoDetalle.estado === "RECHAZADO" &&
+    pagoDetalle.observaciones
+) {
+    agregarCampo(
+        seccionPago,
+        "Motivo del rechazo",
+        pagoDetalle.observaciones
+    );
+}
+
 
                 agregarCampo(
                     seccionPago,
@@ -800,6 +815,296 @@ botonDetalles.addEventListener(
                         ? "Recibido"
                         : "No enviado"
                 );
+
+if (pagoDetalle.comprobanteRecibido) {
+
+    const botonComprobante = document.createElement("button");
+
+    botonComprobante.type = "button";
+    botonComprobante.textContent = "Ver comprobante";
+    botonComprobante.className =
+        "admin-boton admin-boton--principal";
+
+    
+
+        botonComprobante.disabled = false;
+
+    
+botonComprobante.addEventListener("click", async () => {
+
+    const visor = document.getElementById(
+        "admin-visor-comprobante"
+    );
+
+    const contenidoVisor = document.getElementById(
+        "admin-visor-contenido"
+    );
+
+    const botonCerrarVisor = document.getElementById(
+        "admin-cerrar-visor"
+    );
+
+    botonComprobante.disabled = true;
+
+    let urlTemporal = null;
+
+    const limpiarVisor = () => {
+        contenidoVisor.replaceChildren();
+
+        if (urlTemporal) {
+            URL.revokeObjectURL(urlTemporal);
+            urlTemporal = null;
+        }
+    };
+
+    try {
+
+        const respuesta = await fetch(
+            `http://127.0.0.1:8787/api/admin/comprobantes/${pagoDetalle.id}`,
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+        if (!respuesta.ok) {
+            throw new Error(
+                "No se pudo recuperar el comprobante."
+            );
+        }
+
+        const archivo = await respuesta.blob();
+
+        const tiposPermitidos = [
+            "image/png",
+            "image/jpeg",
+            "application/pdf"
+        ];
+
+        if (!tiposPermitidos.includes(archivo.type)) {
+            throw new Error(
+                "Formato de comprobante no permitido."
+            );
+        }
+
+        urlTemporal = URL.createObjectURL(archivo);
+
+        contenidoVisor.replaceChildren();
+
+        if (archivo.type === "application/pdf") {
+
+            const pdf = document.createElement("iframe");
+
+            pdf.src = urlTemporal;
+            pdf.title = "Comprobante de transferencia";
+
+            contenidoVisor.appendChild(pdf);
+
+        } else {
+
+            const imagen = document.createElement("img");
+
+            imagen.src = urlTemporal;
+            imagen.alt = "Comprobante de transferencia";
+
+            contenidoVisor.appendChild(imagen);
+        }
+
+        visor.onclose = limpiarVisor;
+
+        botonCerrarVisor.onclick = () => {
+            visor.close();
+        };
+
+        visor.showModal();
+
+    } catch (error) {
+
+        console.error(error);
+
+        limpiarVisor();
+
+        alert(error.message);
+
+    } finally {
+
+        botonComprobante.disabled = false;
+    }
+});
+
+
+    seccionPago.appendChild(botonComprobante);
+}
+
+if (
+    pagoDetalle.estado === "EN_REVISION" &&
+    pagoDetalle.comprobanteRecibido
+) {
+    const contenedorAcciones = document.createElement("div");
+    contenedorAcciones.className = "admin-acciones";
+
+    const botonAprobar = document.createElement("button");
+    botonAprobar.type = "button";
+    botonAprobar.textContent = "Aprobar pago";
+    botonAprobar.className = "admin-boton admin-boton--aprobar";
+
+    
+botonAprobar.addEventListener("click", async () => {
+
+    const confirmar = confirm(
+        "¿Confirmas que revisaste el comprobante y que el dinero fue recibido en la cuenta de la iglesia?\n\nEsta acción aprobará el pago."
+    );
+
+    if (!confirmar) return;
+
+    botonAprobar.disabled = true;
+    botonRechazar.disabled = true;
+
+    try {
+        const respuesta = await fetch(
+            `http://127.0.0.1:8787/api/admin/pagos/${pagoDetalle.id}/revision`,
+            {
+                method: "POST",
+                credentials: "include",
+                cache: "no-store",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-ICEC-Solicitud": "web"
+                },
+                body: JSON.stringify({
+                    accion: "APROBAR"
+                })
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok || resultado.estado !== "OK") {
+            throw new Error(
+                resultado.mensaje || "No se pudo aprobar el pago."
+            );
+        }
+
+        alert("Pago aprobado correctamente.");
+
+        const panelDetalle = document.getElementById("admin-detalle");
+        const contenidoDetalle = document.getElementById("admin-detalle-contenido");
+
+        panelDetalle.hidden = true;
+        contenidoDetalle.replaceChildren();
+
+        await cargarPanel();
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+
+    } finally {
+        botonAprobar.disabled = false;
+        botonRechazar.disabled = false;
+    }
+});
+
+
+    const botonRechazar = document.createElement("button");
+    botonRechazar.type = "button";
+    botonRechazar.textContent = "Rechazar pago";
+    botonRechazar.className = "admin-boton admin-boton--rechazar";
+
+    
+botonRechazar.addEventListener("click", async () => {
+
+    const motivo = prompt(
+        "Indica el motivo del rechazo del pago.\n\n" +
+        "Ejemplo: El monto transferido no coincide con el valor de la inscripción."
+    );
+
+    // Cancelar sin modificar el pago
+    if (motivo === null) return;
+
+    const motivoLimpio = motivo.trim();
+
+    if (
+        motivoLimpio.length < 10 ||
+        motivoLimpio.length > 500
+    ) {
+        alert(
+            "El motivo debe contener entre 10 y 500 caracteres."
+        );
+        return;
+    }
+
+    const confirmar = confirm(
+        "¿Confirmas que deseas rechazar este pago?\n\n" +
+        "Motivo: " + motivoLimpio
+    );
+
+    if (!confirmar) return;
+
+    botonAprobar.disabled = true;
+    botonRechazar.disabled = true;
+
+    try {
+
+        const respuesta = await fetch(
+            `http://127.0.0.1:8787/api/admin/pagos/${pagoDetalle.id}/revision`,
+            {
+                method: "POST",
+                credentials: "include",
+                cache: "no-store",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-ICEC-Solicitud": "web"
+                },
+                body: JSON.stringify({
+                    accion: "RECHAZAR",
+                    motivo: motivoLimpio
+                })
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok || resultado.estado !== "OK") {
+            throw new Error(
+                resultado.mensaje ||
+                "No se pudo rechazar el pago."
+            );
+        }
+
+        alert("Pago rechazado y motivo registrado correctamente.");
+
+        const panelDetalle = document.getElementById(
+            "admin-detalle"
+        );
+
+        const contenidoDetalle = document.getElementById(
+            "admin-detalle-contenido"
+        );
+
+        panelDetalle.hidden = true;
+        contenidoDetalle.replaceChildren();
+
+        await cargarPanel();
+
+    } catch (error) {
+
+        console.error(error);
+        alert(error.message);
+
+    } finally {
+
+        botonAprobar.disabled = false;
+        botonRechazar.disabled = false;
+    }
+});
+
+
+    contenedorAcciones.append(botonAprobar, botonRechazar);
+    seccionPago.appendChild(contenedorAcciones);
+}
+
 
             } else {
 
@@ -972,6 +1277,12 @@ botonCerrarSesion.addEventListener(
 
             // Ocultar los datos administrativos
             datosPanel.hidden = true;
+            // Ocultar y limpiar información privada
+const panelDetalle = document.getElementById("admin-detalle");
+const contenidoDetalle = document.getElementById("admin-detalle-contenido");
+
+panelDetalle.hidden = true;
+contenidoDetalle.replaceChildren();
             identidad.hidden = true;
             tabla.replaceChildren();
 
@@ -1004,6 +1315,30 @@ botonCerrarSesion.addEventListener(
         cargarPanel();
 
     </script>
+
+<!-- VISOR PRIVADO DE COMPROBANTES -->
+<dialog id="admin-visor-comprobante"
+        class="admin-visor-comprobante"
+        aria-labelledby="admin-visor-titulo">
+
+    <div class="admin-visor-cabecera">
+        <h2 id="admin-visor-titulo">
+            Comprobante de transferencia
+        </h2>
+
+        <button
+            type="button"
+            id="admin-cerrar-visor"
+            class="admin-boton admin-boton--salir">
+            Cerrar
+        </button>
+    </div>
+
+    <div id="admin-visor-contenido"
+         class="admin-visor-contenido">
+    </div>
+
+</dialog>
 
 </body>
 </html>

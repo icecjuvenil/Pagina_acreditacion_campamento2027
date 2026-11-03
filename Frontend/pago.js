@@ -923,16 +923,38 @@ async function cargarResumenDesdeD1() {
 
         // Solo permitir enviar comprobantes
         // cuando el pago siga pendiente.
-        const puedeEnviarComprobante =
+        
+const puedeEnviarComprobante =
+    (
+        (
             datos.pago.estado === "PENDIENTE" &&
-            datos.pago.comprobanteRecibido === false &&
-            Number(datos.pago.montoPagado) === 0 &&
-            totalInscripcion > 0;
+            datos.pago.comprobanteRecibido === false
+        ) ||
+        datos.pago.estado === "RECHAZADO"
+    ) &&
+    Number(datos.pago.montoPagado) === 0 &&
+    totalInscripcion > 0;
+
 
         if (formularioComprobante) {
             formularioComprobante.hidden =
                 !puedeEnviarComprobante;
         }
+            
+if (
+    datos.pago.estado === "RECHAZADO" &&
+    mensajeEstadoPago
+) {
+    const motivo = datos.pago.motivoRechazo?.trim();
+
+    mensajeEstadoPago.textContent = motivo
+        ? `Tu comprobante fue rechazado. Motivo: ${motivo}. Puedes enviar un nuevo comprobante utilizando el formulario.`
+        : "Tu comprobante fue rechazado. Puedes enviar un nuevo comprobante utilizando el formulario.";
+
+    if (estadoPago) {
+        estadoPago.hidden = false;
+    }
+}
 
         if (
             !puedeEnviarComprobante &&

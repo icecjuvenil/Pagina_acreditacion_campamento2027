@@ -17,7 +17,13 @@ import { manejarAcompanantes } from "./acompanantes-api.js";
 import { manejarComprobantes } from "./comprobantes-api.js";
 import { manejarResumen } from "./resumen-api.js";
 import { manejarPagosAdmin } from "./admin-api.js";
-import { manejarDetalleAdmin } from "./admin-detalle-api.js";
+import { manejarValidacionPagoAdmin } from "./admin-validacion-api.js";
+import { enviarCorreo } from "./correo-api.js";
+import {
+    manejarDetalleAdmin,
+    manejarComprobanteAdmin
+} from "./admin-detalle-api.js";
+
 
 
 const FECHA_CAMPAMENTO = "2027-01-08";
@@ -1459,6 +1465,109 @@ async function manejarSolicitud(request, env) {
     );
   }
 
+  
+  // ==========================================
+  // CONSULTAR COMPROBANTE ADMINISTRATIVO
+  // ==========================================
+
+  const rutaComprobanteAdmin = url.pathname.match(
+    /^\/api\/admin\/comprobantes\/([1-9]\d*)$/
+  );
+
+  if (rutaComprobanteAdmin) {
+    return manejarComprobanteAdmin(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      },
+      rutaComprobanteAdmin[1]
+    );
+  }
+
+  
+  // ==========================================
+  // VALIDAR O RECHAZAR PAGOS
+  // SOLO ADMINISTRADORES
+  // ==========================================
+
+  const rutaValidacionPago = url.pathname.match(
+    /^\/api\/admin\/pagos\/([1-9]\d*)\/revision$/
+  );
+
+  if (rutaValidacionPago) {
+    return manejarValidacionPagoAdmin(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      },
+      rutaValidacionPago[1]
+    );
+  }
+
+
+  // ==========================================
+  // PRUEBA LOCAL DE CONFIGURACIÓN DE RESEND
+  // ==========================================
+
+  if (url.pathname === "/api/admin/correo-test") {
+
+    if (request.method !== "GET") {
+      return Response.json(
+        { mensaje: "Método no permitido." },
+        { status: 405 }
+      );
+    }
+
+    const origen = request.headers.get("Origin");
+
+    if (
+      !origen ||
+      !ORIGENES_PERMITIDOS.includes(origen)
+    ) {
+      return Response.json(
+        { mensaje: "Origen no autorizado." },
+        { status: 403 }
+      );
+    }
+
+    const usuario = await usuarioDeSesion(request, env);
+
+    if (!usuario) {
+      return Response.json(
+        { mensaje: "Debes iniciar sesión." },
+        { status: 401 }
+      );
+    }
+
+    if (usuario.rol !== "ADMINISTRADOR") {
+      return Response.json(
+        { mensaje: "Acceso denegado." },
+        { status: 403 }
+      );
+    }
+
+    const configurado =
+      typeof env.RESEND_API_KEY === "string" &&
+      env.RESEND_API_KEY.length > 0;
+
+    return Response.json(
+      {
+        estado: configurado ? "OK" : "SIN_CONFIGURAR",
+        mensaje: configurado
+          ? "Resend está configurado en el Worker."
+          : "Falta configurar RESEND_API_KEY."
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store"
+        }
+      }
+    );
+  }
 
   if (url.pathname === "/api/admin/pagos") {
     return manejarPagosAdmin(

@@ -4874,3 +4874,161 @@ body.pagina-login .boton-login:hover {
         grid-column: auto;
     }
 }
+
+
+/* ==========================================
+   27. VISOR PRIVADO DE COMPROBANTES
+   ========================================== */
+
+.pagina-admin .admin-visor-comprobante {
+    position: fixed;
+    inset: 0;
+
+    width: min(950px, calc(100% - 32px));
+    max-width: 950px;
+    max-height: 92vh;
+    margin: auto;
+    padding: 0;
+
+    background: #fffdf8;
+    border: 1px solid var(--dorado-medio);
+    border-radius: 16px;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.pagina-admin .admin-visor-comprobante::backdrop {
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(4px);
+}
+
+/* Encabezado */
+.pagina-admin .admin-visor-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 18px 24px;
+    background: var(--verde-profundo);
+}
+
+.pagina-admin .admin-visor-cabecera h2 {
+    margin: 0;
+    color: var(--blanco);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* Área del archivo */
+.pagina-admin .admin-visor-contenido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 200px;
+    max-height: calc(92vh - 85px);
+    padding: 18px;
+
+    background: #f2f0e8;
+    overflow: auto;
+}
+
+/* Imágenes */
+.pagina-admin .admin-visor-contenido img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: calc(92vh - 125px);
+    object-fit: contain;
+}
+
+/* Documentos PDF */
+.pagina-admin .admin-visor-contenido iframe {
+    width: 100%;
+    height: 70vh;
+    border: none;
+    background: white;
+}
+
+/* Adaptación a celulares */
+@media (max-width: 600px) {
+    .pagina-admin .admin-visor-cabecera {
+        padding: 14px;
+    }
+
+    .pagina-admin .admin-visor-cabecera h2 {
+        font-size: 0.95rem;
+    }
+
+    .pagina-admin .admin-visor-contenido {
+        padding: 10px;
+    }
+
+    .pagina-admin .admin-visor-contenido iframe {
+        height: 65vh;
+    }
+}
+
+
+/* ==========================================
+   BOTONES DE APROBACIÓN Y RECHAZO
+   ========================================== */
+
+/* APROBAR PAGO */
+.pagina-admin .admin-boton--aprobar {
+    color: #ffffff;
+    background: #237a38;
+    border: 1px solid #17642b;
+    border-radius: 9px;
+
+    transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.pagina-admin .admin-boton--aprobar:hover {
+    background: #2eab4c;
+    border-color: #2eab4c;
+
+    box-shadow:
+        0 0 12px rgba(46, 171, 76, 0.55),
+        0 0 24px rgba(46, 171, 76, 0.25);
+
+    transform: translateY(-2px);
+}
+
+/* RECHAZAR PAGO */
+.pagina-admin .admin-boton--rechazar {
+    color: #ffffff;
+    background: #b63838;
+    border: 1px solid #922727;
+    border-radius: 9px;
+
+    transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.pagina-admin .admin-boton--rechazar:hover {
+    background: #e04444;
+    border-color: #e04444;
+
+    box-shadow:
+        0 0 12px rgba(224, 68, 68, 0.55),
+        0 0 24px rgba(224, 68, 68, 0.25);
+
+    transform: translateY(-2px);
+}
+
+/* Separación de los botones respecto al comprobante */
+.pagina-admin .admin-persona-detalle > .admin-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+}

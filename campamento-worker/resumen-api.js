@@ -131,8 +131,9 @@ export async function manejarResumen(
              monto_total,
              monto_pagado,
              estado,
+             observaciones,
              comprobante_key
-           FROM pagos
+          FROM pagos
            WHERE participante_id = ?
            LIMIT 1`
         ).bind(participanteId).first()
@@ -182,9 +183,15 @@ export async function manejarResumen(
         id: Number(pago.id),
         montoTotal: Number(pago.monto_total),
         montoPagado: Number(pago.monto_pagado),
+        
         estado: pago.estado,
+        motivoRechazo:
+            pago.estado === "RECHAZADO"
+                ? (pago.observaciones || "")
+                : "",
         comprobanteRecibido:
-          Boolean(pago.comprobante_key)
+            Boolean(pago.comprobante_key)
+
       }
     });
 
