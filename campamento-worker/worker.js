@@ -1515,6 +1515,13 @@ async function manejarSolicitud(request, env) {
 
   if (url.pathname === "/api/admin/correo-test") {
 
+    if (env.ENTORNO !== "local") {
+  return Response.json(
+    { mensaje: "Ruta de prueba no disponible." },
+    { status: 404 }
+  );
+}
+
     if (request.method !== "GET") {
       return Response.json(
         { mensaje: "Método no permitido." },
