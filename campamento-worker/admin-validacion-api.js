@@ -137,11 +137,13 @@ export async function manejarValidacionPagoAdmin(
         // NOTIFICACIÓN DE RECHAZO - PRUEBA LOCAL
         // ==========================================
 
-        if (
-            accion === "RECHAZAR" &&
-            env.ENTORNO === "local" &&
-            env.RESEND_TEST_EMAIL
-        ) {
+
+            if (
+                ["APROBAR", "RECHAZAR"].includes(accion) &&
+                env.ENTORNO === "local" &&
+                env.RESEND_TEST_EMAIL
+            ) {
+
             try {
                 const participante = await env.DB.prepare(`
                     SELECT p.nombre_completo
@@ -154,20 +156,42 @@ export async function manejarValidacionPagoAdmin(
 
                 await enviarCorreo(env, {
                     destinatario: env.RESEND_TEST_EMAIL.trim(),
-                    asunto: "Comprobante rechazado - ICEC Juvenil 2027",
-                    mensaje:
-                        `Campamento Juvenil ICEC 2027\n\n` +
-                        `Participante: ${participante?.nombre_completo || "No identificado"}\n\n` +
-                        `Tu comprobante de pago fue rechazado.\n\n` +
-                        `Motivo del rechazo:\n${motivo}\n\n` +
-                        `Para corregirlo, inicia sesión en la plataforma ` +
-                        `y sube un nuevo comprobante.\n\n` +
-                        `ICEC Juvenil 2027`
+                    
+asunto: accion === "APROBAR"
+    ? "Pago aprobado - ICEC Juvenil 2027"
+    : "Comprobante rechazado - ICEC Juvenil 2027",
+
+mensaje: accion === "APROBAR"
+    ? (
+        `Campamento Juvenil ICEC 2027\n\n` +
+        `Participante: ${participante?.nombre_completo || "No identificado"}\n\n` +
+        `¡Tu pago ha sido aprobado!\n\n` +
+        `Hemos verificado tu comprobante de transferencia ` +
+        `y confirmado el pago de tu inscripción.\n\n` +
+        `Te invitamos a loguearte en nuestra pagina para que puedas escoger tu habitación y` +
+        ` revisar la sección información de la plataforma para conocer los próximos pasos y detalles del campamento.\n\n` +
+        `Gracias por ser parte del Campamento Juvenil 2027.\n\n` +
+        `ICEC Juvenil 2027`
+      )
+    : (
+        `Campamento Juvenil ICEC 2027\n\n` +
+        `Participante: ${participante?.nombre_completo || "No identificado"}\n\n` +
+        `Tu comprobante de pago fue rechazado.\n\n` +
+        `Motivo del rechazo:\n${motivo}\n\n` +
+        `Para corregirlo, inicia sesión en la plataforma ` +
+        `y sube un nuevo comprobante.\n\n` +
+        `ICEC Juvenil 2027`
+      )
+
                 });
 
-                console.log(
-                    "Notificación de rechazo aceptada por Resend."
-                );
+
+console.log(
+    accion === "APROBAR"
+        ? "Notificación de aprobación aceptada por Resend."
+        : "Notificación de rechazo aceptada por Resend."
+);
+
 
             } catch (errorCorreo) {
                 console.error(

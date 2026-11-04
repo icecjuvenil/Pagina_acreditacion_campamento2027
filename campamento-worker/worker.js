@@ -18,7 +18,7 @@ import { manejarComprobantes } from "./comprobantes-api.js";
 import { manejarResumen } from "./resumen-api.js";
 import { manejarPagosAdmin } from "./admin-api.js";
 import { manejarValidacionPagoAdmin } from "./admin-validacion-api.js";
-import { enviarCorreo } from "./correo-api.js";
+
 import {
     manejarDetalleAdmin,
     manejarComprobanteAdmin
@@ -1509,121 +1509,7 @@ async function manejarSolicitud(request, env) {
   }
 
 
-  // ==========================================
-  // PRUEBA LOCAL DE CONFIGURACIÓN DE RESEND
-  // ==========================================
-
-  if (url.pathname === "/api/admin/correo-test") {
-
-    if (env.ENTORNO !== "local") {
-  return Response.json(
-    { mensaje: "Ruta de prueba no disponible." },
-    { status: 404 }
-  );
-}
-
-    if (!["GET", "POST"].includes(request.method)) {
-      return Response.json(
-        { mensaje: "Método no permitido." },
-        { status: 405 }
-      );
-    }
-
-    const origen = request.headers.get("Origin");
-
-    if (
-      !origen ||
-      !ORIGENES_PERMITIDOS.includes(origen)
-    ) {
-      return Response.json(
-        { mensaje: "Origen no autorizado." },
-        { status: 403 }
-      );
-    }
-
-    const usuario = await usuarioDeSesion(request, env);
-
-    if (!usuario) {
-      return Response.json(
-        { mensaje: "Debes iniciar sesión." },
-        { status: 401 }
-      );
-    }
-
-    if (usuario.rol !== "ADMINISTRADOR") {
-      return Response.json(
-        { mensaje: "Acceso denegado." },
-        { status: 403 }
-      );
-    }
-
-
-if (request.method === "POST") {
-  if (env.ENTORNO !== "local") {
-    return Response.json(
-      { mensaje: "Ruta no disponible." },
-      { status: 404 }
-    );
-  }
-
-  if (request.headers.get("X-ICEC-Solicitud") !== "web") {
-    return Response.json(
-      { mensaje: "Solicitud no autorizada." },
-      { status: 403 }
-    );
-  }
-
-  const destinatario = env.RESEND_TEST_EMAIL?.trim();
-
-  if (!destinatario) {
-    return Response.json(
-      { mensaje: "Falta RESEND_TEST_EMAIL." },
-      { status: 503 }
-    );
-  }
-
-  try {
-    const resultado = await enviarCorreo(env, {
-      destinatario,
-      asunto: "Prueba de correo - ICEC Juvenil 2027",
-      mensaje:
-        "Este es un correo de prueba enviado desde Cloudflare Workers mediante Resend."
-    });
-
-    return Response.json({
-      estado: "OK",
-      mensaje: "Resend aceptó el envío de prueba.",
-      id: resultado.id
-    });
-  } catch (error) {
-    console.error("Error al enviar correo de prueba.");
-
-    return Response.json(
-      { mensaje: "No fue posible enviar el correo." },
-      { status: 502 }
-    );
-  }
-}
-
-
-    const configurado =
-      typeof env.RESEND_API_KEY === "string" &&
-      env.RESEND_API_KEY.length > 0;
-
-    return Response.json(
-      {
-        estado: configurado ? "OK" : "SIN_CONFIGURAR",
-        mensaje: configurado
-          ? "Resend está configurado en el Worker."
-          : "Falta configurar RESEND_API_KEY."
-      },
-      {
-        headers: {
-          "Cache-Control": "no-store"
-        }
-      }
-    );
-  }
+  
 
   if (url.pathname === "/api/admin/pagos") {
     return manejarPagosAdmin(

@@ -458,7 +458,7 @@ if (formularioAcreditacion) {
                 salidaValorAcreditacion?.dataset.valor || "0"
             );
 
-            if (!fechaNacimientoValida) {
+            if (salidaValorAcreditacion?.dataset.fechaValida !== "true") {
                 alert(
                     "Selecciona una fecha de nacimiento válida."
                 );
