@@ -1,90 +1,55 @@
-/* ==================================================
-   CONTROL DE ACCESO A LA INFORMACIÓN DEL CAMPAMENTO
-   ================================================== */
+
 /*
- * Esta validación es temporal mientras se desarrolla el backend.
- * Permite ver la información solamente cuando:
- *
- * 1. Existen los datos de la persona principal.
- * 2. El voucher fue enviado y está pendiente de revisión,
- *    o el pago ya fue aprobado.
+ * ICEC Juvenil 2027
+ * Control de acceso a Informaciones
+ * Requiere sesión activa y pago APROBADO en D1.
  */
 
-document.addEventListener("DOMContentLoaded", function () {
-    
-    /* Secciones principales de informacion.html */
-    const contenidoInformacion =
-        document.getElementById("informacion");
+document.addEventListener("DOMContentLoaded", async () => {
+    const contenido = document.getElementById(
+        "informacion"
+    );
 
-    const mensajeAccesoDenegado = 
-        document.getElementById("acceso-informacion-denegado");
+    const accesoDenegado = document.getElementById(
+        "acceso-informacion-denegado"
+    );
 
-    /*Convierte de forma segura un valor de sessionStorage*/
+    if (!contenido || !accesoDenegado) {
+        console.error(
+            "No se encontraron las secciones de acceso."
+        );
+        return;
+    }
 
-    function obtenerDatosGuardados(clave) {
+    // Bloquear mientras se comprueba el permiso.
+    contenido.hidden = true;
+    accesoDenegado.hidden = false;
 
-        try{
-            const datos = sessionStorage.getItem(clave);
+    try {
+        const respuesta = await fetch(
+            "http://127.0.0.1:8787/api/resumen",
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
 
-            return datos ? JSON.parse(datos) : null;
-
-        } catch(error){
-            console.error(
-                `No fue posible leer ${clave}:`,
-                error
-            );
-
-            return null;
+        if (!respuesta.ok) {
+            throw new Error("Acceso no autorizado.");
         }
+
+        const datos = await respuesta.json();
+
+        if (datos.pago?.estado === "APROBADO") {
+            contenido.hidden = false;
+            accesoDenegado.hidden = true;
+        }
+
+    } catch (error) {
+        console.error(
+            "No se pudo verificar el acceso:",
+            error
+        );
     }
-    /* Información guardada durante la acreditación */
-
-    const personaPrincipal = 
-        obtenerDatosGuardados("personaPrincipalCampamento");
-
-    const informacionPago=
-        obtenerDatosGuardados("pagoCampamento");
-
-    /*
-     * Estados que permiten acceder a la información.
-     *
-     * pendiente_revision:
-     * El voucher fue enviado y todavía debe ser revisado.
-     *
-     * aprobado:
-     * El pago ya fue validado.
-     */
-
-    const estadosPermitidos = [
-        "pendiente_revision",
-        "aprobado"
-    ];
-
-    /*Comprueba si el voucher ya fue enviado*/
-    const voucherEnviado = Boolean(
-        informacionPago &&
-        estadosPermitidos.includes(informacionPago.estado)
-    );
-
-    /*
-     * Acceso temporal:
-     * La persona puede ver la información después de enviar
-     * su voucher.
-     */
-
-    const puedeVerInformacion = Boolean(
-        personaPrincipal &&
-        voucherEnviado
-    );
-
-    /*Muestra la seccion correspondiente*/
-    if (puedeVerInformacion) {
-
-        contenidoInformacion.hidden = false;
-        mensajeAccesoDenegado.hidden = true;
-    }else{
-        contenidoInformacion.hidden = true;
-        mensajeAccesoDenegado.hidden = false;
-    }
-
 });

@@ -84,8 +84,51 @@ function cambiarEstadoBoton(cargando) {
 // MOSTRAR USUARIO CONECTADO
 // ==========================================
 
+
+async function verificarAccesosCampamento(usuario) {
+    const accesos = document.getElementById(
+        "accesos-pago-aprobado"
+    );
+
+    if (!accesos) return;
+
+    // Mantener ocultos los accesos por defecto.
+    accesos.hidden = true;
+
+    if (usuario?.rol !== "PARTICIPANTE") {
+        return;
+    }
+
+    try {
+        const respuesta = await fetch(
+            `${API_LOGIN}/api/resumen`,
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+        if (!respuesta.ok) return;
+
+        const datos = await respuesta.json();
+
+        if (datos.pago?.estado === "APROBADO") {
+            accesos.hidden = false;
+        }
+
+    } catch (error) {
+        console.error(
+            "No se pudo verificar el estado del pago:",
+            error
+        );
+    }
+}
+
+
 function mostrarUsuario(usuario) {
   if (!usuario) return;
+  verificarAccesosCampamento(usuario);
 
   if (formularioLogin) {
     formularioLogin.hidden = true;

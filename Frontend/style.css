@@ -4574,6 +4574,33 @@ body.pagina-login .boton-login:hover {
 }
 
 .pagina-piezas .pasillo-mapa-piezas {
+    grid-column: 1 / -1;
+    display: grid;
+    place-items: center;
+
+    min-height: 148px;
+    padding: 12px;
+
+    color: rgba(22, 58, 22, 0.56);
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            rgba(22, 58, 22, 0.04),
+            rgba(22, 58, 22, 0.04) 8px,
+            rgba(22, 58, 22, 0.08) 8px,
+            rgba(22, 58, 22, 0.08) 16px
+        );
+    border: 1px dashed rgba(22, 58, 22, 0.25);
+    border-radius: 12px;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.pagina-piezas .baño-piezas {
     display: grid;
     place-items: center;
 
@@ -5861,4 +5888,51 @@ body.pagina-login .boton-login:hover {
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 18px;
+}
+
+
+
+/* ==========================================
+   OCUPANTES DE LAS HABITACIONES
+   ========================================== */
+
+.pagina-piezas .lista-ocupantes-pieza {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    width: 100%;
+    margin-top: 14px;
+    padding-top: 12px;
+
+    border-top: 1px solid rgba(36, 95, 33, 0.25);
+
+    font-size: 0.82rem;
+    text-align: left;
+}
+
+.pagina-piezas .lista-ocupantes-pieza strong {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--verde-profundo);
+}
+
+.pagina-piezas .lista-ocupantes-pieza span {
+    display: block;
+    overflow-wrap: anywhere;
+    color: var(--texto);
+    line-height: 1.4;
+}
+
+/* Mantener la lista legible en tarjetas bloqueadas */
+.pagina-piezas .tarjeta-pieza:disabled
+.lista-ocupantes-pieza {
+    opacity: 1;
+}
+
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada
+.lista-ocupantes-pieza strong,
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada
+.lista-ocupantes-pieza span {
+    color: var(--blanco);
 }

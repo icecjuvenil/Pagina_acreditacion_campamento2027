@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     /* ==================================================
        1. FUNCIONES GENERALES
@@ -73,135 +73,139 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    
     /* ==================================================
-       2. CONTROL DE ACCESO
+       2. CONTROL DE ACCESO CON CLOUDFLARE D1
        ================================================== */
 
-    // Recupera la información del pago.
-    const pagoCampamento = obtenerDatosGuardados(
-        "pagoCampamento",
-        null
+    const contenidoPiezas = document.querySelector(
+        ".contenido-piezas"
     );
 
-    // Permite realizar pruebas únicamente en el computador local.
-    const parametrosPagina =
-        new URLSearchParams(window.location.search);
+    if (contenidoPiezas) {
+        contenidoPiezas.hidden = true;
+    }
 
-    const sitioLocal = [
-        "localhost",
-        "127.0.0.1",
-        "::1"
-    ].includes(window.location.hostname);
+    let pagoAutorizado = false;
 
-    const modoQA =
-        sitioLocal &&
-        parametrosPagina.get("qa") === "1";
-
-    // Estados que permiten utilizar la selección de piezas.
-    const estadosAutorizados = [
-        "aprobado",
-        "validado",
-        "acreditado",
-        "pago aprobado",
-        "pago validado"
-    ];
-
-    const estadoPagoNormalizado =
-        normalizarTexto(pagoCampamento?.estado);
-
-    const pagoAutorizado =
-        estadosAutorizados.includes(
-            estadoPagoNormalizado
+    try {
+        const respuesta = await fetch(
+            "http://127.0.0.1:8787/api/resumen",
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
         );
 
-    // Impide ingresar directamente si la acreditación
-    // todavía no ha sido validada.
-    if (!pagoAutorizado && !modoQA) {
+        if (!respuesta.ok) {
+            throw new Error("No se pudo verificar el acceso.");
+        }
+
+        const datos = await respuesta.json();
+
+        pagoAutorizado =
+            datos.pago?.estado === "APROBADO";
+
+    } catch (error) {
+        console.error(
+            "Error al verificar el pago:",
+            error
+        );
+    }
+
+    if (!pagoAutorizado) {
         alert(
-            "La selección de piezas estará disponible cuando tu acreditación y pago hayan sido aprobados."
+            "Debes tener tu pago aprobado para seleccionar una habitación."
         );
 
-        window.location.replace(
-            "informacion.html"
-        );
-
+        window.location.replace("login.html");
         return;
     }
 
+    if (contenidoPiezas) {
+        contenidoPiezas.hidden = false;
+    }
 
+
+
+    
     /* ==================================================
-       3. RECUPERACIÓN DE PARTICIPANTES
+       3. RECUPERACIÓN DE PARTICIPANTES DESDE D1
        ================================================== */
 
-    const personaPrincipal = obtenerDatosGuardados(
-        "personaPrincipalCampamento",
-        null
-    );
+    let resumenInscripcion;
 
-    const acompanantesGuardados =
-        obtenerDatosGuardados(
-            "acompanantesCampamento",
-            []
+    try {
+        const respuesta = await fetch(
+            "http://127.0.0.1:8787/api/resumen",
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
         );
 
-    const acompanantes = Array.isArray(
-        acompanantesGuardados
-    )
-        ? acompanantesGuardados
-        : [];
+        if (!respuesta.ok) {
+            throw new Error(
+                "No se pudieron recuperar los participantes."
+            );
+        }
 
+        resumenInscripcion = await respuesta.json();
 
-    // Crea una lista común con la persona principal
-    // y todos sus acompañantes.
+        if (resumenInscripcion.pago?.estado !== "APROBADO") {
+            throw new Error(
+                "Tu pago debe estar aprobado."
+            );
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+        window.location.replace("login.html");
+        return;
+    }
+
     const participantes = [];
 
-    if (personaPrincipal) {
+    // Participante principal
+    const principal = resumenInscripcion.participante;
+
+    if (principal) {
         participantes.push({
-            id: "persona-principal",
+            id: `principal-${principal.id}`,
             tipo: "principal",
-            nombre:
-                obtenerNombrePersona(
-                    personaPrincipal
-                ),
-            genero:
-                normalizarGenero(
-                    personaPrincipal.genero
-                ),
-            datos: personaPrincipal
+            nombre: principal.nombreCompleto,
+            genero: normalizarGenero(principal.genero),
+            datos: principal
         });
     }
 
-    acompanantes.forEach(
-        (acompanante, posicion) => {
-            participantes.push({
-                id: `acompanante-${posicion}`,
-                tipo: "acompanante",
-                nombre:
-                    obtenerNombrePersona(
-                        acompanante
-                    ),
-                genero:
-                    normalizarGenero(
-                        acompanante.genero
-                    ),
-                datos: acompanante
-            });
-        }
-    );
+    // Acompañantes registrados
+    const acompanantes = Array.isArray(
+        resumenInscripcion.acompanantes
+    ) ? resumenInscripcion.acompanantes : [];
 
+    acompanantes.forEach((acompanante) => {
+        participantes.push({
+            id: `acompanante-${acompanante.id}`,
+            tipo: "acompanante",
+            nombre: acompanante.nombreCompleto,
+            genero: normalizarGenero(acompanante.genero),
+            datos: acompanante
+        });
+    });
 
-    // Sin participantes no es posible asignar una pieza.
     if (participantes.length === 0) {
         alert(
-            "No se encontraron personas acreditadas para asignar."
+            "No se encontraron participantes registrados."
         );
 
-        window.location.replace(
-            "acreditacion.html"
-        );
-
+        window.location.replace("login.html");
         return;
     }
+
 
 
     /* ==================================================
@@ -371,21 +375,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Calcula los cupos restantes de una pieza.
+    
     function calcularCuposRestantes(tarjeta) {
-        const capacidad = Number(
-            tarjeta.dataset.capacidad || 0
+        const disponibles = Number(
+            tarjeta.dataset.disponibles
         );
 
-        const personasAsignadas =
-            contarPersonasEnPieza(
-                tarjeta.dataset.codigo
-            );
+        if (
+            !Number.isSafeInteger(disponibles) ||
+            disponibles < 0
+        ) {
+            return 0;
+        }
 
-        return Math.max(
-            0,
-            capacidad - personasAsignadas
-        );
+        return disponibles;
     }
+
 
 
     /* ==================================================
@@ -597,6 +602,32 @@ document.addEventListener("DOMContentLoaded", () => {
        ================================================== */
 
     function actualizarResumen() {
+
+        
+    // Verificar si la persona ya tiene una
+    // habitación asignada en Cloudflare D1.
+    const asignacionExistente = participanteActual
+        ? asignaciones[participanteActual.id]
+        : null;
+
+    if (asignacionExistente) {
+        salidaNombrePieza.textContent =
+            `${asignacionExistente.codigo} — ${asignacionExistente.nombre}`;
+
+        salidaCuposPieza.textContent =
+            "Habitación asignada correctamente. " +
+            "No puedes reservar una segunda habitación.";
+
+        botonConfirmar.disabled = true;
+        botonConfirmar.textContent = "Habitación ya asignada";
+
+        return;
+    }
+
+    // Restaurar el texto para personas
+    // que todavía no tienen habitación.
+    botonConfirmar.textContent = "Confirmar pieza";
+
         if (
             !participanteActual ||
             !codigoPiezaTemporal
@@ -755,6 +786,20 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
 
+                    // Evitar seleccionar otra habitación
+                    // si esta persona ya tiene una asignación en D1.
+                    const asignacionExistente =
+                        asignaciones[participanteActual.id];
+
+                    if (asignacionExistente) {
+                        alert(
+                            `${participanteActual.nombre} ya tiene asignada ` +
+                            `la habitación ${asignacionExistente.codigo} — ` +
+                            `${asignacionExistente.nombre}.`
+                        );
+
+                        return;
+                    }
 
                     codigoPiezaTemporal =
                         tarjeta.dataset.codigo;
@@ -778,7 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     botonConfirmar.addEventListener(
         "click",
-        () => {
+        async () => {
             if (
                 !participanteActual ||
                 !codigoPiezaTemporal
@@ -846,6 +891,90 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
+            // ==========================================
+            // GUARDAR LA RESERVA EN CLOUDFLARE D1
+            // ==========================================
+
+            botonConfirmar.disabled = true;
+
+            try {
+                // Consultar las habitaciones reales de D1.
+                const respuestaHabitaciones = await fetch(
+                    "http://127.0.0.1:8787/api/habitaciones",
+                    {
+                        method: "GET",
+                        credentials: "include",
+                        cache: "no-store"
+                    }
+                );
+
+                if (!respuestaHabitaciones.ok) {
+                    throw new Error(
+                        "No se pudieron consultar las habitaciones."
+                    );
+                }
+
+                const datosHabitaciones =
+                    await respuestaHabitaciones.json();
+
+                // Buscar el identificador real de la pieza.
+                const codigo = tarjetaSeleccionada.dataset.codigo;
+
+                const habitacion = datosHabitaciones.habitaciones.find(
+                    h => h.nombre.startsWith(`${codigo} - `)
+                );
+
+                if (!habitacion) {
+                    throw new Error(
+                        "La habitación seleccionada no existe en D1."
+                    );
+                }
+
+                // Enviar la asignación al backend.
+                const respuestaReserva = await fetch(
+                    "http://127.0.0.1:8787/api/habitaciones",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-ICEC-Solicitud": "web"
+                        },
+                        body: JSON.stringify({
+                            habitacionId: habitacion.id,
+                            personaId: participanteActual.datos.id,
+                            tipo: participanteActual.tipo
+                        })
+                    }
+                );
+
+                const resultadoReserva =
+                    await respuestaReserva.json();
+
+                if (
+                    !respuestaReserva.ok ||
+                    resultadoReserva.estado !== "ASIGNADA"
+                ) {
+                    throw new Error(
+                        resultadoReserva.mensaje ||
+                        "No se pudo guardar la habitación."
+                    );
+                }
+
+            } catch (error) {
+                console.error(
+                    "Error al reservar habitación:",
+                    error
+                );
+
+                alert(error.message);
+                return;
+
+            } finally {
+                botonConfirmar.disabled = false;
+            }
+
+
             // Guarda la asignación de la persona.
             asignaciones[
                 participanteActual.id
@@ -881,7 +1010,29 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
 
+            
             guardarAsignaciones();
+
+            // Actualizar los cupos reales después
+            // de guardar correctamente en D1.
+            try {
+                await cargarDisponibilidadD1();
+            } catch (error) {
+                console.error(
+                    "No se pudieron actualizar los cupos:",
+                    error
+                );
+
+                alert(
+                    "La habitación se guardó en D1, " +
+                    "pero no se pudieron actualizar los cupos. " +
+                    "Recarga la página antes de continuar."
+                );
+
+                botonConfirmar.disabled = true;
+                return;
+            }
+
 
 
             mensajeSeleccion.textContent =
@@ -899,13 +1050,197 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    // ==========================================
+    // CONSULTAR DISPONIBILIDAD REAL EN D1
+    // ==========================================
+
+    async function cargarDisponibilidadD1() {
+        const respuesta = await fetch(
+            "http://127.0.0.1:8787/api/habitaciones",
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+        if (!respuesta.ok) {
+            throw new Error(
+                "No se pudo consultar la disponibilidad."
+            );
+        }
+
+        const datos = await respuesta.json();
+
+        if (!Array.isArray(datos.habitaciones)) {
+            throw new Error(
+                "Respuesta de habitaciones no válida."
+            );
+        }
+
+        // Bloquear todas las piezas hasta identificar
+        // correctamente las habitaciones de D1.
+        tarjetasPiezas.forEach(tarjeta => {
+            tarjeta.dataset.disponibles = "0";
+            tarjeta.disabled = true;
+        });
+
+        for (const habitacion of datos.habitaciones) {
+            // En D1 el nombre incluye el código:
+            // Ejemplo: "M5 - Gracia".
+            const tarjeta = tarjetasPiezas.find(t =>
+                habitacion.nombre.startsWith(
+                    `${t.dataset.codigo} - `
+                )
+            );
+
+            if (!tarjeta) {
+                continue;
+            }
+
+            tarjeta.dataset.habitacionId =
+                String(habitacion.id);
+
+            tarjeta.dataset.disponibles =
+                String(habitacion.disponibles);
+
+            tarjeta.dataset.capacidad =
+                String(habitacion.capacidad);
+
+                
+            // ==========================================
+            // MOSTRAR PERSONAS ASIGNADAS A LA HABITACIÓN
+            // ==========================================
+
+            let listaOcupantes = tarjeta.querySelector(
+                ".lista-ocupantes-pieza"
+            );
+
+            if (!listaOcupantes) {
+                listaOcupantes = document.createElement("div");
+                listaOcupantes.className =
+                    "lista-ocupantes-pieza";
+
+                tarjeta.appendChild(listaOcupantes);
+            }
+
+            // Limpiar nombres anteriores para evitar duplicados.
+            listaOcupantes.replaceChildren();
+
+            const ocupantes = Array.isArray(habitacion.ocupantes)
+                ? habitacion.ocupantes
+                : [];
+
+            const titulo = document.createElement("strong");
+            titulo.textContent = "Personas asignadas:";
+            listaOcupantes.appendChild(titulo);
+
+            if (ocupantes.length === 0) {
+                const mensaje = document.createElement("span");
+                mensaje.textContent = "Sin personas asignadas";
+                listaOcupantes.appendChild(mensaje);
+            } else {
+                ocupantes.forEach(nombre => {
+                    const persona = document.createElement("span");
+                    persona.textContent = "• " + nombre;
+                    listaOcupantes.appendChild(persona);
+                });
+            }
+
+        }
+
+        
+        // ==========================================
+        // RECUPERAR ASIGNACIONES REALES DESDE D1
+        // ==========================================
+
+        if (!Array.isArray(datos.asignaciones)) {
+            throw new Error(
+                "No se pudieron recuperar las asignaciones."
+            );
+        }
+
+        // Eliminar las reservas temporales anteriores.
+        Object.keys(asignaciones).forEach(clave => {
+            delete asignaciones[clave];
+        });
+
+        sessionStorage.removeItem(
+            "asignacionesPiezasCampamento"
+        );
+
+        // Recuperar las asignaciones de esta cuenta.
+        datos.asignaciones.forEach(asignacion => {
+            const idPersona =
+                `${asignacion.tipo === "principal"
+                    ? "principal"
+                    : "acompanante"}-${asignacion.personaId}`;
+
+            const persona = participantes.find(
+                p => p.id === idPersona
+            );
+
+            const tarjeta = tarjetasPiezas.find(
+                t => asignacion.nombreHabitacion.startsWith(
+                    `${t.dataset.codigo} - `
+                )
+            );
+
+            if (!persona || !tarjeta) {
+                return;
+            }
+
+            asignaciones[idPersona] = {
+                participanteId: idPersona,
+                nombreParticipante: persona.nombre,
+                tipoParticipante: persona.tipo,
+                genero: persona.genero,
+                codigo: tarjeta.dataset.codigo,
+                nombre: tarjeta.dataset.nombre,
+                capacidad: Number(
+                    tarjeta.dataset.capacidad
+                ),
+                habitacionId: asignacion.habitacionId
+            };
+        });
+
+
+        return datos.habitaciones;
+    }
+
+
     /* ==================================================
        15. ESTADO INICIAL
        ================================================== */
 
+    
     cargarSelectorParticipantes();
     desactivarTodasLasPiezas();
     actualizarResumen();
+
+    try {
+        await cargarDisponibilidadD1();
+        actualizarPiezas();
+        actualizarResumen();
+    } catch (error) {
+        console.error(
+            "Error al cargar habitaciones:",
+            error
+        );
+
+        alert(
+            "No fue posible cargar los cupos reales. " +
+            "No se pueden seleccionar habitaciones."
+        );
+
+        botonConfirmar.disabled = true;
+        tarjetasPiezas.forEach(tarjeta => {
+            tarjeta.disabled = true;
+        });
+
+        return;
+    }
+
 
 
     // Informa en consola cuando se utiliza el modo de prueba.

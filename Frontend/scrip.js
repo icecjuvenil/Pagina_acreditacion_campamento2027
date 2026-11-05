@@ -23,16 +23,19 @@ async function enviarRegistroCampamento(datos) {
     // Incluir el token en los datos enviados al backend
     datos.turnstileToken = tokenTurnstile;
 
-    const respuesta = await fetch(
-        `${API_CAMPAMENTO}/api/registro`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(datos)
-        }
-    );
+    
+const respuesta = await fetch(
+    `${API_CAMPAMENTO}/api/registro`,
+    {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(datos)
+    }
+);
+
 
     const resultado = await respuesta.json();
 
