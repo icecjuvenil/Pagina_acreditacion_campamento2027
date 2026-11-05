@@ -18,6 +18,7 @@ import { manejarComprobantes } from "./comprobantes-api.js";
 import { manejarResumen } from "./resumen-api.js";
 import { manejarPagosAdmin } from "./admin-api.js";
 import { manejarValidacionPagoAdmin } from "./admin-validacion-api.js";
+import { manejarHabitaciones } from "./habitaciones-api.js";
 
 import {
     manejarDetalleAdmin,
@@ -968,15 +969,34 @@ async function registrarParticipante(datos, env) {
       )
     ]);
 
-    return responder({
-      mensaje:
-        "Inscripción registrada correctamente.",
-      estado: "REGISTRADA",
-      montoTotal: monto,
-      pago: "PENDIENTE",
-      acompanantesPendientes:
-        datos.tieneAcompanantes === "si"
-    }, 201);
+    
+const usuarioCreado = await env.DB.prepare(
+  `SELECT id
+   FROM usuarios
+   WHERE correo = ?
+   LIMIT 1`
+).bind(correo).first();
+
+if (!usuarioCreado) {
+  throw new Error(
+    "No se pudo identificar la cuenta creada."
+  );
+}
+
+const tokenSesion = await crearTokenSesion(
+  usuarioCreado.id,
+  env
+);
+
+return respuestaConCookie({
+  mensaje: "Inscripción registrada correctamente.",
+  estado: "REGISTRADA",
+  montoTotal: monto,
+  pago: "PENDIENTE",
+  acompanantesPendientes:
+    datos.tieneAcompanantes === "si"
+}, 201, crearCookieSesion(tokenSesion));
+
 
   } catch (error) {
     console.error(
@@ -1724,6 +1744,22 @@ async function manejarSolicitud(request, env) {
       }, 500);
     }
   }
+  
+  // ==========================================
+  // HABITACIONES Y CUPOS DISPONIBLES
+  // ==========================================
+
+  if (url.pathname === "/api/habitaciones") {
+    return manejarHabitaciones(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      }
+    );
+  }
+
 
   // ----------------------------------------
   // INICIAR SESIÓN

@@ -89,6 +89,7 @@ export async function manejarResumen(
          p.nombre_completo,
          p.rut,
          p.fecha_nacimiento,
+         p.genero,
          p.valor_acreditacion,
          u.correo
        FROM participantes p
@@ -119,6 +120,7 @@ export async function manejarResumen(
              rut,
              correo,
              fecha_nacimiento,
+             genero,
              valor_acreditacion
            FROM acompanantes
            WHERE participante_id = ?
@@ -153,6 +155,7 @@ export async function manejarResumen(
           rut: persona.rut,
           correo: persona.correo || "",
           fechaNacimiento: persona.fecha_nacimiento,
+          genero: persona.genero,
           valorAcreditacion:
             Number(persona.valor_acreditacion)
         }));
@@ -169,9 +172,10 @@ export async function manejarResumen(
         rut: participante.rut,
         correo: participante.correo,
         fechaNacimiento:
-          participante.fecha_nacimiento,
+        participante.fecha_nacimiento,
+        genero: participante.genero,
         valorAcreditacion:
-          Number(participante.valor_acreditacion)
+        Number(participante.valor_acreditacion)
       },
 
       acompanantes,
