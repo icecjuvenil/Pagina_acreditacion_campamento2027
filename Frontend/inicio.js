@@ -1,124 +1,284 @@
 // ==================================================
-// 1. CONTADOR DEL CAMPAMENTO
+// 1. PLAZO, CAMPAMENTO Y CUPOS
 // ==================================================
 
-// Inicio: viernes 8 de enero de 2027 a las 19:30
-const fechaInicioCampamento = new Date(
-    2027,
-    0,
-    8,
-    19,
-    30,
-    0
-);
+(() => {
+    // Elementos del resumen mostrado en la portada
+    const contadorCampamento =
+        document.querySelector(".contador-campamento");
 
-// Final: domingo 10 de enero de 2027 a las 14:30
-const fechaFinCampamento = new Date(
-    2027,
-    0,
-    10,
-    14,
-    30,
-    0
-);
-
-// Elementos del contador
-const contadorCampamento = document.querySelector(
-    ".contador-campamento"
-);
-
-const diasRestantes = document.getElementById(
-    "dias-restantes"
-);
-
-const horasRestantes = document.getElementById(
-    "horas-restantes"
-);
-
-const minutosRestantes = document.getElementById(
-    "minutos-restantes"
-);
-
-const segundosRestantes = document.getElementById(
-    "segundos-restantes"
-);
-
-let intervaloContador = null;
-
-// Actualiza los días, horas, minutos y segundos
-function actualizarContador() {
-    const fechaActual = new Date();
-
-    const diferencia =
-        fechaInicioCampamento.getTime() -
-        fechaActual.getTime();
-
-    if (diferencia > 0) {
-        const segundosTotales = Math.floor(
-            diferencia / 1000
+    const salidaDiasCierreAcreditacion =
+        document.getElementById(
+            "dias-cierre-acreditacion"
         );
 
-        const dias = Math.floor(
-            segundosTotales / 86400
+    const salidaEstadoAcreditacion =
+        document.getElementById(
+            "estado-acreditacion"
         );
 
-        const horas = Math.floor(
-            (segundosTotales % 86400) / 3600
+    const salidaDiasCampamento =
+        document.getElementById(
+            "dias-campamento"
         );
 
-        const minutos = Math.floor(
-            (segundosTotales % 3600) / 60
+    const salidaCuposDisponibles =
+        document.getElementById(
+            "cupos-disponibles"
         );
 
-        const segundos =
-            segundosTotales % 60;
+    const botonAcreditacion =
+        document.querySelector(
+            ".boton-acreditacion"
+        );
 
-        diasRestantes.textContent = dias;
-
-        horasRestantes.textContent =
-            String(horas).padStart(2, "0");
-
-        minutosRestantes.textContent =
-            String(minutos).padStart(2, "0");
-
-        segundosRestantes.textContent =
-            String(segundos).padStart(2, "0");
-
+    // Detiene solamente esta sección si falta algún elemento
+    if (
+        !contadorCampamento ||
+        !salidaDiasCierreAcreditacion ||
+        !salidaEstadoAcreditacion ||
+        !salidaDiasCampamento ||
+        !salidaCuposDisponibles
+    ) {
         return;
     }
 
-    // Mensaje durante o después del campamento
-    if (fechaActual <= fechaFinCampamento) {
-        contadorCampamento.textContent =
-            "¡El campamento ya comenzó!";
-    } else {
-        contadorCampamento.textContent =
-            "El campamento 2027 ya finalizó.";
-    }
+    // Fechas oficiales
+    const fechaInicioAcreditacion =
+        new Date(2026, 10, 6, 0, 0, 0);
 
-    if (intervaloContador) {
-        clearInterval(intervaloContador);
-    }
-}
+    const fechaFinAcreditacion =
+        new Date(2026, 11, 6, 23, 59, 59);
 
-// Inicia el contador
-if (
-    contadorCampamento &&
-    diasRestantes &&
-    horasRestantes &&
-    minutosRestantes &&
-    segundosRestantes
-) {
-    actualizarContador();
+    const fechaInicioCampamento =
+        new Date(2027, 0, 8, 19, 30, 0);
 
-    if (new Date() < fechaInicioCampamento) {
-        intervaloContador = setInterval(
-            actualizarContador,
-            1000
+    // Los líderes también se descuentan de estos 90 cupos
+    const TOTAL_CUPOS_CAMPAMENTO = 90;
+
+    /*
+     * Valor temporal mientras se conecta el backend.
+     * Posteriormente debe reemplazarse por la cantidad
+     * real de acreditaciones aprobadas.
+     */
+    const ACREDITACIONES_REGISTRADAS = 0;
+
+    const MILISEGUNDOS_POR_DIA =
+        1000 * 60 * 60 * 24;
+
+    const enlaceOriginalAcreditacion =
+        botonAcreditacion?.getAttribute("href") ||
+        "acreditacion.html";
+
+    /*
+     * Devuelve una fecha sin horas para realizar
+     * cálculos por días calendario.
+     */
+    function obtenerInicioDelDia(fecha) {
+        return new Date(
+            fecha.getFullYear(),
+            fecha.getMonth(),
+            fecha.getDate()
         );
     }
-}
 
+    /*
+     * Calcula los días restantes sin considerar
+     * horas, minutos ni segundos.
+     */
+    function calcularDiasCalendario(
+        fechaDestino,
+        fechaActual
+    ) {
+        const destino =
+            obtenerInicioDelDia(fechaDestino);
+
+        const actual =
+            obtenerInicioDelDia(fechaActual);
+
+        return Math.max(
+            0,
+            Math.ceil(
+                (destino - actual) /
+                MILISEGUNDOS_POR_DIA
+            )
+        );
+    }
+
+    /*
+     * Habilita o bloquea el botón Acredítate
+     * según el periodo de inscripción.
+     */
+    function cambiarDisponibilidadBoton(
+        disponible
+    ) {
+        if (!botonAcreditacion) {
+            return;
+        }
+
+        botonAcreditacion.classList.toggle(
+            "deshabilitado",
+            !disponible
+        );
+
+        botonAcreditacion.setAttribute(
+            "aria-disabled",
+            String(!disponible)
+        );
+
+        if (disponible) {
+            botonAcreditacion.setAttribute(
+                "href",
+                enlaceOriginalAcreditacion
+            );
+
+            botonAcreditacion.removeAttribute(
+                "tabindex"
+            );
+        } else {
+            botonAcreditacion.removeAttribute(
+                "href"
+            );
+
+            botonAcreditacion.setAttribute(
+                "tabindex",
+                "-1"
+            );
+        }
+    }
+
+    /*
+     * Actualiza el plazo de las acreditaciones.
+     */
+    function actualizarPlazoAcreditacion(
+        fechaActual
+    ) {
+        // Antes de la apertura
+        if (
+            fechaActual <
+            fechaInicioAcreditacion
+        ) {
+            salidaDiasCierreAcreditacion.textContent =
+                "--";
+
+            salidaEstadoAcreditacion.textContent =
+                "Acreditaciones próximamente";
+
+            cambiarDisponibilidadBoton(false);
+
+            return;
+        }
+
+        // Después del cierre
+        if (
+            fechaActual >
+            fechaFinAcreditacion
+        ) {
+            salidaDiasCierreAcreditacion.textContent =
+                "0";
+
+            salidaEstadoAcreditacion.textContent =
+                "Acreditaciones cerradas";
+
+            cambiarDisponibilidadBoton(false);
+
+            return;
+        }
+
+        const diasParaCerrar =
+            calcularDiasCalendario(
+                fechaFinAcreditacion,
+                fechaActual
+            );
+
+        salidaDiasCierreAcreditacion.textContent =
+            String(diasParaCerrar);
+
+        // Durante el 6 de diciembre
+        if (diasParaCerrar === 0) {
+            salidaEstadoAcreditacion.textContent =
+                "Último día para acreditarte";
+        } else {
+            salidaEstadoAcreditacion.textContent =
+                "días para el cierre";
+        }
+
+        cambiarDisponibilidadBoton(true);
+    }
+
+    /*
+     * Actualiza los días restantes para el campamento.
+     */
+    function actualizarDiasCampamento(
+        fechaActual
+    ) {
+        const diasParaCampamento =
+            calcularDiasCalendario(
+                fechaInicioCampamento,
+                fechaActual
+            );
+
+        salidaDiasCampamento.textContent =
+            String(diasParaCampamento);
+
+        const descripcion =
+            salidaDiasCampamento.nextElementSibling;
+
+        if (
+            descripcion &&
+            fechaActual >= fechaInicioCampamento
+        ) {
+            descripcion.textContent =
+                "campamento en curso";
+        }
+    }
+
+    /*
+     * Calcula los cupos disponibles.
+     */
+    function actualizarCuposDisponibles() {
+        const cuposDisponibles = Math.max(
+            0,
+            TOTAL_CUPOS_CAMPAMENTO -
+                ACREDITACIONES_REGISTRADAS
+        );
+
+        salidaCuposDisponibles.textContent =
+            String(cuposDisponibles);
+    }
+
+    /*
+     * Actualiza todos los datos del resumen.
+     */
+    function actualizarResumenCampamento() {
+        const ahora = new Date();
+
+        actualizarPlazoAcreditacion(ahora);
+        actualizarDiasCampamento(ahora);
+        actualizarCuposDisponibles();
+    }
+
+    // Primera actualización inmediata
+    actualizarResumenCampamento();
+
+    // Actualización automática cada minuto
+    const intervaloResumen =
+        window.setInterval(
+            actualizarResumenCampamento,
+            60 * 1000
+        );
+
+    // Limpia el intervalo al abandonar la página
+    window.addEventListener(
+        "beforeunload",
+        () => {
+            window.clearInterval(
+                intervaloResumen
+            );
+        },
+        { once: true }
+    );
+})();
 
 // ==================================================
 // 2. MODO QA

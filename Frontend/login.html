@@ -11,6 +11,12 @@
 
     <title>Iniciar sesión | Elegidos ICEC Juvenil</title>
 
+    <!-- Logo mostrado en la pestaña del navegador -->
+     <link 
+        rel="icon" 
+        type="image/png"
+        href="Logos/logo-elegidos-blanco.jpg">
+
     <!-- Estilos generales del sitio -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -38,23 +44,27 @@
             class="menu-principal"
             aria-label="Navegación principal">
 
-            <a href="index.html">
-                Inicio
-            </a>
+           <nav
+                class="menu-principal"
+                aria-label="Navegación principal">
 
-            <a href="index.html#informacion">
-                Información
+            <a  
+                href="index.html">
+                    Inicio
             </a>
 
             <a
                 href="login.html"
                 aria-current="page">
-                Acreditación
+                    Iniciar sesión
             </a>
 
-            
+            <a
+                href="acreditacion.html">
+                    Acreditación
+                </a>
 
-        </nav>
+            </nav>
 
     </header>
 
@@ -100,12 +110,9 @@
             <div class="cabecera-login">
 
                 <h2 id="titulo-login">
-                    Acreditación
+                    Iniciar sesión
                 </h2>
 
-                <p>
-                    Ingresa a tu cuenta para continuar con tu acreditación.
-                </p>
 
             </div>
 
@@ -226,6 +233,25 @@
                     </a>
 
                 </div>
+
+                <!-- Acceso exclusivo para personal administrativo -->
+                    <div class="acceso-administrativo-login">
+
+                        <span>
+                            ¿Tienes acceso administrativo?
+                        </span>
+
+                        <a
+                            href="admin-login.html"
+                            class="enlace-administrador-login">
+
+                            🔒 Acceso administrativo
+                        </a>
+                    </div>
+
+
+
+                
 
             </div>
 

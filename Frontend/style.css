@@ -265,22 +265,26 @@ img {
     height: auto;
     margin: 0;
 }
-
-
 /* ==================================================
    6. INFORMACIÓN INFERIOR DE LA PORTADA
    ================================================== */
 
+/* Franja inferior que contiene la fecha, los datos y los botones */
 .portada-informacion {
     display: grid;
-    grid-template-columns: minmax(260px, 1fr) auto auto;
+    grid-template-columns:
+        minmax(300px, 0.9fr)
+        minmax(620px, 1.8fr)
+        minmax(390px, auto);
     align-items: center;
-    gap: 24px;
+    gap: 18px;
 
     width: 100%;
-    padding: 22px 28px;
+    padding: 20px clamp(24px, 3vw, 48px);
+    box-sizing: border-box;
 
     color: var(--blanco);
+
     background: linear-gradient(
         90deg,
         var(--verde-profundo),
@@ -288,16 +292,24 @@ img {
     );
 }
 
+
+/* ==================================================
+   FECHA DEL CAMPAMENTO
+   ================================================== */
+
 .fecha-destacada {
     display: flex;
     align-items: center;
     gap: 16px;
+
+    min-width: 0;
 }
 
+/* Icono del calendario */
 .icono-fecha {
     display: grid;
     place-items: center;
-    flex-shrink: 0;
+    flex: 0 0 54px;
 
     width: 54px;
     height: 54px;
@@ -306,53 +318,320 @@ img {
     border-radius: 12px;
 
     font-size: 28px;
+    line-height: 1;
 }
 
+/* Texto de la fecha */
 .portada-informacion .fecha-campamento {
     margin: 0;
 
     color: var(--blanco);
-    font-size: 1.25rem;
+    font-size: clamp(1rem, 1.15vw, 1.2rem);
     font-weight: 700;
+    line-height: 1.3;
+    white-space: nowrap;
 }
 
-.contador-detallado {
+
+/* ==================================================
+   RESUMEN DE ACREDITACIÓN, CAMPAMENTO Y CUPOS
+   ================================================== */
+
+.contador-campamento.contador-resumido {
     display: grid;
-    grid-template-columns: repeat(4, minmax(68px, 1fr));
-    gap: 6px;
-}
+    grid-template-columns:
+        minmax(270px, 1.45fr)
+        minmax(155px, 0.75fr)
+        minmax(190px, 0.9fr);
+    align-items: stretch;
+    gap: 12px;
 
-.unidad-contador {
-    min-width: 68px;
-    padding: 9px 7px;
-
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 10px;
-
-    text-align: center;
-}
-
-.unidad-contador strong {
-    display: block;
-
-    color: var(--blanco);
-    font-size: 1.35rem;
-    line-height: 1.1;
-}
-
-.unidad-contador span {
-    display: block;
-    margin-top: 4px;
-    font-size: 0.85rem;
-}
-
-.portada-informacion .acciones-portada {
-    display: flex;
+    min-width: 0;
+    width: 100%;
     margin: 0;
 }
 
-.portada-informacion .boton-secundario {
-    min-width: 160px;
+/* Tarjeta de cada dato */
+.contador-resumido .unidad-contador {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    align-items: center;
+    gap: 11px;
+
+    min-width: 0;
+    min-height: 72px;
+    padding: 11px 13px;
+    box-sizing: border-box;
+
+    color: var(--blanco);
+    background-color: rgba(0, 0, 0, 0.1);
+
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 12px;
+}
+
+/* Icono de cada tarjeta */
+.icono-resumen-contador {
+    display: grid;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+
+    background-color: rgba(228, 198, 116, 0.14);
+    border: 1px solid rgba(228, 198, 116, 0.68);
+    border-radius: 11px;
+
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+/* Agrupa el valor y su descripción */
+.contenido-resumen-contador {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+
+    min-width: 0;
+}
+
+/* Valores numéricos */
+.contador-resumido .contenido-resumen-contador strong {
+    margin: 0;
+
+    color: var(--blanco);
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Descripción de cada valor */
+.contador-resumido .contenido-resumen-contador span {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+
+
+/* Mensaje con los días restantes para acreditarse */
+#estado-acreditacion {
+    display: block;
+
+    width: 100%;
+
+    color: var(--blanco);
+    font-size: clamp(1.05rem, 1.2vw, 1.22rem);
+    font-weight: 800;
+    line-height: 1.3;
+
+    white-space: normal;
+    overflow-wrap: normal;
+}
+
+/* Evita que los días y cupos se separen demasiado */
+.resumen-campamento .contenido-resumen-contador,
+.resumen-cupos .contenido-resumen-contador {
+    justify-content: flex-start;
+}
+
+
+/* ==================================================
+   BOTONES DE ACREDITACIÓN
+   ================================================== */
+
+.acciones-acreditacion {
+    display: grid;
+    grid-template-columns:
+        minmax(170px, 1fr)
+        minmax(210px, 1.2fr);
+    align-items: stretch;
+    gap: 12px;
+
+    min-width: 0;
+}
+
+/* Estilos compartidos por ambos botones */
+.boton-acreditacion,
+.boton-ingresar-acreditado {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 58px;
+    padding: 12px 18px;
+    box-sizing: border-box;
+
+    border: 2px solid var(--blanco);
+    border-radius: 14px;
+
+    text-decoration: none;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Botón para una persona nueva */
+.boton-acreditacion {
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
+}
+
+/* Botón para una persona ya acreditada */
+.boton-ingresar-acreditado {
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+}
+
+/* Efectos al pasar el cursor */
+.boton-acreditacion:hover,
+.boton-ingresar-acreditado:hover {
+    transform: translateY(-2px);
+}
+
+.boton-acreditacion:hover {
+    background-color: var(--dorado-medio);
+}
+
+.boton-ingresar-acreditado:hover {
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
+}
+
+/* Accesibilidad mediante teclado */
+.boton-acreditacion:focus-visible,
+.boton-ingresar-acreditado:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 4px;
+}
+
+/* Botón cerrado antes o después del periodo de acreditación */
+.boton-acreditacion.deshabilitado,
+.boton-acreditacion[aria-disabled="true"] {
+    cursor: not-allowed;
+    pointer-events: none;
+
+    color: rgba(255, 255, 255, 0.72);
+    background-color: #6f746d;
+    border-color: rgba(255, 255, 255, 0.45);
+    opacity: 0.86;
+}
+
+
+/* ==================================================
+   COMPUTADORES MEDIANOS
+   ================================================== */
+
+@media (max-width: 1500px) {
+
+    .portada-informacion {
+        grid-template-columns:
+            minmax(280px, 1fr)
+            minmax(390px, auto);
+    }
+
+    /* El contador ocupa la segunda fila completa */
+    .contador-campamento.contador-resumido {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .acciones-acreditacion {
+        grid-column: 2;
+        grid-row: 1;
+    }
+}
+
+
+/* ==================================================
+   TABLETAS
+   ================================================== */
+
+@media (max-width: 960px) {
+
+    .portada-informacion {
+        grid-template-columns: 1fr;
+        gap: 16px;
+
+        padding: 22px;
+    }
+
+    .fecha-destacada {
+        justify-content: center;
+    }
+
+    .portada-informacion .fecha-campamento {
+        white-space: normal;
+        text-align: center;
+    }
+
+    .contador-campamento.contador-resumido {
+        grid-column: auto;
+        grid-row: auto;
+        grid-template-columns:
+            minmax(240px, 1.3fr)
+            minmax(145px, 0.8fr)
+            minmax(180px, 1fr);
+    }
+
+    .acciones-acreditacion {
+        grid-column: auto;
+        grid-row: auto;
+
+        width: min(100%, 500px);
+        margin: 0 auto;
+    }
+}
+
+
+/* ==================================================
+   CELULARES
+   ================================================== */
+
+@media (max-width: 760px) {
+
+    .contador-campamento.contador-resumido {
+        grid-template-columns: 1fr;
+    }
+
+    .contador-resumido .unidad-contador {
+        min-height: 66px;
+    }
+}
+
+@media (max-width: 620px) {
+
+    .portada-informacion {
+        padding: 20px 16px;
+    }
+
+    .fecha-destacada {
+        justify-content: flex-start;
+    }
+
+    .portada-informacion .fecha-campamento {
+        text-align: left;
+    }
+
+    .acciones-acreditacion {
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    .boton-acreditacion,
+    .boton-ingresar-acreditado {
+        width: 100%;
+        min-width: 0;
+    }
 }
 
 
@@ -5021,4 +5300,126 @@ body.pagina-login .boton-login:hover {
         width: 100%;
         min-width: 0;
     }
+}
+/* ==================================================
+   BOTONES DE ACCESO A LA ACREDITACIÓN
+   ================================================== */
+
+/* Agrupa los botones para personas nuevas y acreditadas */
+.acciones-acreditacion {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Acceso para una persona que ya está acreditada */
+.boton-ingresar-acreditado {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+    padding: 12px 22px;
+
+    color: var(--blanco);
+    background-color: var(--color-oscuro);
+
+    border: 2px solid var(--blanco);
+    border-radius: 12px;
+
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Efecto al pasar el cursor */
+.boton-ingresar-acreditado:hover {
+    color: var(--color-oscuro);
+    background-color: var(--dorado-claro);
+    transform: translateY(-2px);
+}
+
+/* Accesibilidad mediante teclado */
+.boton-ingresar-acreditado:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 4px;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 760px) {
+
+    .acciones-acreditacion {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .acciones-acreditacion a {
+        width: 100%;
+    }
+}
+
+/* ==================================================
+   ACCESO ADMINISTRATIVO DESDE EL LOGIN
+   ================================================== */
+
+/* Separa el acceso administrativo de las opciones públicas */
+.acceso-administrativo-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+
+    margin-top: 22px;
+    padding-top: 20px;
+
+    border-top: 1px solid rgba(37, 30, 23, 0.15);
+
+    color: rgba(37, 30, 23, 0.72);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Enlace al inicio de sesión administrativo */
+.enlace-administrador-login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 9px 14px;
+
+    color: var(--verde-profundo);
+    background-color: rgba(59, 152, 51, 0.08);
+
+    border: 1px solid rgba(22, 58, 22, 0.28);
+    border-radius: 8px;
+
+    text-decoration: none;
+    font-weight: 700;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+/* Efecto al pasar el cursor */
+.enlace-administrador-login:hover {
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+    border-color: var(--verde-profundo);
+}
+
+/* Accesibilidad mediante teclado */
+.enlace-administrador-login:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 4px;
 }

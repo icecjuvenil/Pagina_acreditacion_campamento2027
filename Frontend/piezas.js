@@ -37,8 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Convierte el género registrado al valor usado por las piezas.
     function normalizarGenero(genero) {
-        const generoNormalizado =
-            normalizarTexto(genero);
+        const generoNormalizado = normalizarTexto(genero);
 
         if (
             generoNormalizado === "femenino" ||
@@ -83,21 +82,28 @@ document.addEventListener("DOMContentLoaded", () => {
         null
     );
 
-    // Permite realizar pruebas únicamente en el computador local.
+
+    // Lee los parámetros incluidos en la dirección.
     const parametrosPagina =
         new URLSearchParams(window.location.search);
 
+
+    // Comprueba que la página se esté ejecutando localmente.
     const sitioLocal = [
         "localhost",
         "127.0.0.1",
         "::1"
     ].includes(window.location.hostname);
 
+
+    // Activa el modo de prueba solamente en el computador local
+    // cuando la dirección termina en ?qa=1.
     const modoQA =
         sitioLocal &&
         parametrosPagina.get("qa") === "1";
 
-    // Estados que permiten utilizar la selección de piezas.
+
+    // Estados de pago que permiten seleccionar piezas.
     const estadosAutorizados = [
         "aprobado",
         "validado",
@@ -106,16 +112,20 @@ document.addEventListener("DOMContentLoaded", () => {
         "pago validado"
     ];
 
+
     const estadoPagoNormalizado =
         normalizarTexto(pagoCampamento?.estado);
+
 
     const pagoAutorizado =
         estadosAutorizados.includes(
             estadoPagoNormalizado
         );
 
-    // Impide ingresar directamente si la acreditación
-    // todavía no ha sido validada.
+
+    // En el funcionamiento real, impide ingresar si el pago
+    // todavía no ha sido aprobado.
+    // El modo QA permite revisar la página durante el desarrollo.
     if (!pagoAutorizado && !modoQA) {
         alert(
             "La selección de piezas estará disponible cuando tu acreditación y pago hayan sido aprobados."
@@ -138,11 +148,13 @@ document.addEventListener("DOMContentLoaded", () => {
         null
     );
 
+
     const acompanantesGuardados =
         obtenerDatosGuardados(
             "acompanantesCampamento",
             []
         );
+
 
     const acompanantes = Array.isArray(
         acompanantesGuardados
@@ -151,46 +163,91 @@ document.addEventListener("DOMContentLoaded", () => {
         : [];
 
 
-    // Crea una lista común con la persona principal
+    // Lista común para la persona principal
     // y todos sus acompañantes.
     const participantes = [];
 
+
+    // Agrega la persona principal cuando existe.
     if (personaPrincipal) {
         participantes.push({
             id: "persona-principal",
             tipo: "principal",
+
             nombre:
                 obtenerNombrePersona(
                     personaPrincipal
                 ),
+
             genero:
                 normalizarGenero(
                     personaPrincipal.genero
                 ),
+
             datos: personaPrincipal
         });
     }
 
+
+    // Agrega los acompañantes registrados.
     acompanantes.forEach(
         (acompanante, posicion) => {
             participantes.push({
                 id: `acompanante-${posicion}`,
                 tipo: "acompanante",
+
                 nombre:
                     obtenerNombrePersona(
                         acompanante
                     ),
+
                 genero:
                     normalizarGenero(
                         acompanante.genero
                     ),
+
                 datos: acompanante
             });
         }
     );
 
 
-    // Sin participantes no es posible asignar una pieza.
+    // Si estamos en modo QA y no existen participantes,
+    // crea dos personas temporales para revisar la página.
+    if (participantes.length === 0 && modoQA) {
+        participantes.push(
+            {
+                id: "persona-prueba-femenina",
+                tipo: "principal",
+                nombre: "Participante femenina de prueba",
+                genero: "femenino",
+
+                datos: {
+                    nombreCompleto:
+                        "Participante femenina de prueba",
+
+                    genero: "Femenino"
+                }
+            },
+            {
+                id: "persona-prueba-masculina",
+                tipo: "acompanante",
+                nombre: "Participante masculino de prueba",
+                genero: "masculino",
+
+                datos: {
+                    nombreCompleto:
+                        "Participante masculino de prueba",
+
+                    genero: "Masculino"
+                }
+            }
+        );
+    }
+
+
+    // En el funcionamiento real no permite continuar
+    // si no existen personas acreditadas.
     if (participantes.length === 0) {
         alert(
             "No se encontraron personas acreditadas para asignar."
@@ -213,40 +270,48 @@ document.addEventListener("DOMContentLoaded", () => {
             "participante-pieza"
         );
 
+
     const salidaGenero =
         document.getElementById(
             "genero-participante-pieza"
         );
+
 
     const textoGenero =
         document.getElementById(
             "texto-genero-participante"
         );
 
+
     const mensajeSeleccion =
         document.getElementById(
             "mensaje-seleccion-pieza"
         );
+
 
     const contadorPiezas =
         document.getElementById(
             "contador-piezas-disponibles"
         );
 
+
     const salidaNombrePieza =
         document.getElementById(
             "nombre-pieza-seleccionada"
         );
+
 
     const salidaCuposPieza =
         document.getElementById(
             "cupos-pieza-seleccionada"
         );
 
+
     const botonConfirmar =
         document.getElementById(
             "boton-confirmar-pieza"
         );
+
 
     const tarjetasPiezas = Array.from(
         document.querySelectorAll(
@@ -285,6 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
             {}
         );
 
+
     const asignaciones =
         asignacionesRecuperadas &&
         typeof asignacionesRecuperadas === "object" &&
@@ -293,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
             : {};
 
 
-    // Guarda todas las asignaciones temporales.
+    // Guarda las asignaciones temporales.
     function guardarAsignaciones() {
         sessionStorage.setItem(
             "asignacionesPiezasCampamento",
@@ -317,10 +383,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function cargarSelectorParticipantes() {
         selectorParticipante.textContent = "";
 
+
         const opcionInicial =
             document.createElement("option");
 
         opcionInicial.value = "";
+
         opcionInicial.textContent =
             "Seleccione un participante";
 
@@ -338,10 +406,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 opcion.value = participante.id;
 
+
                 const tipoPersona =
                     participante.tipo === "principal"
                         ? "Persona principal"
                         : "Acompañante";
+
 
                 opcion.textContent =
                     `${participante.nombre} — ${tipoPersona}`;
@@ -358,7 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
        8. CÁLCULO DE CUPOS
        ================================================== */
 
-    // Cuenta cuántas personas han sido asignadas
+    // Cuenta cuántas personas están asignadas
     // a una pieza determinada.
     function contarPersonasEnPieza(codigoPieza) {
         return Object.values(
@@ -376,10 +446,12 @@ document.addEventListener("DOMContentLoaded", () => {
             tarjeta.dataset.capacidad || 0
         );
 
+
         const personasAsignadas =
             contarPersonasEnPieza(
                 tarjeta.dataset.codigo
             );
+
 
         return Math.max(
             0,
@@ -406,7 +478,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Desactiva todas las piezas cuando todavía
+    // Desactiva las piezas cuando todavía
     // no se ha seleccionado una persona.
     function desactivarTodasLasPiezas() {
         tarjetasPiezas.forEach(
@@ -416,14 +488,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
                 tarjeta.disabled = true;
+
                 tarjeta.classList.add(
                     "pieza-bloqueada"
                 );
+
 
                 const estado =
                     tarjeta.querySelector(
                         ".estado-pieza"
                     );
+
 
                 if (estado) {
                     estado.textContent =
@@ -431,6 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         );
+
 
         contadorPiezas.textContent =
             "0 piezas disponibles";
@@ -447,8 +523,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+
         const generoParticipante =
             participanteActual.genero;
+
 
         let cantidadDisponibles = 0;
 
@@ -459,32 +537,39 @@ document.addEventListener("DOMContentLoaded", () => {
                     tarjeta
                 );
 
+
                 const codigo =
                     tarjeta.dataset.codigo;
+
 
                 const generoPieza =
                     normalizarGenero(
                         tarjeta.dataset.genero
                     );
 
+
                 const estado =
                     tarjeta.querySelector(
                         ".estado-pieza"
                     );
+
 
                 const cuposRestantes =
                     calcularCuposRestantes(
                         tarjeta
                     );
 
+
                 const asignacionActual =
                     asignaciones[
                         participanteActual.id
                     ];
 
+
                 const esAsignacionGuardada =
                     asignacionActual?.codigo ===
                     codigo;
+
 
                 const correspondeAlGenero =
                     generoPieza ===
@@ -499,6 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         "pieza-bloqueada"
                     );
 
+
                     if (estado) {
                         estado.textContent =
                             "No corresponde al género";
@@ -508,8 +594,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                // Mantiene habilitada la pieza de una persona
-                // que ya había sido asignada.
+                // Mantiene disponible la pieza que ya
+                // estaba asignada a esta persona.
                 if (esAsignacionGuardada) {
                     tarjeta.disabled = false;
 
@@ -521,6 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         "aria-pressed",
                         "true"
                     );
+
 
                     if (estado) {
                         estado.textContent =
@@ -540,6 +627,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         "pieza-completa"
                     );
 
+
                     if (estado) {
                         estado.textContent =
                             "Completa";
@@ -552,6 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Habilita piezas disponibles.
                 tarjeta.disabled = false;
 
+
                 if (estado) {
                     estado.textContent =
                         cuposRestantes === 1
@@ -559,10 +648,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             : `${cuposRestantes} cupos disponibles`;
                 }
 
+
                 cantidadDisponibles += 1;
 
 
-                // Muestra la selección temporal.
+                // Muestra la selección provisional.
                 if (
                     codigoPiezaTemporal ===
                     codigo
@@ -575,6 +665,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         "aria-pressed",
                         "true"
                     );
+
 
                     if (estado) {
                         estado.textContent =
@@ -629,8 +720,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const codigo =
             tarjetaSeleccionada.dataset.codigo;
 
+
         const nombre =
             tarjetaSeleccionada.dataset.nombre;
+
 
         const cuposRestantes =
             calcularCuposRestantes(
@@ -641,10 +734,12 @@ document.addEventListener("DOMContentLoaded", () => {
         salidaNombrePieza.textContent =
             `${codigo} — ${nombre}`;
 
+
         salidaCuposPieza.textContent =
             cuposRestantes === 1
                 ? "Queda 1 cupo disponible."
                 : `Quedan ${cuposRestantes} cupos disponibles.`;
+
 
         botonConfirmar.disabled = false;
     }
@@ -707,6 +802,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? "M"
                     : "H";
 
+
             textoGenero.textContent =
                 participanteActual.genero ===
                 "femenino"
@@ -718,6 +814,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 asignaciones[
                     participanteActual.id
                 ];
+
 
             codigoPiezaTemporal =
                 asignacionExistente?.codigo ||
@@ -908,7 +1005,7 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarResumen();
 
 
-    // Informa en consola cuando se utiliza el modo de prueba.
+    // Informa en la consola cuando se utiliza el modo de prueba.
     if (modoQA) {
         console.log(
             "Modo QA de selección de piezas activado."

@@ -13,8 +13,14 @@
         content="width=device-width, initial-scale=1.0">
 
     <title>
-        Reconciliado en la Cruz | Elegidos ICEC Juvenil
+      Reconciliado en la Cruz | Elegidos ICEC Juvenil
     </title>
+
+    <!-- Logo mostrado en la pestaña del navegador -->
+     <link 
+        rel="icon" 
+        type="image/png"
+        href="Logos/logo-elegidos-blanco.jpg">
 
     <!-- Archivo principal de estilos -->
     <link rel="stylesheet" href="style.css">
@@ -29,7 +35,10 @@
     <header class="encabezado">
 
         <!-- Logo y nombre de la organización -->
-        <a href="index.html" class="marca">
+        <a 
+            href="index.html" 
+            class="marca"
+            aria-label="Ir a la página de inicio">
 
             <img
                 src="Logos/logo-elegidos.png"
@@ -47,17 +56,23 @@
             class="menu-principal"
             aria-label="Navegación principal">
 
-            <a href="index.html"
+            <a 
+                href="index.html"
+                class="enlace-menu"
                 aria-current="page">
                 Inicio
             </a>
 
-            <a href="#informacion">
-                Información
+            <a 
+                href="login.html"
+                class="enlace-menu boton-iniciar-sesion">
+                Iniciar sesión
             </a>
 
-            <a href="login.html">
-                Acreditación
+            <a
+                href="acreditacion.html"
+                class="boton-menu-acreditacion">
+                Acredítate
             </a>
 
            
@@ -76,111 +91,135 @@
              PORTADA DEL CAMPAMENTO
              ================================================== -->
 
-        <section id="inicio" class="portada">
+            <!-- ==================================================
+     PORTADA DEL CAMPAMENTO
+     ================================================== -->
 
-            <!--
-                Título oculto visualmente.
-                Se conserva para accesibilidad y buscadores.
-            -->
-            <h1 class="titulo-oculto">
-                Reconciliado en la Cruz -
-                Campamento ICEC 2027
-            </h1>
+<section id="inicio" class="portada">
 
-            <!-- Afiche oficial del campamento -->
-            <img
-                src="Logos/tripleta oficial.png"
-                alt="Reconciliado en la Cruz - Campamento ICEC 2027"
-                class="afiche-oficial">
+    <!-- Imagen oficial del campamento -->
+    <img
+        src="Logos/tripleta oficial.png"
+        alt="Campamento ICEC Juvenil 2027"
+        class="imagen-portada">
 
+    <!-- Franja informativa -->
+    <div class="portada-informacion">
 
-            <!-- Información ubicada debajo del afiche -->
-            <div class="portada-informacion">
+        <!-- Fecha del campamento -->
+        <div class="fecha-campamento">
 
-                <!-- Fecha del campamento -->
-                <div class="fecha-destacada">
+            <span
+                class="icono-fecha"
+                aria-hidden="true">
+                📅
+            </span>
 
-                    <span
-                        class="icono-fecha"
-                        aria-hidden="true">
-                        📅
+            <strong>
+                8, 9 y 10 de enero de 2027
+            </strong>
+
+        </div>
+
+        <!-- Resumen de acreditación, campamento y cupos -->
+        <div
+            class="contador-campamento contador-resumido"
+            aria-live="polite"
+            aria-atomic="true">
+
+            <!-- Días hasta el cierre de las acreditaciones -->
+            <div class="unidad-contador resumen-acreditacion">
+
+                <span
+                    class="icono-resumen-contador"
+                    aria-hidden="true">
+                    📝
+                </span>
+
+                <div class="contenido-resumen-contador">
+
+                    <strong id="dias-cierre-acreditacion">
+                        --
+                    </strong>
+
+                    <span id="estado-acreditacion">
+                        días para el cierre de las acreditaciones
                     </span>
-
-                    <p class="fecha-campamento">
-                        8, 9 y 10 de enero de 2027
-                    </p>
-
-                </div>
-
-
-                <!-- Contador para el inicio del campamento -->
-                <div
-                    class="contador-campamento contador-detallado"
-                    aria-live="polite">
-
-                    <!-- Días restantes -->
-                    <div class="unidad-contador">
-
-                        <strong id="dias-restantes">
-                            ...
-                        </strong>
-
-                        <span>Días</span>
-
-                    </div>
-
-                    <!-- Horas restantes -->
-                    <div class="unidad-contador">
-
-                        <strong id="horas-restantes">
-                            --
-                        </strong>
-
-                        <span>Horas</span>
-
-                    </div>
-
-                    <!-- Minutos restantes -->
-                    <div class="unidad-contador">
-
-                        <strong id="minutos-restantes">
-                            --
-                        </strong>
-
-                        <span>Minutos</span>
-
-                    </div>
-
-                    <!-- Segundos restantes -->
-                    <div class="unidad-contador">
-
-                        <strong id="segundos-restantes">
-                            --
-                        </strong>
-
-                        <span>Segundos</span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Botón principal de acreditación -->
-                <div class="acciones-portada">
-
-                    <a
-                        href="login.html"
-                        class="boton boton-secundario">
-                        Acredítate
-                    </a>
 
                 </div>
 
             </div>
 
-        </section>
+            <!-- Días hasta el campamento -->
+            <div class="unidad-contador resumen-campamento">
 
+                <span
+                    class="icono-resumen-contador"
+                    aria-hidden="true">
+                    ⛺
+                </span>
 
+                <div class="contenido-resumen-contador">
+
+                    <strong id="dias-campamento">
+                        --
+                    </strong>
+
+                    <span>
+                        días para el campamento
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Cupos disponibles -->
+            <div
+                class="unidad-contador resumen-cupos"
+                aria-label="Cupos disponibles de un total de 90">
+
+                <span
+                    class="icono-resumen-contador"
+                    aria-hidden="true">
+                    👥
+                </span>
+
+                <div class="contenido-resumen-contador">
+
+                    <strong id="cupos-disponibles">
+                        --
+                    </strong>
+
+                    <span>
+                        cupos disponibles
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Acciones de acreditación -->
+        <div class="acciones-acreditacion">
+
+            <a
+                href="acreditacion.html"
+                class="boton-acreditacion">
+                Acredítate
+            </a>
+
+            <a
+                href="login.html"
+                class="boton-ingresar-acreditado">
+                Ya estoy acreditado
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
         <!-- ==================================================
              PROPÓSITO DEL CAMPAMENTO
              ================================================== -->
