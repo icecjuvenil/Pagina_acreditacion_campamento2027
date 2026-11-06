@@ -1108,6 +1108,38 @@ document.addEventListener("DOMContentLoaded", async () => {
                 String(habitacion.capacidad);
 
                 
+            // Identificar el estado real de la habitación
+            // para aplicar colores al pasar el mouse.
+
+            tarjeta.classList.remove(
+                "habitacion-verde",
+                "habitacion-amarilla",
+                "habitacion-roja"
+            );
+
+            const cuposDisponibles = Number(
+                habitacion.disponibles
+            );
+
+            const capacidadTotal = Number(
+                habitacion.capacidad
+            );
+
+            if (cuposDisponibles <= 0) {
+                // Habitación completa.
+                tarjeta.classList.add("habitacion-roja");
+
+            } else if (cuposDisponibles < capacidadTotal) {
+                // Habitación parcialmente ocupada.
+                tarjeta.classList.add("habitacion-amarilla");
+
+            } else {
+                // Habitación completamente disponible.
+                tarjeta.classList.add("habitacion-verde");
+            }
+
+
+                
             // ==========================================
             // MOSTRAR PERSONAS ASIGNADAS A LA HABITACIÓN
             // ==========================================

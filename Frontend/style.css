@@ -5936,3 +5936,185 @@ body.pagina-login .boton-login:hover {
 .lista-ocupantes-pieza span {
     color: var(--blanco);
 }
+
+
+
+/* ==========================================
+   MEJORAR VISIBILIDAD DE HABITACIONES BLOQUEADAS
+   ========================================== */
+
+.pagina-piezas .tarjeta-pieza:disabled,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada,
+.pagina-piezas .tarjeta-pieza.pieza-completa {
+    opacity: 1;
+    background-color: #f2f3ef;
+    border-color: #cbd3c7;
+}
+
+/* Nombre de la habitación */
+.pagina-piezas .tarjeta-pieza:disabled .nombre-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada .nombre-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-completa .nombre-pieza {
+    color: #254b2b;
+    font-weight: 700;
+}
+
+/* Capacidad */
+.pagina-piezas .tarjeta-pieza:disabled .capacidad-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada .capacidad-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-completa .capacidad-pieza {
+    color: #566457;
+}
+
+/* Título de personas asignadas */
+.pagina-piezas .tarjeta-pieza:disabled
+.lista-ocupantes-pieza strong {
+    color: #204c29;
+    opacity: 1;
+}
+
+/* Nombres de los ocupantes */
+.pagina-piezas .tarjeta-pieza:disabled
+.lista-ocupantes-pieza span {
+    color: #263c2a;
+    opacity: 1;
+    font-weight: 500;
+}
+
+/* Separador de ocupantes */
+.pagina-piezas .tarjeta-pieza:disabled
+.lista-ocupantes-pieza {
+    border-top-color: #b7c9b5;
+    opacity: 1;
+}
+
+
+
+/* ==========================================
+   EFECTO HOVER EN HABITACIONES
+   ========================================== */
+
+.pagina-piezas .tarjeta-pieza {
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease,
+        background-color 0.25s ease;
+}
+
+/* Habitaciones disponibles */
+.pagina-piezas .tarjeta-pieza:hover:not(:disabled) {
+    transform: translateY(-4px);
+    border-color: #245f21;
+    box-shadow: 0 10px 24px rgba(22, 58, 22, 0.20);
+}
+
+/* Habitaciones bloqueadas o completas */
+.pagina-piezas .tarjeta-pieza:disabled:hover {
+    transform: translateY(-2px);
+    border-color: #8fa58c;
+    box-shadow: 0 6px 15px rgba(22, 58, 22, 0.12);
+    cursor: not-allowed;
+}
+
+/* Respetar preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .pagina-piezas .tarjeta-pieza {
+        transition: none;
+    }
+
+    .pagina-piezas .tarjeta-pieza:hover {
+        transform: none;
+    }
+}
+
+
+
+/* ==========================================
+   COLORES HOVER SEGÚN DISPONIBILIDAD
+   ========================================== */
+
+/* VERDE: habitación completamente disponible */
+.pagina-piezas .tarjeta-pieza.habitacion-verde:hover {
+    background-color: #d7f3dc;
+    border-color: #228b45;
+    box-shadow: 0 8px 22px rgba(34, 139, 69, 0.25);
+    transform: translateY(-4px);
+}
+
+/* AMARILLO: habitación parcialmente ocupada */
+.pagina-piezas .tarjeta-pieza.habitacion-amarilla:hover {
+    background-color: #fff0b3;
+    border-color: #d5a021;
+    box-shadow: 0 8px 22px rgba(213, 160, 33, 0.25);
+    transform: translateY(-4px);
+}
+
+/* ROJO: habitación sin cupos */
+.pagina-piezas .tarjeta-pieza.habitacion-roja:hover {
+    background-color: #f9d7d4;
+    border-color: #c63e35;
+    box-shadow: 0 8px 22px rgba(198, 62, 53, 0.25);
+    transform: translateY(-4px);
+}
+
+/* Mantener legibles los textos en habitaciones bloqueadas */
+.pagina-piezas .tarjeta-pieza.habitacion-verde:hover,
+.pagina-piezas .tarjeta-pieza.habitacion-amarilla:hover,
+.pagina-piezas .tarjeta-pieza.habitacion-roja:hover {
+    opacity: 1;
+}
+
+/* Reducir animación cuando el usuario lo prefiera */
+@media (prefers-reduced-motion: reduce) {
+    .pagina-piezas .tarjeta-pieza:hover {
+        transform: none;
+    }
+}
+
+
+
+/* ==========================================
+   HOVER GRIS PARA HABITACIONES DE OTRO GÉNERO
+   ========================================== */
+
+/* El bloqueo por género tiene prioridad
+   sobre los colores de disponibilidad. */
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover {
+    background-color: #e3e5e3 !important;
+    border-color: #929a92 !important;
+    box-shadow: 0 8px 20px rgba(75, 85, 75, 0.18) !important;
+    transform: translateY(-3px);
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+/* Textos legibles en habitaciones bloqueadas */
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover
+.nombre-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover
+.capacidad-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover
+.lista-ocupantes-pieza strong,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover
+.lista-ocupantes-pieza span {
+    color: #384538 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover {
+        transform: none;
+    }
+}
+
+
+/* Boton Excel */
+.admin-boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icono-excel {
+    flex-shrink: 0;
+}
