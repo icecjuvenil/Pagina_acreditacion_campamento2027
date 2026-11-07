@@ -37,8 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Convierte el género registrado al valor usado por las piezas.
     function normalizarGenero(genero) {
-        const generoNormalizado =
-            normalizarTexto(genero);
+        const generoNormalizado = normalizarTexto(genero);
 
         if (
             generoNormalizado === "femenino" ||
@@ -217,40 +216,48 @@ document.addEventListener("DOMContentLoaded", async () => {
             "participante-pieza"
         );
 
+
     const salidaGenero =
         document.getElementById(
             "genero-participante-pieza"
         );
+
 
     const textoGenero =
         document.getElementById(
             "texto-genero-participante"
         );
 
+
     const mensajeSeleccion =
         document.getElementById(
             "mensaje-seleccion-pieza"
         );
+
 
     const contadorPiezas =
         document.getElementById(
             "contador-piezas-disponibles"
         );
 
+
     const salidaNombrePieza =
         document.getElementById(
             "nombre-pieza-seleccionada"
         );
+
 
     const salidaCuposPieza =
         document.getElementById(
             "cupos-pieza-seleccionada"
         );
 
+
     const botonConfirmar =
         document.getElementById(
             "boton-confirmar-pieza"
         );
+
 
     const tarjetasPiezas = Array.from(
         document.querySelectorAll(
@@ -289,6 +296,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             {}
         );
 
+
     const asignaciones =
         asignacionesRecuperadas &&
         typeof asignacionesRecuperadas === "object" &&
@@ -297,7 +305,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             : {};
 
 
-    // Guarda todas las asignaciones temporales.
+    // Guarda las asignaciones temporales.
     function guardarAsignaciones() {
         sessionStorage.setItem(
             "asignacionesPiezasCampamento",
@@ -321,10 +329,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     function cargarSelectorParticipantes() {
         selectorParticipante.textContent = "";
 
+
         const opcionInicial =
             document.createElement("option");
 
         opcionInicial.value = "";
+
         opcionInicial.textContent =
             "Seleccione un participante";
 
@@ -342,10 +352,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 opcion.value = participante.id;
 
+
                 const tipoPersona =
                     participante.tipo === "principal"
                         ? "Persona principal"
                         : "Acompañante";
+
 
                 opcion.textContent =
                     `${participante.nombre} — ${tipoPersona}`;
@@ -362,7 +374,7 @@ document.addEventListener("DOMContentLoaded", async () => {
        8. CÁLCULO DE CUPOS
        ================================================== */
 
-    // Cuenta cuántas personas han sido asignadas
+    // Cuenta cuántas personas están asignadas
     // a una pieza determinada.
     function contarPersonasEnPieza(codigoPieza) {
         return Object.values(
@@ -381,6 +393,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             tarjeta.dataset.disponibles
         );
 
+
         if (
             !Number.isSafeInteger(disponibles) ||
             disponibles < 0
@@ -390,6 +403,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         return disponibles;
     }
+
 
 
 
@@ -411,7 +425,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 
-    // Desactiva todas las piezas cuando todavía
+    // Desactiva las piezas cuando todavía
     // no se ha seleccionado una persona.
     function desactivarTodasLasPiezas() {
         tarjetasPiezas.forEach(
@@ -421,14 +435,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                 );
 
                 tarjeta.disabled = true;
+
                 tarjeta.classList.add(
                     "pieza-bloqueada"
                 );
+
 
                 const estado =
                     tarjeta.querySelector(
                         ".estado-pieza"
                     );
+
 
                 if (estado) {
                     estado.textContent =
@@ -436,6 +453,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
         );
+
 
         contadorPiezas.textContent =
             "0 piezas disponibles";
@@ -452,8 +470,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+
         const generoParticipante =
             participanteActual.genero;
+
 
         let cantidadDisponibles = 0;
 
@@ -464,32 +484,39 @@ document.addEventListener("DOMContentLoaded", async () => {
                     tarjeta
                 );
 
+
                 const codigo =
                     tarjeta.dataset.codigo;
+
 
                 const generoPieza =
                     normalizarGenero(
                         tarjeta.dataset.genero
                     );
 
+
                 const estado =
                     tarjeta.querySelector(
                         ".estado-pieza"
                     );
+
 
                 const cuposRestantes =
                     calcularCuposRestantes(
                         tarjeta
                     );
 
+
                 const asignacionActual =
                     asignaciones[
                         participanteActual.id
                     ];
 
+
                 const esAsignacionGuardada =
                     asignacionActual?.codigo ===
                     codigo;
+
 
                 const correspondeAlGenero =
                     generoPieza ===
@@ -504,6 +531,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         "pieza-bloqueada"
                     );
 
+
                     if (estado) {
                         estado.textContent =
                             "No corresponde al género";
@@ -513,8 +541,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
 
 
-                // Mantiene habilitada la pieza de una persona
-                // que ya había sido asignada.
+                // Mantiene disponible la pieza que ya
+                // estaba asignada a esta persona.
                 if (esAsignacionGuardada) {
                     tarjeta.disabled = false;
 
@@ -526,6 +554,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         "aria-pressed",
                         "true"
                     );
+
 
                     if (estado) {
                         estado.textContent =
@@ -545,6 +574,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         "pieza-completa"
                     );
 
+
                     if (estado) {
                         estado.textContent =
                             "Completa";
@@ -557,6 +587,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Habilita piezas disponibles.
                 tarjeta.disabled = false;
 
+
                 if (estado) {
                     estado.textContent =
                         cuposRestantes === 1
@@ -564,10 +595,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                             : `${cuposRestantes} cupos disponibles`;
                 }
 
+
                 cantidadDisponibles += 1;
 
 
-                // Muestra la selección temporal.
+                // Muestra la selección provisional.
                 if (
                     codigoPiezaTemporal ===
                     codigo
@@ -580,6 +612,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         "aria-pressed",
                         "true"
                     );
+
 
                     if (estado) {
                         estado.textContent =
@@ -660,8 +693,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const codigo =
             tarjetaSeleccionada.dataset.codigo;
 
+
         const nombre =
             tarjetaSeleccionada.dataset.nombre;
+
 
         const cuposRestantes =
             calcularCuposRestantes(
@@ -672,10 +707,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         salidaNombrePieza.textContent =
             `${codigo} — ${nombre}`;
 
+
         salidaCuposPieza.textContent =
             cuposRestantes === 1
                 ? "Queda 1 cupo disponible."
                 : `Quedan ${cuposRestantes} cupos disponibles.`;
+
 
         botonConfirmar.disabled = false;
     }
@@ -738,6 +775,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     ? "M"
                     : "H";
 
+
             textoGenero.textContent =
                 participanteActual.genero ===
                 "femenino"
@@ -749,6 +787,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 asignaciones[
                     participanteActual.id
                 ];
+
 
             codigoPiezaTemporal =
                 asignacionExistente?.codigo ||
@@ -1275,7 +1314,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-    // Informa en consola cuando se utiliza el modo de prueba.
+    // Informa en la consola cuando se utiliza el modo de prueba.
     if (modoQA) {
         console.log(
             "Modo QA de selección de piezas activado."
