@@ -59,8 +59,17 @@ export async function manejarExportacion(
                 u.correo,
                 COALESCE(h.nombre, 'Sin asignar')
                     AS habitacion,
-                pg.estado AS estado_pago,
-                pg.monto_total
+                
+pg.estado AS estado_pago,
+pg.monto_total,
+CASE
+    WHEN p.cancelada = 1 THEN 'CANCELADA'
+    ELSE 'ACTIVA'
+END AS estado_inscripcion,
+p.fecha_cancelacion,
+p.motivo_cancelacion,
+p.estado_devolucion
+
 
             FROM participantes p
 
@@ -80,16 +89,27 @@ export async function manejarExportacion(
 
             SELECT
                 a.participante_id AS inscripcion_id,
-                'ACOMPAÑANTE' AS tipo,
+                'Acompañante de: ' || p.nombre_completo AS tipo,
                 a.nombre_completo AS nombre,
                 a.telefono,
                 a.correo,
                 COALESCE(h.nombre, 'Sin asignar')
                     AS habitacion,
-                pg.estado AS estado_pago,
-                pg.monto_total
+                
+pg.estado AS estado_pago,
+NULL AS monto_total,
+CASE
+    WHEN p.cancelada = 1 THEN 'CANCELADA'
+    ELSE 'ACTIVA'
+END AS estado_inscripcion,
+p.fecha_cancelacion,
+p.motivo_cancelacion,
+p.estado_devolucion
+
 
             FROM acompanantes a
+            INNER JOIN participantes p
+                ON p.id = a.participante_id
 
             LEFT JOIN pagos pg
                 ON pg.participante_id = a.participante_id
@@ -103,11 +123,78 @@ export async function manejarExportacion(
             ORDER BY inscripcion_id, tipo DESC
         `).all();
 
-        return responder({
-            estado: "OK",
-            fechaExportacion: new Date().toISOString(),
-            registros: resultado.results || []
-        });
+        
+        // Información de salud de participantes
+        // y acompañantes para el respaldo privado.
+
+        const resultadoSalud = await env.DB.prepare(`
+            SELECT
+                'PARTICIPANTE' AS tipo,
+                p.nombre_completo AS nombre,
+                p.nombre_completo AS responsable,
+                COALESCE(h.nombre, 'Sin asignar') AS habitacion,
+                im.tiene_alergias,
+                im.detalle_alergias,
+                im.tiene_enfermedad,
+                im.detalle_enfermedad,
+                im.toma_medicamentos,
+                im.detalle_medicamentos,
+                im.restriccion_alimentaria,
+                im.detalle_alimentacion
+
+            FROM participantes p
+
+            LEFT JOIN informacion_medica im
+                ON im.participante_id = p.id
+
+            LEFT JOIN asignaciones_habitaciones ah
+                ON ah.participante_id = p.id
+
+            LEFT JOIN habitaciones h
+                ON h.id = ah.habitacion_id
+
+            UNION ALL
+
+            SELECT
+                'ACOMPAÑANTE' AS tipo,
+                a.nombre_completo AS nombre,
+                p.nombre_completo AS responsable,
+                COALESCE(h.nombre, 'Sin asignar') AS habitacion,
+                im.tiene_alergias,
+                im.detalle_alergias,
+                im.tiene_enfermedad,
+                im.detalle_enfermedad,
+                im.toma_medicamentos,
+                im.detalle_medicamentos,
+                im.restriccion_alimentaria,
+                im.detalle_alimentacion
+
+            FROM acompanantes a
+
+            INNER JOIN participantes p
+                ON p.id = a.participante_id
+
+            LEFT JOIN informacion_medica im
+                ON im.acompanante_id = a.id
+
+            LEFT JOIN asignaciones_habitaciones ah
+                ON ah.acompanante_id = a.id
+
+            LEFT JOIN habitaciones h
+                ON h.id = ah.habitacion_id
+
+            ORDER BY responsable, tipo, nombre
+        `).all();
+
+
+        
+            return responder({
+                estado: "OK",
+                fechaExportacion: new Date().toISOString(),
+                registros: resultado.results || [],
+                salud: resultadoSalud.results || []
+            });
+
 
     } catch (error) {
         console.error(

@@ -111,8 +111,16 @@ export async function manejarValidacionPagoAdmin(
                 WHERE id = ?
                   AND estado = 'EN_REVISION'
                   AND comprobante_key IS NOT NULL
-                  AND monto_total > 0
-                  AND monto_pagado = 0
+                  
+AND monto_total > 0
+AND monto_pagado = 0
+AND EXISTS (
+    SELECT 1
+    FROM participantes p
+    WHERE p.id = pagos.participante_id
+      AND p.cancelada = 0
+)
+
             `).bind(id).run();
         } else {
             resultado = await env.DB.prepare(`

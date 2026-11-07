@@ -87,12 +87,26 @@ if (
         }
 
         // Verificar que el pago esté aprobado.
-        const pago = await env.DB.prepare(
-            `SELECT estado
-             FROM pagos
-             WHERE participante_id = ?
-             LIMIT 1`
-        ).bind(participanteId).first();
+        
+            const pago = await env.DB.prepare(
+                `SELECT
+                    pg.estado,
+                    p.cancelada
+                FROM pagos pg
+                INNER JOIN participantes p
+                    ON p.id = pg.participante_id
+                WHERE pg.participante_id = ?
+                LIMIT 1`
+            ).bind(participanteId).first();
+
+            if (Number(pago?.cancelada) === 1) {
+                return responder({
+                    mensaje:
+                        "Esta inscripción está cancelada. " +
+                        "No es posible reservar habitaciones."
+                }, 403);
+            }
+
 
         if (pago?.estado !== "APROBADO") {
             return responder({
@@ -166,9 +180,10 @@ if (
                      ON p.id = ?
                    INNER JOIN pagos pg
                      ON pg.participante_id = p.id
-                   WHERE h.id = ?
-                     AND h.activa = 1
-                     AND pg.estado = 'APROBADO'
+                    WHERE h.id = ?
+                    AND h.activa = 1
+                    AND p.cancelada = 0
+                    AND pg.estado = 'APROBADO'
                      AND UPPER(TRIM(h.genero)) =
                          UPPER(TRIM(p.genero))
                      AND (
@@ -183,11 +198,17 @@ if (
                    INNER JOIN acompanantes a
                      ON a.id = ?
                    INNER JOIN pagos pg
-                     ON pg.participante_id = a.participante_id
-                   WHERE h.id = ?
-                     AND h.activa = 1
-                     AND a.participante_id = ?
-                     AND pg.estado = 'APROBADO'
+                     ON pg.participante_id = a.participante_id             
+                        WHERE h.id = ?
+                        AND h.activa = 1
+                        AND a.participante_id = ?
+                        AND EXISTS (
+                            SELECT 1
+                            FROM participantes p
+                            WHERE p.id = a.participante_id
+                                AND p.cancelada = 0
+                        )
+                        AND pg.estado = 'APROBADO'
                      AND UPPER(TRIM(h.genero)) =
                          UPPER(TRIM(a.genero))
                      AND (

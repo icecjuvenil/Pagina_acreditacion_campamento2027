@@ -3160,8 +3160,6 @@ body.pagina-login .boton-login:hover {
 }
 
 
-
-
 /* ==================================================
    CONTENEDOR PRINCIPAL
    ================================================== */
@@ -5051,6 +5049,135 @@ body.pagina-login .boton-login:hover {
 }
 
 
+/* ==================================================
+   OCUPANTES Y ESTADOS DINÁMICOS DE HABITACIONES
+   ================================================== */
+
+/* Lista de personas asignadas */
+.pagina-piezas .lista-ocupantes-pieza {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(36, 95, 33, 0.25);
+    font-size: 0.82rem;
+    text-align: left;
+}
+
+.pagina-piezas .lista-ocupantes-pieza strong {
+    color: var(--verde-profundo);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.pagina-piezas .lista-ocupantes-pieza span {
+    display: block;
+    color: var(--texto);
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+/* Las tarjetas no seleccionables siguen mostrando claramente sus datos. */
+.pagina-piezas .tarjeta-pieza:disabled,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada,
+.pagina-piezas .tarjeta-pieza.pieza-completa {
+    opacity: 1;
+    background-color: #f2f3ef;
+    border-color: #cbd3c7;
+    cursor: not-allowed;
+}
+
+.pagina-piezas .tarjeta-pieza:disabled .nombre-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada .nombre-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-completa .nombre-pieza {
+    color: #254b2b;
+    font-weight: 700;
+}
+
+.pagina-piezas .tarjeta-pieza:disabled .capacidad-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada .capacidad-pieza,
+.pagina-piezas .tarjeta-pieza.pieza-completa .capacidad-pieza {
+    color: #566457;
+}
+
+.pagina-piezas .tarjeta-pieza:disabled .lista-ocupantes-pieza {
+    opacity: 1;
+    border-top-color: #b7c9b5;
+}
+
+.pagina-piezas .tarjeta-pieza:disabled .lista-ocupantes-pieza strong {
+    color: #204c29;
+}
+
+.pagina-piezas .tarjeta-pieza:disabled .lista-ocupantes-pieza span {
+    color: #263c2a;
+    font-weight: 500;
+}
+
+/* La selección conserva su contraste, incluso al pasar el cursor. */
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada .lista-ocupantes-pieza strong,
+.pagina-piezas .tarjeta-pieza.pieza-seleccionada .lista-ocupantes-pieza span {
+    color: var(--blanco);
+}
+
+/* Hover por disponibilidad: los colores coinciden con la leyenda. */
+.pagina-piezas .tarjeta-pieza.habitacion-verde:not(.pieza-bloqueada):not(.pieza-seleccionada):hover {
+    background-color: var(--verde-principal);
+    border-color: var(--verde-principal);
+    box-shadow: 0 8px 22px rgba(36, 95, 33, 0.30);
+    transform: translateY(-4px);
+}
+
+/* Dorado: tiene ocupantes, pero quedan cupos. */
+.pagina-piezas .tarjeta-pieza.habitacion-amarilla:not(.pieza-bloqueada):not(.pieza-seleccionada):hover {
+    background-color: var(--dorado-medio);
+    border-color: var(--dorado-medio);
+    box-shadow: 0 8px 22px rgba(181, 139, 69, 0.30);
+    transform: translateY(-4px);
+}
+
+/* Rojo: no quedan cupos. */
+.pagina-piezas .tarjeta-pieza.habitacion-roja:not(.pieza-bloqueada):hover {
+    background-color: #7a3623;
+    border-color: #7a3623;
+    box-shadow: 0 8px 22px rgba(122, 54, 35, 0.30);
+    transform: translateY(-4px);
+}
+
+/* Gris: habitación de otro género; prevalece sobre la disponibilidad. */
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover {
+    background-color: #999990;
+    border-color: #999990;
+    box-shadow: 0 8px 20px rgba(80, 80, 75, 0.25);
+    transform: translateY(-3px);
+    cursor: not-allowed;
+}
+
+/* Contraste de textos sobre los colores de interacción. */
+.pagina-piezas .tarjeta-pieza.habitacion-verde:not(.pieza-bloqueada):not(.pieza-seleccionada):hover :is(.nombre-pieza, .capacidad-pieza, .estado-pieza),
+.pagina-piezas .tarjeta-pieza.habitacion-verde:not(.pieza-bloqueada):not(.pieza-seleccionada):hover .lista-ocupantes-pieza :is(strong, span),
+.pagina-piezas .tarjeta-pieza.habitacion-roja:not(.pieza-bloqueada):hover :is(.nombre-pieza, .capacidad-pieza, .estado-pieza),
+.pagina-piezas .tarjeta-pieza.habitacion-roja:not(.pieza-bloqueada):hover .lista-ocupantes-pieza :is(strong, span) {
+    color: var(--blanco);
+}
+
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover :is(.nombre-pieza, .capacidad-pieza),
+.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover .lista-ocupantes-pieza :is(strong, span) {
+    color: #252b25;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pagina-piezas .tarjeta-pieza {
+        transition: none;
+    }
+
+    .pagina-piezas .tarjeta-pieza:hover {
+        transform: none;
+    }
+}
+
 
 /* ==================================================
    25. PANEL DE ADMINISTRACIÓN ICEC 2027
@@ -5460,7 +5587,7 @@ body.pagina-login .boton-login:hover {
 
 
 /* ==================================================
-   25. BANNER ADMINISTRATIVO CON ONDA
+   PANEL ADMINISTRATIVO: BANNER CON ONDA
    ================================================== */
 
 /* Ampliar ligeramente la imagen */
@@ -5890,223 +6017,9 @@ body.pagina-login .boton-login:hover {
     margin-top: 18px;
 }
 
-
-
-/* ==========================================
-   OCUPANTES DE LAS HABITACIONES
-   ========================================== */
-
-.pagina-piezas .lista-ocupantes-pieza {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    width: 100%;
-    margin-top: 14px;
-    padding-top: 12px;
-
-    border-top: 1px solid rgba(36, 95, 33, 0.25);
-
-    font-size: 0.82rem;
-    text-align: left;
-}
-
-.pagina-piezas .lista-ocupantes-pieza strong {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--verde-profundo);
-}
-
-.pagina-piezas .lista-ocupantes-pieza span {
-    display: block;
-    overflow-wrap: anywhere;
-    color: var(--texto);
-    line-height: 1.4;
-}
-
-/* Mantener la lista legible en tarjetas bloqueadas */
-.pagina-piezas .tarjeta-pieza:disabled
-.lista-ocupantes-pieza {
-    opacity: 1;
-}
-
-.pagina-piezas .tarjeta-pieza.pieza-seleccionada
-.lista-ocupantes-pieza strong,
-.pagina-piezas .tarjeta-pieza.pieza-seleccionada
-.lista-ocupantes-pieza span {
-    color: var(--blanco);
-}
-
-
-
-/* ==========================================
-   MEJORAR VISIBILIDAD DE HABITACIONES BLOQUEADAS
-   ========================================== */
-
-.pagina-piezas .tarjeta-pieza:disabled,
-.pagina-piezas .tarjeta-pieza.pieza-bloqueada,
-.pagina-piezas .tarjeta-pieza.pieza-completa {
-    opacity: 1;
-    background-color: #f2f3ef;
-    border-color: #cbd3c7;
-}
-
-/* Nombre de la habitación */
-.pagina-piezas .tarjeta-pieza:disabled .nombre-pieza,
-.pagina-piezas .tarjeta-pieza.pieza-bloqueada .nombre-pieza,
-.pagina-piezas .tarjeta-pieza.pieza-completa .nombre-pieza {
-    color: #254b2b;
-    font-weight: 700;
-}
-
-/* Capacidad */
-.pagina-piezas .tarjeta-pieza:disabled .capacidad-pieza,
-.pagina-piezas .tarjeta-pieza.pieza-bloqueada .capacidad-pieza,
-.pagina-piezas .tarjeta-pieza.pieza-completa .capacidad-pieza {
-    color: #566457;
-}
-
-/* Título de personas asignadas */
-.pagina-piezas .tarjeta-pieza:disabled
-.lista-ocupantes-pieza strong {
-    color: #204c29;
-    opacity: 1;
-}
-
-/* Nombres de los ocupantes */
-.pagina-piezas .tarjeta-pieza:disabled
-.lista-ocupantes-pieza span {
-    color: #263c2a;
-    opacity: 1;
-    font-weight: 500;
-}
-
-/* Separador de ocupantes */
-.pagina-piezas .tarjeta-pieza:disabled
-.lista-ocupantes-pieza {
-    border-top-color: #b7c9b5;
-    opacity: 1;
-}
-
-
-
-/* ==========================================
-   EFECTO HOVER EN HABITACIONES
-   ========================================== */
-
-.pagina-piezas .tarjeta-pieza {
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease,
-        border-color 0.25s ease,
-        background-color 0.25s ease;
-}
-
-/* Habitaciones disponibles */
-.pagina-piezas .tarjeta-pieza:hover:not(:disabled) {
-    transform: translateY(-4px);
-    border-color: #245f21;
-    box-shadow: 0 10px 24px rgba(22, 58, 22, 0.20);
-}
-
-/* Habitaciones bloqueadas o completas */
-.pagina-piezas .tarjeta-pieza:disabled:hover {
-    transform: translateY(-2px);
-    border-color: #8fa58c;
-    box-shadow: 0 6px 15px rgba(22, 58, 22, 0.12);
-    cursor: not-allowed;
-}
-
-/* Respetar preferencias de movimiento reducido */
-@media (prefers-reduced-motion: reduce) {
-    .pagina-piezas .tarjeta-pieza {
-        transition: none;
-    }
-
-    .pagina-piezas .tarjeta-pieza:hover {
-        transform: none;
-    }
-}
-
-
-
-/* ==========================================
-   COLORES HOVER SEGÚN DISPONIBILIDAD
-   ========================================== */
-
-/* VERDE: habitación completamente disponible */
-.pagina-piezas .tarjeta-pieza.habitacion-verde:hover {
-    background-color: #d7f3dc;
-    border-color: #228b45;
-    box-shadow: 0 8px 22px rgba(34, 139, 69, 0.25);
-    transform: translateY(-4px);
-}
-
-/* AMARILLO: habitación parcialmente ocupada */
-.pagina-piezas .tarjeta-pieza.habitacion-amarilla:hover {
-    background-color: #fff0b3;
-    border-color: #d5a021;
-    box-shadow: 0 8px 22px rgba(213, 160, 33, 0.25);
-    transform: translateY(-4px);
-}
-
-/* ROJO: habitación sin cupos */
-.pagina-piezas .tarjeta-pieza.habitacion-roja:hover {
-    background-color: #f9d7d4;
-    border-color: #c63e35;
-    box-shadow: 0 8px 22px rgba(198, 62, 53, 0.25);
-    transform: translateY(-4px);
-}
-
-/* Mantener legibles los textos en habitaciones bloqueadas */
-.pagina-piezas .tarjeta-pieza.habitacion-verde:hover,
-.pagina-piezas .tarjeta-pieza.habitacion-amarilla:hover,
-.pagina-piezas .tarjeta-pieza.habitacion-roja:hover {
-    opacity: 1;
-}
-
-/* Reducir animación cuando el usuario lo prefiera */
-@media (prefers-reduced-motion: reduce) {
-    .pagina-piezas .tarjeta-pieza:hover {
-        transform: none;
-    }
-}
-
-
-
-/* ==========================================
-   HOVER GRIS PARA HABITACIONES DE OTRO GÉNERO
-   ========================================== */
-
-/* El bloqueo por género tiene prioridad
-   sobre los colores de disponibilidad. */
-.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover {
-    background-color: #e3e5e3 !important;
-    border-color: #929a92 !important;
-    box-shadow: 0 8px 20px rgba(75, 85, 75, 0.18) !important;
-    transform: translateY(-3px);
-    opacity: 1;
-    cursor: not-allowed;
-}
-
-/* Textos legibles en habitaciones bloqueadas */
-.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover
-.nombre-pieza,
-.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover
-.capacidad-pieza,
-.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover
-.lista-ocupantes-pieza strong,
-.pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover
-.lista-ocupantes-pieza span {
-    color: #384538 !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .pagina-piezas .tarjeta-pieza.pieza-bloqueada:hover {
-        transform: none;
-    }
-}
-
+/* ==================================================
+   BOTÓN EXPORTAR EXCEL DEL PANEL ADMINISTRATIVO
+   ================================================== */
 
 /* Boton Excel */
 .admin-boton {
@@ -6117,4 +6030,228 @@ body.pagina-login .boton-login:hover {
 
 .icono-excel {
     flex-shrink: 0;
+}
+
+
+/* ==========================================
+   BOTÓN CANCELAR INSCRIPCIÓN - ADMIN
+   ========================================== */
+
+.pagina-admin .admin-boton--eliminar {
+    color: #9b3434;
+    background: #fff1f0;
+    border: 1px solid #e9b8b4;
+    border-radius: 9px;
+    min-height: 42px;
+    padding: 10px 17px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    white-space: nowrap;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.pagina-admin .admin-boton--eliminar:not(:disabled):hover {
+    color: #ffffff;
+    background: #b84545;
+    border-color: #b84545;
+    box-shadow: 0 3px 10px rgba(184, 69, 69, 0.18);
+}
+
+.pagina-admin .admin-boton--eliminar:disabled {
+    color: #929292;
+    background: #f3f3f3;
+    border-color: #dedede;
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Separación entre botones de acciones */
+.pagina-admin .admin-boton--eliminar {
+    margin-left: 12px;
+}
+
+
+
+/* ==================================================
+   28. INFORMACIÓN - HABITACIONES ASIGNADAS
+   ================================================== */
+
+/* Distribución principal de la cabecera */
+.pagina-informacion .cabecera-informacion {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    column-gap: 28px;
+    align-items: start;
+}
+
+/* Encabezado y descripción a todo el ancho */
+.pagina-informacion .cabecera-informacion > h1,
+.pagina-informacion .cabecera-informacion > p {
+    grid-column: 1 / -1;
+}
+
+/* Habitaciones a la izquierda */
+.pagina-informacion
+.cabecera-informacion > .informacion-habitaciones {
+    grid-column: 1;
+    grid-row: 4;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+/* Botón centrado verticalmente a la derecha */
+.pagina-informacion
+.cabecera-informacion > .acceso-seleccion-piezas {
+    grid-column: 2;
+    grid-row: 4;
+    align-self: center;
+    width: 100%;
+    margin: 0;
+    text-align: center;
+}
+
+.pagina-informacion
+.acceso-seleccion-piezas .boton-seleccionar-pieza {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* ==========================================
+   TARJETA PRINCIPAL DE HABITACIONES
+   ========================================== */
+
+.pagina-informacion .informacion-habitaciones {
+    padding: 26px 30px;
+    background: #ffffff;
+    border: 1px solid #e8dfc9;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(35, 55, 30, 0.08);
+    text-align: left;
+}
+
+.pagina-informacion .informacion-habitaciones[hidden] {
+    display: none;
+}
+
+/* Título de la tarjeta */
+.pagina-informacion .informacion-habitaciones h3 {
+    margin: 0 0 18px;
+    padding-bottom: 14px;
+    color: #173c20;
+    font-size: 1.25rem;
+    font-weight: 800;
+    border-bottom: 2px solid #e5c46c;
+}
+
+/* ==========================================
+   LISTA DE HABITACIONES
+   ========================================== */
+
+.pagina-informacion .lista-habitaciones-asignadas {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Tarjeta por participante */
+.pagina-informacion .tarjeta-habitacion-asignada {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 20px;
+    padding: 18px;
+    background: #faf8f1;
+    border: 1px solid #e9dfc8;
+    border-radius: 12px;
+}
+
+/* Estilos comunes de nombres */
+.pagina-informacion .tarjeta-habitacion-persona,
+.pagina-informacion .tarjeta-habitacion-nombre {
+    margin: 0;
+    padding: 8px 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Nombre del participante a la izquierda */
+.pagina-informacion .tarjeta-habitacion-persona {
+    grid-column: 1;
+    grid-row: 1;
+    color: #173c20;
+}
+
+/* Nombre de habitación a la derecha */
+.pagina-informacion .tarjeta-habitacion-nombre {
+    grid-column: 2;
+    grid-row: 1;
+    color: #674525;
+}
+
+/* Imagen original debajo del nombre */
+.pagina-informacion .tarjeta-habitacion-cartel {
+    grid-column: 2;
+    grid-row: 2;
+    display: block;
+    width: 150px;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #e0d3b7;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+/* ==========================================
+   ADAPTACIÓN PARA TABLETAS
+   ========================================== */
+
+@media (max-width: 800px) {
+
+    .pagina-informacion .cabecera-informacion {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pagina-informacion
+    .cabecera-informacion > .informacion-habitaciones,
+    .pagina-informacion
+    .cabecera-informacion > .acceso-seleccion-piezas {
+        grid-column: 1;
+        grid-row: auto;
+        margin: 12px 0;
+    }
+}
+
+/* ==========================================
+   ADAPTACIÓN PARA CELULARES
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .pagina-informacion .informacion-habitaciones {
+        padding: 20px 16px;
+    }
+
+    .pagina-informacion .informacion-habitaciones h3 {
+        font-size: 1.1rem;
+    }
+
+    .pagina-informacion .tarjeta-habitacion-asignada {
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .pagina-informacion .tarjeta-habitacion-cartel {
+        width: 115px;
+    }
 }

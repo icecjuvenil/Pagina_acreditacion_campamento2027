@@ -91,9 +91,13 @@ export async function manejarPagosAdmin(
       `SELECT
          pg.id AS pago_id,
          pg.participante_id,
-         p.nombre_completo,
-         p.rut,
-         u.correo,
+        p.nombre_completo,
+        p.rut,
+        p.cancelada,
+        p.fecha_cancelacion,
+        p.motivo_cancelacion,
+        p.estado_devolucion,
+        u.correo,
          pg.monto_total,
          pg.monto_pagado,
          pg.estado,
@@ -135,9 +139,19 @@ export async function manejarPagosAdmin(
         nombreCompleto:
           fila.nombre_completo,
 
-        rut: fila.rut,
+        
+rut: fila.rut,
 
-        correo: fila.correo,
+cancelada: Number(fila.cancelada) === 1,
+
+fechaCancelacion: fila.fecha_cancelacion,
+
+motivoCancelacion: fila.motivo_cancelacion || "",
+
+estadoDevolucion: fila.estado_devolucion,
+
+correo: fila.correo,
+
 
         cantidadAcompanantes:
           Number(fila.cantidad_acompanantes),

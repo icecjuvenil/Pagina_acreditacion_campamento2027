@@ -308,6 +308,9 @@
     </main>
 
     <!-- LÓGICA DEL PANEL -->
+     
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+
     <script>
 
         const API_ADMIN =
@@ -428,6 +431,84 @@
             }
         }
 
+
+        
+async function confirmarCancelacion(pago) {
+    const motivo = prompt(
+        "Indica el motivo de cancelación de la inscripción de " +
+        pago.nombreCompleto + ":"
+    );
+
+    if (motivo === null) return;
+
+    if (motivo.trim().length < 10 ||
+        motivo.trim().length > 500) {
+        alert(
+            "El motivo debe tener entre 10 y 500 caracteres."
+        );
+        return;
+    }
+
+    const confirmado = confirm(
+        "¿Confirmas que deseas cancelar la inscripción de " +
+        pago.nombreCompleto + "?\n\n" +
+        "Se liberarán sus habitaciones y las de sus acompañantes.\n" +
+        "Los pagos y comprobantes se conservarán.\n\n" +
+        "Esta acción requiere confirmación administrativa."
+    );
+
+    if (!confirmado) return;
+
+    
+    try {
+        const respuesta = await fetch(
+            `http://127.0.0.1:8787/api/admin/inscripciones/${pago.participanteId}/cancelar`,
+            {
+                method: "POST",
+                credentials: "include",
+                cache: "no-store",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-ICEC-Solicitud": "web"
+                },
+                body: JSON.stringify({
+                    motivo: motivo.trim()
+                })
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            alert(
+                resultado.mensaje ||
+                "No fue posible cancelar la inscripción."
+            );
+            return;
+        }
+
+        alert(
+            "Inscripción cancelada correctamente.\n\n" +
+            "Habitaciones liberadas: " +
+            resultado.habitacionesLiberadas +
+            "\nLos pagos y comprobantes se conservaron."
+        );
+
+        await cargarPanel();
+
+    } catch (error) {
+        console.error(
+            "Error al cancelar inscripción:",
+            error
+        );
+
+        alert(
+            "No se pudo conectar con el servidor."
+        );
+    }
+
+}
+
         // Mostrar inscripciones
         function mostrarPagos(pagos) {
 
@@ -475,7 +556,11 @@
                     pago.estado
                 );
 
-                etiqueta.textContent = texto;
+                
+etiqueta.textContent = pago.cancelada
+    ? "INSCRIPCIÓN CANCELADA · Pago: " + texto
+    : texto;
+
 
                 etiqueta.className =
                     "admin-estado " + clase;
@@ -793,6 +878,32 @@ botonDetalles.addEventListener(
                     "Monto pagado registrado",
                     formatoPesos.format(pagoDetalle.montoPagado)
                 );
+
+
+                // Método de pago seleccionado por el administrador
+                const campoMetodoPago = document.createElement("div");
+                campoMetodoPago.className = "admin-campo-metodo-pago";
+
+                const etiquetaMetodoPago = document.createElement("label");
+                etiquetaMetodoPago.textContent = "Método de pago *";
+                etiquetaMetodoPago.htmlFor = "metodo-pago-admin";
+
+                const selectorMetodoPago = document.createElement("select");
+                selectorMetodoPago.id = "metodo-pago-admin";
+                selectorMetodoPago.required = true;
+
+                selectorMetodoPago.innerHTML = `
+                    <option value="">Seleccione el método de pago</option>
+                    <option value="TRANSFERENCIA">Transferencia bancaria</option>
+                    <option value="EFECTIVO">Efectivo</option>
+                `;
+
+                selectorMetodoPago.value = pagoDetalle.metodoPago || "";
+
+                campoMetodoPago.appendChild(etiquetaMetodoPago);
+                campoMetodoPago.appendChild(selectorMetodoPago);
+                seccionPago.appendChild(campoMetodoPago);
+
 
                 agregarCampo(
                     seccionPago,
@@ -1149,6 +1260,31 @@ botonRechazar.addEventListener("click", async () => {
 
 
                 celdaAcciones.appendChild(botonDetalles);
+
+                
+                // ==========================================
+                // BOTÓN ELIMINAR INSCRIPCIÓN
+                // ==========================================
+
+                const botonEliminar = document.createElement("button");
+
+                botonEliminar.type = "button";
+                botonEliminar.textContent = "Cancelar inscripción";
+                botonEliminar.className =
+                    "admin-boton admin-boton--eliminar";
+                botonEliminar.disabled = pago.cancelada;
+
+                botonEliminar.addEventListener("click", async () => {
+                    if (pago.cancelada) {
+                        alert("Esta inscripción ya está cancelada.");
+                        return;
+                    }
+
+                    await confirmarCancelacion(pago);
+                });
+
+                celdaAcciones.appendChild(botonEliminar);
+
                 fila.appendChild(celdaAcciones);
 
                 tabla.appendChild(fila);
@@ -1255,6 +1391,267 @@ botonRechazar.addEventListener("click", async () => {
             "click",
             cargarPanel
         );
+
+        
+// ==========================================
+// EXPORTAR INSCRIPCIONES A EXCEL
+// ==========================================
+
+const botonExportarExcel =
+    document.getElementById("admin-exportar-excel");
+
+botonExportarExcel.disabled = false;
+
+botonExportarExcel.addEventListener("click", async () => {
+    botonExportarExcel.disabled = true;
+    botonExportarExcel.querySelector("span").textContent = "Generando Excel...";
+
+    try {
+        const respuesta = await fetch(
+            "http://127.0.0.1:8787/api/admin/exportacion",
+            {
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+        if (!respuesta.ok) {
+            throw new Error("No fue posible obtener los datos.");
+        }
+
+        const datos = await respuesta.json();
+
+        if (
+            datos.estado !== "OK" ||
+            !Array.isArray(datos.registros)
+        ) {
+            throw new Error("Datos de exportación no válidos.");
+        }
+
+        const libro = new ExcelJS.Workbook();
+        const hoja = libro.addWorksheet("Inscripciones");
+
+        
+        // ==========================================
+        // SEGUNDA HOJA: INFORMACIÓN DE SALUD
+        // ==========================================
+
+        const hojaSalud = libro.addWorksheet("Información de salud");
+
+        hojaSalud.columns = [
+            { header: "Tipo", key: "tipo", width: 20 },
+            { header: "Nombre completo", key: "nombre", width: 35 },
+            { header: "Participante responsable", key: "responsable", width: 35 },
+            { header: "Habitación", key: "habitacion", width: 36 },
+            { header: "Alergias", key: "alergias", width: 15 },
+            { header: "Detalle de alergias", key: "detalleAlergias", width: 45 },
+            { header: "Enfermedades", key: "enfermedades", width: 18 },
+            { header: "Detalle de enfermedades", key: "detalleEnfermedades", width: 45 },
+            { header: "Medicamentos", key: "medicamentos", width: 18 },
+            { header: "Detalle de medicamentos", key: "detalleMedicamentos", width: 45 },
+            { header: "Restricción alimentaria", key: "restriccion", width: 23 },
+            { header: "Detalle de alimentación", key: "detalleAlimentacion", width: 45 }
+        ];
+
+        // Los datos médicos se incorporarán en el siguiente paso.
+
+
+        hoja.columns = [
+            { header: "ID inscripción", key: "id", width: 18 },
+            { header: "Tipo", key: "tipo", width: 52 },
+            { header: "Nombre completo", key: "nombre", width: 34 },
+            { header: "Teléfono", key: "telefono", width: 19 },
+            { header: "Correo", key: "correo", width: 38 },
+            { header: "Habitación", key: "habitacion", width: 36 },
+            
+{ header: "Estado de pago", key: "estado", width: 20 },
+{ header: "Monto total (CLP)", key: "monto", width: 23 },
+{ header: "Estado de inscripción", key: "estadoInscripcion", width: 25 },
+{ header: "Fecha de cancelación", key: "fechaCancelacion", width: 24 },
+{ header: "Motivo de cancelación", key: "motivoCancelacion", width: 55 },
+{ header: "Estado de devolución", key: "estadoDevolucion", width: 25 }
+
+        ];
+
+        
+
+        // Evitar que Excel interprete textos como fórmulas.
+        const textoSeguro = (valor) => {
+            const texto = String(valor ?? "");
+
+            return /^[\s]*[=+\-@\t\r]/.test(texto)
+                ? "'" + texto
+                : texto;
+        };
+
+        for (const registro of datos.registros) {
+            hoja.addRow({
+                id: Number(registro.inscripcion_id),
+                tipo: textoSeguro(registro.tipo),
+                nombre: textoSeguro(registro.nombre),
+                telefono: textoSeguro(registro.telefono),
+                correo: textoSeguro(registro.correo),
+                habitacion: textoSeguro(registro.habitacion),
+                estado: textoSeguro(registro.estado_pago),
+                
+monto: registro.monto_total == null
+    ? null
+    : Number(registro.monto_total),
+
+estadoInscripcion: textoSeguro(
+    registro.estado_inscripcion
+),
+
+fechaCancelacion: textoSeguro(
+    registro.fecha_cancelacion || ""
+),
+
+motivoCancelacion: textoSeguro(
+    registro.motivo_cancelacion || ""
+),
+
+estadoDevolucion: textoSeguro(
+    registro.estado_devolucion
+)
+
+            });
+        }
+
+        // Encabezados
+        const encabezado = hoja.getRow(1);
+        encabezado.font = {
+            bold: true,
+            color: { argb: "FFFFFFFF" }
+        };
+        encabezado.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FF245F21" }
+        };
+        encabezado.alignment = {
+            vertical: "middle"
+        };
+        encabezado.height = 28;
+
+        // Formato de montos
+        hoja.getColumn("monto").numFmt = '"$"#,##0';
+
+        // Filtros y encabezado fijo
+        hoja.autoFilter = "A1:H1";
+        hoja.views = [{
+            state: "frozen",
+            ySplit: 1
+        }];
+
+                    
+            // ==========================================
+            // COMPLETAR LA HOJA DE INFORMACIÓN DE SALUD
+            // ==========================================
+
+            // Validar que la API entregue los datos de salud.
+            if (!Array.isArray(datos.salud)) {
+                throw new Error(
+                    "No se recibió la información de salud."
+                );
+            }
+
+            // Convertir respuestas de la base de datos.
+            const respuestaSalud = (valor) => {
+                if (valor === null || valor === undefined) {
+                    return "No registrado";
+                }
+
+                return Number(valor) === 1 ? "Sí" : "No";
+            };
+
+            // Incorporar participantes y acompañantes.
+            for (const persona of datos.salud) {
+                hojaSalud.addRow({
+                    tipo: textoSeguro(persona.tipo),
+                    nombre: textoSeguro(persona.nombre),
+                    responsable: textoSeguro(persona.responsable),
+                    habitacion: textoSeguro(persona.habitacion),
+
+                    alergias: respuestaSalud(persona.tiene_alergias),
+                    detalleAlergias: textoSeguro(persona.detalle_alergias),
+
+                    enfermedades: respuestaSalud(persona.tiene_enfermedad),
+                    detalleEnfermedades: textoSeguro(persona.detalle_enfermedad),
+
+                    medicamentos: respuestaSalud(persona.toma_medicamentos),
+                    detalleMedicamentos: textoSeguro(persona.detalle_medicamentos),
+
+                    restriccion: respuestaSalud(persona.restriccion_alimentaria),
+                    detalleAlimentacion: textoSeguro(persona.detalle_alimentacion)
+                });
+            }
+
+            // Encabezados de color verde.
+            const encabezadoSalud = hojaSalud.getRow(1);
+
+            encabezadoSalud.font = {
+                bold: true,
+                color: { argb: "FFFFFFFF" }
+            };
+
+            encabezadoSalud.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: "FF245F21" }
+            };
+
+            encabezadoSalud.height = 30;
+
+            // Facilitar la lectura de observaciones extensas.
+            hojaSalud.eachRow((fila, numero) => {
+                if (numero > 1) {
+                    fila.alignment = {
+                        vertical: "top",
+                        wrapText: true
+                    };
+                }
+            });
+
+            // Habilitar filtros.
+            hojaSalud.autoFilter = "A1:L1";
+
+            // Mantener encabezados visibles al desplazarse.
+            hojaSalud.views = [{
+                state: "frozen",
+                ySplit: 1
+            }];
+
+
+        const archivo = await libro.xlsx.writeBuffer();
+
+        const blob = new Blob([archivo], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        });
+
+        const enlace = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+
+        enlace.href = url;
+        enlace.download =
+            "Respaldo_Inscripciones_ICEC_2027_" +
+            new Date().toISOString().slice(0, 10) +
+            ".xlsx";
+
+        document.body.appendChild(enlace);
+        enlace.click();
+        enlace.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    } catch (error) {
+        console.error("Error al exportar:", error);
+        alert("No fue posible generar el archivo Excel.");
+    } finally {
+        botonExportarExcel.disabled = false;
+        botonExportarExcel.querySelector("span").textContent = "Exportar Excel";
+    }
+});
+
 
 // =====================================
 // CERRAR SESIÓN ADMINISTRATIVA

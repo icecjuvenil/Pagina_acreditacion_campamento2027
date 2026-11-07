@@ -18,7 +18,9 @@ import { manejarComprobantes } from "./comprobantes-api.js";
 import { manejarResumen } from "./resumen-api.js";
 import { manejarPagosAdmin } from "./admin-api.js";
 import { manejarValidacionPagoAdmin } from "./admin-validacion-api.js";
+import { manejarCancelacionAdmin } from "./admin-cancelacion-api.js";
 import { manejarHabitaciones } from "./habitaciones-api.js";
+import { manejarExportacion } from "./exportacion-api.js";
 
 import {
     manejarDetalleAdmin,
@@ -1465,9 +1467,31 @@ async function manejarSolicitud(request, env) {
   // ==========================================
 
 
+
+  
+  // ==========================================
+  // CANCELAR INSCRIPCIÓN - ADMINISTRADORES
+  // ==========================================
+
+  const rutaCancelacionAdmin = url.pathname.match(
+    /^\/api\/admin\/inscripciones\/([1-9]\d*)\/cancelar$/
+  );
+
+  if (rutaCancelacionAdmin) {
+    return manejarCancelacionAdmin(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      },
+      rutaCancelacionAdmin[1]
+    );
+  }
   // ==========================================
   // DETALLE DE INSCRIPCIONES ADMINISTRATIVAS
   // ==========================================
+
 
   const rutaDetalleAdmin = url.pathname.match(
     /^\/api\/admin\/inscripciones\/([1-9]\d*)$/
@@ -1528,6 +1552,21 @@ async function manejarSolicitud(request, env) {
     );
   }
 
+
+  // ==========================================
+  // EXPORTACIÓN ADMINISTRATIVA A EXCEL
+  // ==========================================
+
+  if (url.pathname === "/api/admin/exportacion") {
+    return manejarExportacion(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      }
+    );
+  }
 
   
 
