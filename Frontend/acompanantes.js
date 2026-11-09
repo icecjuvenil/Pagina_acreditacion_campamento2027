@@ -145,9 +145,27 @@ function actualizarValorAcompanante() {
     salidaValorAcompanante.textContent =
       "Selecciona una fecha de nacimiento válida";
 
-    salidaValorAcompanante.dataset.valor = "";
-    return;
-  }
+        salidaValorAcompanante.dataset.valor =
+            "0";
+
+        salidaValorAcompanante.dataset.fechaValida =
+            "false";
+
+        actualizarRequisitoTelefono(null);
+        return;
+    }
+        /* Solo se permiten acompañantes de 0 a 5 años */
+        if (edad >= 6) {
+            salidaValorAcompanante.textContent =
+                "Solo se permiten acompañantes de 0 a 5 años. " +
+                "Desde los 6 años debe acreditarse como participante.";
+
+            salidaValorAcompanante.dataset.valor = "0";
+            salidaValorAcompanante.dataset.fechaValida = "false";
+
+            actualizarRequisitoTelefono(null);
+            return;
+        }
 
   let categoria = "Tarifa general";
 

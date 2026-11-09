@@ -82,20 +82,31 @@
     <main class="contenido-acompanantes">
 
         <!-- Presentación de la página -->
-        <header class="cabecera-acompanantes">
+    <header class="cabecera-acompanantes">
 
             <h1>Agregar acompañantes</h1>
 
-            <p>
-                Registra aquí a las personas que te acompañarán al campamento.
-            </p>
+        <!-- Advertencia sobre la edad permitida -->
+        <div class="aviso-edad-acompanantes">
 
-            <p>
-                Completa sus datos, información de salud y un contacto
-                de emergencia.
-            </p>
+            <strong class="titulo-aviso-edad">
+                ⚠ Acompañantes: solo de 0 a 5 años
+            </strong>
 
-        </header>
+        <p>
+            Desde los <strong>6 años</strong>,
+            cada persona debe
+            <strong>acreditarse como participante</strong>.
+        </p>
+
+        </div>
+
+        <p>
+            Completa sus datos, información de salud y un contacto
+            de emergencia.
+        </p>
+
+    </header>
 
 
         <!-- ==================================================
@@ -253,6 +264,8 @@
                             <span class="obligatorio">*</span>
                         </label>
 
+                        
+
                         <input
                             type="date"
                             id="fecha-acompanante"
@@ -281,28 +294,7 @@
 
                     </div>
 
-                    <div class="campo">
-
-                        <label for="correo-acompanante">
-                            Correo electrónico
-                            <span class="texto-opcional">(opcional)</span>
-                        </label>
-
-                        <input
-                            type="email"
-                            id="correo-acompanante"
-                            name="correo"
-                            class="correo-acompanante"
-                            autocomplete="email"
-                            placeholder="Ejemplo: correo@ejemplo.cl">
-
-                        <small>
-                            Debe ser un correo personal. Si no tiene uno,
-                            puede dejarlo vacío.
-                        </small>
-
-                    </div>
-
+                   
                 </div>
 
                 <!-- Valor calculado según la edad -->

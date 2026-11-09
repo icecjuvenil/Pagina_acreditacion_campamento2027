@@ -5788,6 +5788,188 @@ body.pagina-login .boton-login:hover {
     line-height: 1.6;
 }
 
+/* ==================================================
+   AVISO DE EDAD PARA ACOMPAÑANTES
+   ================================================== */
+
+.cabecera-acompanantes .aviso-edad-acompanantes {
+    box-sizing: border-box;
+    max-width: 850px;
+    margin: 24px auto;
+    padding: 20px 24px;
+
+    color: #493000;
+    background-color: #fff0c2;
+    border: 2px solid #b87900;
+    border-left: 8px solid #b87900;
+    border-radius: 12px;
+
+    text-align: left;
+    font-family: "Roboto", Arial, sans-serif;
+}
+
+/* Título destacado del aviso */
+.aviso-edad-acompanantes .titulo-aviso-edad {
+    display: block;
+    margin-bottom: 8px;
+
+    color: #493000;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+/* Explicación de la regla */
+.cabecera-acompanantes .aviso-edad-acompanantes p {
+    margin: 0;
+
+    color: #493000;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* ==================================================
+   BENEFICIO PARA LÍDERES
+   ================================================== */
+
+.pagina-pago .tarjeta-beneficio-lider {
+    border-top: 4px solid var(--dorado-medio);
+}
+
+.tarjeta-beneficio-lider .descripcion-beneficio-lider {
+    margin: 0 0 22px;
+
+    color: #5c5c54;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Casilla “Soy líder” */
+.tarjeta-beneficio-lider .casilla-soy-lider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: fit-content;
+    cursor: pointer;
+
+    color: var(--verde-profundo);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.casilla-soy-lider input {
+    width: 22px;
+    height: 22px;
+    margin: 0;
+
+    accent-color: var(--verde-profundo);
+    cursor: pointer;
+}
+
+/* Mantener oculto el campo hasta marcar la casilla */
+.tarjeta-beneficio-lider .campos-clave-lider[hidden] {
+    display: none;
+}
+
+/* Campo de palabra clave */
+.tarjeta-beneficio-lider .campos-clave-lider {
+    margin-top: 24px;
+}
+
+.campos-clave-lider > label {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--texto);
+    font-weight: 700;
+}
+
+.fila-clave-lider {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+}
+
+.fila-clave-lider input {
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+    min-height: 52px;
+    padding: 12px 16px;
+
+    color: var(--texto);
+    background-color: var(--blanco);
+    border: 1px solid #bfc5bc;
+    border-radius: 10px;
+
+    font: inherit;
+}
+
+/* Botón para validar */
+.fila-clave-lider .boton-validar-clave-lider {
+    min-height: 52px;
+    padding: 12px 26px;
+
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+    border: 2px solid var(--verde-profundo);
+    border-radius: 10px;
+
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.boton-validar-clave-lider:hover {
+    background-color: var(--verde-intermedio);
+}
+
+.boton-validar-clave-lider:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+/* Foco visible al usar el teclado */
+.fila-clave-lider input:focus-visible,
+.fila-clave-lider button:focus-visible,
+.casilla-soy-lider input:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+}
+
+/* Ayuda y resultado de la validación */
+.campos-clave-lider #ayuda-clave-lider {
+    margin: 12px 0 0;
+
+    color: #62665e;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.campos-clave-lider #mensaje-clave-lider {
+    margin: 12px 0 0;
+
+    color: var(--verde-profundo);
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.campos-clave-lider #mensaje-clave-lider:empty {
+    display: none;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 600px) {
+    .fila-clave-lider {
+        flex-direction: column;
+    }
+
+    .fila-clave-lider .boton-validar-clave-lider {
+        width: 100%;
+    }
+}
+
 
 /* ==================================================
    OCUPANTES Y ESTADOS DINÁMICOS DE HABITACIONES
