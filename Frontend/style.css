@@ -5449,6 +5449,344 @@ body.pagina-login .boton-login:hover {
     outline-offset: 4px;
 }
 
+/* ==================================================
+   PLAYLIST DEL CAMPAMENTO — LADO DERECHO
+   ================================================== */
+
+.seccion-playlist {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 80px 32px;
+
+    color: var(--texto);
+    text-align: center;
+    background: transparent;
+}
+
+/* Encabezado de la playlist */
+.cabecera-playlist {
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto 32px;
+}
+
+/* Etiqueta superior */
+.etiqueta-playlist {
+    display: inline-block;
+
+    margin-bottom: 20px;
+    padding: 12px 25px;
+
+    color: var(--verde-profundo);
+    background-color: rgba(59, 152, 51, 0.12);
+    border-radius: 999px;
+
+    font-family: "Roboto", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* Título de la playlist */
+.cabecera-playlist h2 {
+    margin: 0;
+
+    color: var(--texto);
+
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 400;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+/* El mockup no lleva línea debajo de este título */
+.seccion-playlist .linea-decorativa {
+    display: none;
+}
+
+/* Descripción */
+.cabecera-playlist p {
+    margin: 24px 0 0;
+
+    color: var(--texto);
+
+    font-family: "Roboto", sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+/* Contenedor del reproductor real de Spotify */
+.reproductor-spotify {
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+
+    background-color: #121212;
+    border: 0;
+    border-radius: 20px;
+    overflow: hidden;
+
+    box-shadow: 0 16px 34px rgba(37, 30, 23, 0.14);
+}
+
+.reproductor-spotify iframe {
+    display: block;
+
+    width: 100%;
+    height: 352px;
+
+    border: 0;
+    border-radius: 20px;
+}
+
+/* Botón para abrir Spotify */
+.boton-abrir-spotify {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 48px;
+    margin-top: 24px;
+    padding: 12px 24px;
+
+    color: var(--blanco);
+    background-color: var(--verde-profundo);
+    border: 2px solid var(--verde-profundo);
+    border-radius: 12px;
+
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.boton-abrir-spotify:hover {
+    color: var(--verde-profundo);
+    background-color: var(--dorado-claro);
+}
+
+.boton-abrir-spotify:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 4px;
+}
+
+/* ==================================================
+   TABLET — PROPÓSITO ARRIBA Y PLAYLIST ABAJO
+   ================================================== */
+
+@media (max-width: 1100px) {
+    .bloque-proposito-playlist {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .bloque-proposito-playlist::before {
+        display: none;
+    }
+
+    .bloque-proposito-playlist .informacion-campamento {
+        padding: 55px 24px;
+
+        background:
+            linear-gradient(
+                rgba(22, 58, 22, 0.82),
+                rgba(22, 58, 22, 0.82)
+            ),
+            url("Logos/imagen.png") center / cover no-repeat;
+
+        border-radius: 0 0 90px 0;
+    }
+
+    .bloque-proposito-playlist .tarjetas-informacion {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .seccion-playlist {
+        padding: 50px 24px;
+    }
+}
+
+/* ==================================================
+   CELULAR — TARJETAS EN UNA COLUMNA
+   ================================================== */
+
+@media (max-width: 600px) {
+    .bloque-proposito-playlist .tarjetas-informacion {
+        grid-template-columns: 1fr;
+    }
+
+    .seccion-playlist {
+        padding: 45px 18px;
+    }
+
+    .cabecera-playlist h2 {
+        font-size: 2.8rem;
+    }
+
+    .boton-abrir-spotify {
+        width: 100%;
+        max-width: 620px;
+    }
+}
+/* Contenedor de Propósito y Playlist */
+.bloque-proposito-playlist {
+    position: relative;
+    isolation: isolate;
+
+    display: grid;
+    grid-template-columns: 57% 43%;
+
+    width: 100%;
+    min-height: 720px;
+
+    background-color: var(--crema);
+    overflow: hidden;
+}
+
+/* Fondo verde con la curva del mockup */
+.bloque-proposito-playlist::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    background:
+        linear-gradient(
+            rgba(22, 58, 22, 0.82),
+            rgba(22, 58, 22, 0.82)
+        ),
+        url("Logos/imagen.png") left center / cover no-repeat;
+
+    -webkit-mask:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900' preserveAspectRatio='none'%3E%3Cpath fill='white' d='M0 0H1210C920 80 895 240 910 440C930 680 865 850 690 900H0Z'/%3E%3C/svg%3E")
+        center / 100% 100% no-repeat;
+
+    mask:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900' preserveAspectRatio='none'%3E%3Cpath fill='white' d='M0 0H1210C920 80 895 240 910 440C930 680 865 850 690 900H0Z'/%3E%3C/svg%3E")
+        center / 100% 100% no-repeat;
+}
+
+/* En tablet y celular, las secciones van una debajo de otra */
+@media (max-width: 1100px) {
+    .bloque-proposito-playlist {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .bloque-proposito-playlist::before {
+        display: none;
+    }
+}
+
+/* ==================================================
+   PROPÓSITO DEL CAMPAMENTO — LADO IZQUIERDO
+   ================================================== */
+
+.informacion-campamento {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 75px 22px 100px 5%;
+
+    color: var(--blanco);
+    background: transparent;
+    border-radius: 0;
+}
+
+/* Título principal */
+.titulo-seccion {
+    margin: 0;
+
+    color: var(--blanco);
+    text-align: center;
+
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(2rem, 3.5vw, 3.5rem);
+}
+
+/* Línea dorada debajo del título */
+.titulo-seccion::after {
+    content: "";
+    display: block;
+
+    width: 70px;
+    height: 5px;
+    margin: 20px auto 45px;
+
+    background-color: var(--dorado-claro);
+    border-radius: 999px;
+}
+
+/* Tres tarjetas en una fila */
+.tarjetas-informacion {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Apariencia de cada tarjeta */
+.tarjeta-informacion {
+    min-width: 0;
+    padding: 24px 18px;
+
+    background-color: rgba(22, 58, 22, 0.84);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 20px;
+
+    box-shadow: 0 12px 28px rgba(37, 30, 23, 0.22);
+}
+
+/* Iconos dentro de un círculo dorado */
+.icono-informacion {
+    display: grid;
+    place-items: center;
+
+    width: 58px;
+    height: 58px;
+    margin-bottom: 18px;
+
+    color: var(--dorado-claro);
+    border: 2px solid var(--dorado-claro);
+    border-radius: 50%;
+
+    font-size: 28px;
+}
+
+/* Títulos de las tarjetas */
+.tarjeta-informacion h3 {
+    margin: 0 0 12px;
+
+    color: var(--blanco);
+
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1.6rem;
+}
+
+/* Texto de las tarjetas */
+.tarjeta-informacion p {
+    margin: 0;
+
+    color: #f5eddc;
+    font-size: 1rem;
+    line-height: 1.6;
+}
 
 
 /* ==================================================
