@@ -910,6 +910,200 @@ botonDetalles.addEventListener(
                 campoMetodoPago.appendChild(etiquetaMetodoPago);
                 campoMetodoPago.appendChild(selectorMetodoPago);
                 seccionPago.appendChild(campoMetodoPago);
+                
+                // Comprobante obligatorio para pagos en efectivo
+                const campoComprobanteEfectivo =
+                    document.createElement("div");
+
+                campoComprobanteEfectivo.className =
+                    "admin-campo-comprobante-efectivo";
+
+                const etiquetaComprobanteEfectivo =
+                    document.createElement("label");
+
+                etiquetaComprobanteEfectivo.htmlFor =
+                    "comprobante-efectivo-admin";
+
+                etiquetaComprobanteEfectivo.textContent =
+                    "Boleta o vale firmado por un administrador *";
+
+                const archivoComprobanteEfectivo =
+                    document.createElement("input");
+
+                archivoComprobanteEfectivo.type = "file";
+                archivoComprobanteEfectivo.id =
+                    "comprobante-efectivo-admin";
+
+                archivoComprobanteEfectivo.accept =
+                    ".pdf,.jpg,.jpeg,.png";
+
+                campoComprobanteEfectivo.appendChild(
+                    etiquetaComprobanteEfectivo
+                );
+
+                campoComprobanteEfectivo.appendChild(
+                    archivoComprobanteEfectivo
+                );
+
+                seccionPago.appendChild(
+                    campoComprobanteEfectivo
+                );
+
+                // Mostrar el campo solamente para efectivo
+                function actualizarCampoComprobanteEfectivo() {
+                    const esEfectivo =
+                        selectorMetodoPago.value === "EFECTIVO";
+
+                    campoComprobanteEfectivo.hidden = !esEfectivo;
+
+                    archivoComprobanteEfectivo.required = esEfectivo;
+
+                    if (!esEfectivo) {
+                        archivoComprobanteEfectivo.value = "";
+                    }
+                }
+
+                selectorMetodoPago.addEventListener(
+                    "change",
+                    actualizarCampoComprobanteEfectivo
+                );
+
+                actualizarCampoComprobanteEfectivo();
+                
+                // Botón para guardar el comprobante de efectivo
+                const botonGuardarEfectivo =
+                    document.createElement("button");
+
+                botonGuardarEfectivo.type = "button";
+                botonGuardarEfectivo.className =
+                    "admin-boton admin-boton--principal";
+
+                botonGuardarEfectivo.textContent =
+                    "Guardar comprobante de efectivo";
+
+                // Mensaje de resultado
+                const mensajeComprobanteEfectivo =
+                    document.createElement("p");
+
+                mensajeComprobanteEfectivo.setAttribute(
+                    "role",
+                    "status"
+                );
+
+                campoComprobanteEfectivo.appendChild(
+                    botonGuardarEfectivo
+                );
+
+                campoComprobanteEfectivo.appendChild(
+                    mensajeComprobanteEfectivo
+                );
+
+                botonGuardarEfectivo.addEventListener(
+                    "click",
+                    async () => {
+
+                        if (
+                            selectorMetodoPago.value !== "EFECTIVO"
+                        ) {
+                            alert(
+                                "Selecciona el método de pago Efectivo."
+                            );
+                            return;
+                        }
+
+                        const archivo =
+                            archivoComprobanteEfectivo.files[0];
+
+                        if (!archivo) {
+                            alert(
+                                "Debes adjuntar una boleta o vale firmado."
+                            );
+                            return;
+                        }
+
+                        const tiposPermitidos = [
+                            "application/pdf",
+                            "image/jpeg",
+                            "image/png"
+                        ];
+
+                        if (
+                            !tiposPermitidos.includes(archivo.type) ||
+                            archivo.size === 0 ||
+                            archivo.size > 5 * 1024 * 1024
+                        ) {
+                            alert(
+                                "Selecciona un archivo PDF, JPG o PNG de máximo 5 MB."
+                            );
+                            return;
+                        }
+
+                        const formulario = new FormData();
+
+                        formulario.append(
+                            "comprobante",
+                            archivo
+                        );
+
+                        botonGuardarEfectivo.disabled = true;
+                        botonGuardarEfectivo.textContent =
+                            "Guardando comprobante...";
+
+                        mensajeComprobanteEfectivo.textContent = "";
+
+                        try {
+                            const respuesta = await fetch(
+                                `http://127.0.0.1:8787/api/admin/pagos/${pagoDetalle.id}/comprobante-efectivo`,
+                                {
+                                    method: "POST",
+                                    credentials: "include",
+                                    cache: "no-store",
+                                    headers: {
+                                        "X-ICEC-Solicitud": "web"
+                                    },
+                                    body: formulario
+                                }
+                            );
+
+                            const resultado =
+                                await respuesta.json();
+
+                            if (
+                                !respuesta.ok ||
+                                resultado.estado !== "OK"
+                            ) {
+                                throw new Error(
+                                    resultado.mensaje ||
+                                    "No se pudo guardar el comprobante."
+                                );
+                            }
+
+                            
+mensajeComprobanteEfectivo.textContent =
+    "✅ Comprobante guardado correctamente.";
+
+archivoComprobanteEfectivo.value = "";
+
+// Actualizar los detalles de la inscripción
+// para mostrar el comprobante recién guardado
+botonDetalles.click();
+
+
+                        } catch (error) {
+                            console.error(error);
+
+                            mensajeComprobanteEfectivo.textContent =
+                                "❌ " + error.message;
+
+                        } finally {
+                            botonGuardarEfectivo.disabled = false;
+                            botonGuardarEfectivo.textContent =
+                                "Guardar comprobante de efectivo";
+                        }
+                    }
+                );
+
+
 
 
                 agregarCampo(
@@ -1071,10 +1265,112 @@ botonComprobante.addEventListener("click", async () => {
     seccionPago.appendChild(botonComprobante);
 }
 
+if (pagoDetalle.comprobanteEfectivoRecibido) {
+
+    const botonVerEfectivo = document.createElement("button");
+
+    botonVerEfectivo.type = "button";
+    botonVerEfectivo.textContent = "Ver comprobante de efectivo";
+    botonVerEfectivo.className =
+        "admin-boton admin-boton--principal";
+
+    botonVerEfectivo.addEventListener("click", async () => {
+
+        const visor = document.getElementById(
+            "admin-visor-comprobante"
+        );
+
+        const contenidoVisor = document.getElementById(
+            "admin-visor-contenido"
+        );
+
+        const botonCerrarVisor = document.getElementById(
+            "admin-cerrar-visor"
+        );
+
+        botonVerEfectivo.disabled = true;
+
+        let urlTemporal = null;
+
+        const limpiarVisor = () => {
+            contenidoVisor.replaceChildren();
+
+            if (urlTemporal) {
+                URL.revokeObjectURL(urlTemporal);
+                urlTemporal = null;
+            }
+        };
+
+        try {
+            const respuesta = await fetch(
+                `http://127.0.0.1:8787/api/admin/comprobantes/${pagoDetalle.id}?tipo=EFECTIVO`,
+                {
+                    method: "GET",
+                    credentials: "include",
+                    cache: "no-store"
+                }
+            );
+
+            if (!respuesta.ok) {
+                throw new Error(
+                    "No se pudo recuperar el comprobante de efectivo."
+                );
+            }
+
+            const archivo = await respuesta.blob();
+
+            if (![
+                "application/pdf",
+                "image/jpeg",
+                "image/png"
+            ].includes(archivo.type)) {
+                throw new Error(
+                    "Formato de archivo no permitido."
+                );
+            }
+
+            urlTemporal = URL.createObjectURL(archivo);
+
+            if (archivo.type === "application/pdf") {
+                const pdf = document.createElement("iframe");
+                pdf.src = urlTemporal;
+                pdf.title = "Boleta o vale firmado";
+                contenidoVisor.appendChild(pdf);
+            } else {
+                const imagen = document.createElement("img");
+                imagen.src = urlTemporal;
+                imagen.alt = "Boleta o vale firmado";
+                contenidoVisor.appendChild(imagen);
+            }
+
+            visor.onclose = limpiarVisor;
+
+            botonCerrarVisor.onclick = () => visor.close();
+
+            visor.showModal();
+
+        } catch (error) {
+            console.error(error);
+            limpiarVisor();
+            alert(error.message);
+
+        } finally {
+            botonVerEfectivo.disabled = false;
+        }
+    });
+
+    seccionPago.appendChild(botonVerEfectivo);
+}
+
+
 if (
     pagoDetalle.estado === "EN_REVISION" &&
-    pagoDetalle.comprobanteRecibido
+    (
+        pagoDetalle.comprobanteRecibido ||
+        pagoDetalle.comprobanteEfectivoRecibido
+    )
 ) {
+
     const contenedorAcciones = document.createElement("div");
     contenedorAcciones.className = "admin-acciones";
 
@@ -1086,9 +1382,27 @@ if (
     
 botonAprobar.addEventListener("click", async () => {
 
-    const confirmar = confirm(
-        "¿Confirmas que revisaste el comprobante y que el dinero fue recibido en la cuenta de la iglesia?\n\nEsta acción aprobará el pago."
-    );
+    // El administrador debe seleccionar el método de pago
+    const metodoSeleccionado = selectorMetodoPago.value;
+
+    if (!["TRANSFERENCIA", "EFECTIVO"].includes(metodoSeleccionado)) {
+        alert("Debes seleccionar el método de pago antes de aprobar.");
+        selectorMetodoPago.focus();
+        return;
+    }
+
+
+    
+const mensajeConfirmacion =
+    metodoSeleccionado === "EFECTIVO"
+        ? "¿Confirmas que recibiste el dinero en efectivo y revisaste la boleta o el vale firmado por un administrador?"
+        : "¿Confirmas que verificaste la transferencia y que el dinero fue recibido en la cuenta de la iglesia?";
+
+const confirmar = confirm(
+    mensajeConfirmacion +
+    "\n\nEsta acción aprobará el pago."
+);
+
 
     if (!confirmar) return;
 
@@ -1107,8 +1421,9 @@ botonAprobar.addEventListener("click", async () => {
                     "X-ICEC-Solicitud": "web"
                 },
                 body: JSON.stringify({
-                    accion: "APROBAR"
-                })
+    accion: "APROBAR",
+    metodoPago: metodoSeleccionado
+})
             }
         );
 

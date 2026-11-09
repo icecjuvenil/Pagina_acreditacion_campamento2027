@@ -18,6 +18,7 @@ import { manejarComprobantes } from "./comprobantes-api.js";
 import { manejarResumen } from "./resumen-api.js";
 import { manejarPagosAdmin } from "./admin-api.js";
 import { manejarValidacionPagoAdmin } from "./admin-validacion-api.js";
+import { manejarComprobanteEfectivoAdmin } from "./admin-efectivo-api.js";
 import { manejarCancelacionAdmin } from "./admin-cancelacion-api.js";
 import { manejarHabitaciones } from "./habitaciones-api.js";
 import { manejarExportacion } from "./exportacion-api.js";
@@ -1531,6 +1532,27 @@ async function manejarSolicitud(request, env) {
   }
 
   
+  // ==========================================
+  // COMPROBANTES DE PAGOS EN EFECTIVO
+  // SOLO ADMINISTRADORES
+  // ==========================================
+
+  const rutaComprobanteEfectivo = url.pathname.match(
+    /^\/api\/admin\/pagos\/([1-9]\d*)\/comprobante-efectivo$/
+  );
+
+  if (rutaComprobanteEfectivo) {
+    return manejarComprobanteEfectivoAdmin(
+      request,
+      env,
+      {
+        usuarioDeSesion,
+        ORIGENES_PERMITIDOS
+      },
+      rutaComprobanteEfectivo[1]
+    );
+  }
+
   // ==========================================
   // VALIDAR O RECHAZAR PAGOS
   // SOLO ADMINISTRADORES

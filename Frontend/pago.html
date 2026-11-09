@@ -369,9 +369,39 @@
                 </div>
 
                 <!-- Campos del comprobante -->
-                <div class="campos-comprobante">
+                <div
+    class="campos-comprobante"
+    id="campos-transferencia">
+                    <!-- Selección del método de pago -->
+<div class="campo campo-metodo-pago">
 
-                    <div class="campo">
+    <label for="metodo-pago">
+        Método de pago
+        <span class="obligatorio">*</span>
+    </label>
+
+    <select
+        id="metodo-pago"
+        name="metodoPago"
+        required>
+
+        <option value="">
+            Selecciona tu método de pago
+        </option>
+
+        <option value="TRANSFERENCIA">
+            Transferencia bancaria
+        </option>
+
+        <option value="EFECTIVO">
+            Efectivo
+        </option>
+
+    </select>
+
+</div>
+
+                    <div class="campo" id="campo-titular-transferencia">
 
                         <label for="titular-tranferencia">
                             Nombre del titular
@@ -388,10 +418,10 @@
 
                     </div>
 
-                    <div class="campo">
+                    <div class="campo" id="campo-fecha-transferencia">
 
                         <label for="fecha-transferencia">
-                            Fecha de la transferencia
+                            Fecha del Pago
                             <span class="obligatorio">*</span>
                         </label>
 
@@ -532,6 +562,55 @@
 
     <!-- Funciones de la página de pago -->
     <script src="pago.js"></script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const metodoPago = document.getElementById("metodo-pago");
+    const campoTitular = document.getElementById("campo-titular-transferencia");
+    const campoFecha = document.getElementById("campo-fecha-transferencia");
+
+    const titular = document.getElementById("titular-tranferencia");
+    const fecha = document.getElementById("fecha-transferencia");
+
+    const titulo = document.getElementById("titulo-comprobante");
+    const descripcion = document.querySelector(
+        ".texto-cabecera-tarjeta-pago p"
+    );
+
+    if (!metodoPago || !campoTitular || !campoFecha) return;
+
+    function actualizarFormulario() {
+        const esTransferencia = metodoPago.value === "TRANSFERENCIA";
+        const esEfectivo = metodoPago.value === "EFECTIVO";
+
+        // Mostrar los campos exclusivos de transferencia
+        campoTitular.style.display = esTransferencia ? "" : "none";
+        campoFecha.style.display = esTransferencia ? "" : "none";
+
+        // Ajustar los campos obligatorios
+        titular.required = esTransferencia;
+        fecha.required = esTransferencia;
+
+        // Actualizar los textos
+        titulo.textContent = "Comprobante de pago";
+
+        if (esTransferencia) {
+            descripcion.textContent =
+                "Completa los datos y adjunta el comprobante de tu transferencia.";
+        } else if (esEfectivo) {
+            descripcion.textContent =
+                "Adjunta una fotografía o PDF del vale firmado por un administrador.";
+        } else {
+            descripcion.textContent =
+                "Selecciona tu método de pago y adjunta el comprobante correspondiente.";
+        }
+    }
+
+    metodoPago.addEventListener("change", actualizarFormulario);
+
+    actualizarFormulario();
+});
+</script>
 
 </body>
 

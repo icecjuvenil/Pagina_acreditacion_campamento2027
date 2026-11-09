@@ -87,6 +87,18 @@ export async function manejarValidacionPagoAdmin(
         }, 400);
     }
 
+    // Validación obligatoria del método de pago
+    const metodoPago = datos?.metodoPago;
+
+    if (
+        accion === "APROBAR" &&
+        !["TRANSFERENCIA", "EFECTIVO"].includes(metodoPago)
+    ) {
+        return responder({
+            mensaje: "Debes seleccionar un método de pago válido: efectivo o transferencia."
+        }, 400);
+    }
+
     const motivo = String(datos?.motivo ?? "").trim();
 
     if (
@@ -103,25 +115,43 @@ export async function manejarValidacionPagoAdmin(
 
         if (accion === "APROBAR") {
             resultado = await env.DB.prepare(`
-                UPDATE pagos
-                SET estado = 'APROBADO',
-                    monto_pagado = monto_total,
-                    fecha_revision = CURRENT_TIMESTAMP,
-                    observaciones = NULL
-                WHERE id = ?
-                  AND estado = 'EN_REVISION'
-                  AND comprobante_key IS NOT NULL
-                  
-AND monto_total > 0
-AND monto_pagado = 0
-AND EXISTS (
-    SELECT 1
-    FROM participantes p
-    WHERE p.id = pagos.participante_id
-      AND p.cancelada = 0
-)
+                
+UPDATE pagos
+SET estado = 'APROBADO',
+    monto_pagado = monto_total,
+    metodo_pago = ?,
+    revisado_por = ?,
+    fecha_revision = CURRENT_TIMESTAMP,
+    observaciones = NULL
+WHERE id = ?
+  AND estado = 'EN_REVISION'
+  AND monto_total > 0
+  AND monto_pagado = 0
+  AND (
+      (
+          ? = 'TRANSFERENCIA'
+          AND comprobante_key IS NOT NULL
+      )
+      OR
+      (
+          ? = 'EFECTIVO'
+          AND comprobante_efectivo_key IS NOT NULL
+      )
+  )
+  AND EXISTS (
+      SELECT 1
+      FROM participantes p
+      WHERE p.id = pagos.participante_id
+        AND p.cancelada = 0
+  )
+`).bind(
+    metodoPago,
+    usuario.id,
+    id,
+    metodoPago,
+    metodoPago
+).run();
 
-            `).bind(id).run();
         } else {
             resultado = await env.DB.prepare(`
                 UPDATE pagos
@@ -130,7 +160,12 @@ AND EXISTS (
                     observaciones = ?
                 WHERE id = ?
                   AND estado = 'EN_REVISION'
-                  AND comprobante_key IS NOT NULL
+                  
+AND (
+    comprobante_key IS NOT NULL
+    OR comprobante_efectivo_key IS NOT NULL
+)
+
                   AND monto_pagado = 0
             `).bind(motivo, id).run();
         }
@@ -174,8 +209,10 @@ mensaje: accion === "APROBAR"
         `Campamento Juvenil ICEC 2027\n\n` +
         `Participante: ${participante?.nombre_completo || "No identificado"}\n\n` +
         `¡Tu pago ha sido aprobado!\n\n` +
-        `Hemos verificado tu comprobante de transferencia ` +
-        `y confirmado el pago de tu inscripción.\n\n` +
+        
+`Hemos revisado tu comprobante de pago ` +
+`y confirmado correctamente el pago de tu inscripción.\n\n` +
+
         `Te invitamos a loguearte en nuestra pagina para que puedas escoger tu habitación y` +
         ` revisar la sección información de la plataforma para conocer los próximos pasos y detalles del campamento.\n\n` +
         `Gracias por ser parte del Campamento Juvenil 2027.\n\n` +
@@ -186,8 +223,9 @@ mensaje: accion === "APROBAR"
         `Participante: ${participante?.nombre_completo || "No identificado"}\n\n` +
         `Tu comprobante de pago fue rechazado.\n\n` +
         `Motivo del rechazo:\n${motivo}\n\n` +
-        `Para corregirlo, inicia sesión en la plataforma ` +
-        `y sube un nuevo comprobante.\n\n` +
+        `Para regularizar tu pago, comunícate con la ` +
+`administración del campamento y solicita las ` +
+`indicaciones correspondientes.\n\n` +
         `ICEC Juvenil 2027`
       )
 

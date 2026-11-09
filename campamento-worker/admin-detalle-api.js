@@ -269,10 +269,12 @@ export async function manejarDetalleAdmin(
                 monto_total,
                 monto_pagado,
                 estado,
+                metodo_pago,
                 titular_transferencia,
                 fecha_transferencia,
                 fecha_revision,
                 observaciones,
+                comprobante_efectivo_key,
 
                 CASE
                     WHEN comprobante_key IS NOT NULL
@@ -309,6 +311,7 @@ export async function manejarDetalleAdmin(
                         Number(pago.monto_pagado),
 
                     estado: pago.estado,
+                    metodoPago: pago.metodo_pago || "",
 
                     titularTransferencia:
                         pago.titular_transferencia || "",
@@ -322,8 +325,13 @@ export async function manejarDetalleAdmin(
                     observaciones:
                         pago.observaciones || "",
 
-                    comprobanteRecibido:
-                        Boolean(pago.comprobante_recibido)
+                    
+comprobanteRecibido:
+    Boolean(pago.comprobante_recibido),
+
+comprobanteEfectivoRecibido:
+    Boolean(pago.comprobante_efectivo_key)
+
                 } : null
             }
         });
@@ -410,21 +418,52 @@ export async function manejarComprobanteAdmin(
 
     try {
 
+        
+        // Identificar el tipo de comprobante solicitado
+        const url = new URL(request.url);
+
+        const tipoComprobante =
+            url.searchParams.get("tipo") || "TRANSFERENCIA";
+
+        if (
+            !["TRANSFERENCIA", "EFECTIVO"].includes(tipoComprobante)
+        ) {
+            return responder({
+                mensaje: "Tipo de comprobante no válido."
+            }, 400);
+        }
+
+        // Consultar las referencias privadas en D1
         const pago = await env.DB.prepare(`
-            SELECT comprobante_key
+            SELECT
+                comprobante_key,
+                comprobante_efectivo_key
             FROM pagos
             WHERE id = ?
         `).bind(id).first();
 
-        if (!pago || !pago.comprobante_key) {
+        if (!pago) {
+            return responder({
+                mensaje: "Pago no encontrado."
+            }, 404);
+        }
+
+        const claveComprobante =
+            tipoComprobante === "EFECTIVO"
+                ? pago.comprobante_efectivo_key
+                : pago.comprobante_key;
+
+        if (!claveComprobante) {
             return responder({
                 mensaje: "Comprobante no encontrado."
             }, 404);
         }
 
+        // Recuperar el archivo desde Cloudflare R2
         const archivo = await env.COMPROBANTES.get(
-            pago.comprobante_key
+            claveComprobante
         );
+
 
         if (!archivo) {
             return responder({

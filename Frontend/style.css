@@ -6657,3 +6657,38 @@ body.pagina-login .boton-login:hover {
         width: 115px;
     }
 }
+
+/* ========================================
+   MÉTODO DE PAGO
+======================================== */
+
+.campo-metodo-pago {
+    width: 100%;
+    margin-bottom: 22px;
+}
+
+.campo-metodo-pago label {
+    display: block;
+    margin-bottom: 2px;
+    font-weight: 600;
+}
+
+.campo-metodo-pago select {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid #d5d8ce;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #263c2d;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.campo-metodo-pago select:focus {
+    outline: none;
+    border-color: #66855b;
+    box-shadow: 0 0 0 3px rgba(102, 133, 91, 0.15);
+}
