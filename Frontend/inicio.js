@@ -236,16 +236,60 @@
     /*
      * Calcula los cupos disponibles.
      */
-    function actualizarCuposDisponibles() {
-        const cuposDisponibles = Math.max(
-            0,
-            TOTAL_CUPOS_CAMPAMENTO -
-                ACREDITACIONES_REGISTRADAS
+    
+async function actualizarCuposDisponibles() {
+    try {
+        const respuesta = await fetch(
+            "http://127.0.0.1:8787/api/cupos",
+            {
+                method: "GET",
+                cache: "no-store"
+            }
         );
 
+        if (!respuesta.ok) {
+            throw new Error(
+                "No se pudieron consultar los cupos."
+            );
+        }
+
+        const datos = await respuesta.json();
+
+        if (
+            datos.estado !== "OK" ||
+            !Number.isSafeInteger(datos.total) ||
+            !Number.isSafeInteger(datos.ocupados) ||
+            !Number.isSafeInteger(datos.disponibles) ||
+            datos.total < 0 ||
+            datos.ocupados < 0 ||
+            datos.disponibles !==
+                Math.max(0, datos.total - datos.ocupados)
+        ) {
+            throw new Error(
+                "Los datos de cupos no son válidos."
+            );
+        }
+
         salidaCuposDisponibles.textContent =
-            String(cuposDisponibles);
+            String(datos.disponibles);
+
+        contadorCampamento.querySelector(
+            ".resumen-cupos"
+        )?.setAttribute(
+            "aria-label",
+            `${datos.disponibles} cupos disponibles de ${datos.total}`
+        );
+
+    } catch (error) {
+        console.error(
+            "Error al consultar los cupos:",
+            error
+        );
+
+        salidaCuposDisponibles.textContent = "--";
     }
+}
+
 
     /*
      * Actualiza todos los datos del resumen.

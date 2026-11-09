@@ -60,7 +60,10 @@ export async function manejarExportacion(
                 COALESCE(h.nombre, 'Sin asignar')
                     AS habitacion,
                 
+
 pg.estado AS estado_pago,
+pg.metodo_pago AS metodo_pago,
+
 pg.monto_total,
 CASE
     WHEN p.cancelada = 1 THEN 'CANCELADA'
@@ -96,7 +99,10 @@ p.estado_devolucion
                 COALESCE(h.nombre, 'Sin asignar')
                     AS habitacion,
                 
+
 pg.estado AS estado_pago,
+pg.metodo_pago AS metodo_pago,
+
 NULL AS monto_total,
 CASE
     WHEN p.cancelada = 1 THEN 'CANCELADA'

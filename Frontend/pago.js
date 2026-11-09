@@ -420,7 +420,9 @@ const formularioComprobante =
     document.getElementById(
         "formulario-comprobante"
     );
-
+// Método de pago seleccionado por el participante
+const selectorMetodoPago =
+    document.getElementById("metodo-pago");
 const entradaComprobante =
     document.getElementById(
         "comprobante-transferencia"
@@ -644,19 +646,30 @@ if (
                 return;
             }
 
-            if (
-                entradaFechaTransferencia.value >
-                fechaActualFormato
-            ) {
-                entradaFechaTransferencia.setCustomValidity(
-                    "La fecha de transferencia no puede ser futura."
-                );
+            const metodoSeleccionado = selectorMetodoPago?.value;
 
-                entradaFechaTransferencia.reportValidity();
-                return;
-            }
+if (
+    metodoSeleccionado !== "TRANSFERENCIA" &&
+    metodoSeleccionado !== "EFECTIVO"
+) {
+    alert("Selecciona un método de pago válido.");
+    return;
+}
 
-            entradaFechaTransferencia.setCustomValidity("");
+// La fecha se valida únicamente para transferencias.
+if (
+    metodoSeleccionado === "TRANSFERENCIA" &&
+    entradaFechaTransferencia.value > fechaActualFormato
+) {
+    entradaFechaTransferencia.setCustomValidity(
+        "La fecha de transferencia no puede ser futura."
+    );
+
+    entradaFechaTransferencia.reportValidity();
+    return;
+}
+
+entradaFechaTransferencia.setCustomValidity("");
 
             const archivo = entradaComprobante.files[0];
 
@@ -719,15 +732,25 @@ if (
                 // Crear el formulario que recibirá el Worker.
                 const datosEnvio = new FormData();
 
-                datosEnvio.append(
-                    "titularTransferencia",
-                    entradaTitularTransferencia.value.trim()
-                );
+                // Enviar el método seleccionado
+datosEnvio.append(
+    "metodoPago",
+    metodoSeleccionado
+);
 
-                datosEnvio.append(
-                    "fechaTransferencia",
-                    entradaFechaTransferencia.value
-                );
+// Datos exclusivos de transferencia bancaria
+if (metodoSeleccionado === "TRANSFERENCIA") {
+
+    datosEnvio.append(
+        "titularTransferencia",
+        entradaTitularTransferencia.value.trim()
+    );
+
+    datosEnvio.append(
+        "fechaTransferencia",
+        entradaFechaTransferencia.value
+    );
+}
 
                 datosEnvio.append(
                     "comprobante",

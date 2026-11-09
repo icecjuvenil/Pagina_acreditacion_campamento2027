@@ -890,6 +890,7 @@ botonDetalles.addEventListener(
                 // Método de pago seleccionado por el administrador
                 const campoMetodoPago = document.createElement("div");
                 campoMetodoPago.className = "admin-campo-metodo-pago";
+                campoMetodoPago.hidden = true;
 
                 const etiquetaMetodoPago = document.createElement("label");
                 etiquetaMetodoPago.textContent = "Método de pago *";
@@ -911,198 +912,7 @@ botonDetalles.addEventListener(
                 campoMetodoPago.appendChild(selectorMetodoPago);
                 seccionPago.appendChild(campoMetodoPago);
                 
-                // Comprobante obligatorio para pagos en efectivo
-                const campoComprobanteEfectivo =
-                    document.createElement("div");
-
-                campoComprobanteEfectivo.className =
-                    "admin-campo-comprobante-efectivo";
-
-                const etiquetaComprobanteEfectivo =
-                    document.createElement("label");
-
-                etiquetaComprobanteEfectivo.htmlFor =
-                    "comprobante-efectivo-admin";
-
-                etiquetaComprobanteEfectivo.textContent =
-                    "Boleta o vale firmado por un administrador *";
-
-                const archivoComprobanteEfectivo =
-                    document.createElement("input");
-
-                archivoComprobanteEfectivo.type = "file";
-                archivoComprobanteEfectivo.id =
-                    "comprobante-efectivo-admin";
-
-                archivoComprobanteEfectivo.accept =
-                    ".pdf,.jpg,.jpeg,.png";
-
-                campoComprobanteEfectivo.appendChild(
-                    etiquetaComprobanteEfectivo
-                );
-
-                campoComprobanteEfectivo.appendChild(
-                    archivoComprobanteEfectivo
-                );
-
-                seccionPago.appendChild(
-                    campoComprobanteEfectivo
-                );
-
-                // Mostrar el campo solamente para efectivo
-                function actualizarCampoComprobanteEfectivo() {
-                    const esEfectivo =
-                        selectorMetodoPago.value === "EFECTIVO";
-
-                    campoComprobanteEfectivo.hidden = !esEfectivo;
-
-                    archivoComprobanteEfectivo.required = esEfectivo;
-
-                    if (!esEfectivo) {
-                        archivoComprobanteEfectivo.value = "";
-                    }
-                }
-
-                selectorMetodoPago.addEventListener(
-                    "change",
-                    actualizarCampoComprobanteEfectivo
-                );
-
-                actualizarCampoComprobanteEfectivo();
                 
-                // Botón para guardar el comprobante de efectivo
-                const botonGuardarEfectivo =
-                    document.createElement("button");
-
-                botonGuardarEfectivo.type = "button";
-                botonGuardarEfectivo.className =
-                    "admin-boton admin-boton--principal";
-
-                botonGuardarEfectivo.textContent =
-                    "Guardar comprobante de efectivo";
-
-                // Mensaje de resultado
-                const mensajeComprobanteEfectivo =
-                    document.createElement("p");
-
-                mensajeComprobanteEfectivo.setAttribute(
-                    "role",
-                    "status"
-                );
-
-                campoComprobanteEfectivo.appendChild(
-                    botonGuardarEfectivo
-                );
-
-                campoComprobanteEfectivo.appendChild(
-                    mensajeComprobanteEfectivo
-                );
-
-                botonGuardarEfectivo.addEventListener(
-                    "click",
-                    async () => {
-
-                        if (
-                            selectorMetodoPago.value !== "EFECTIVO"
-                        ) {
-                            alert(
-                                "Selecciona el método de pago Efectivo."
-                            );
-                            return;
-                        }
-
-                        const archivo =
-                            archivoComprobanteEfectivo.files[0];
-
-                        if (!archivo) {
-                            alert(
-                                "Debes adjuntar una boleta o vale firmado."
-                            );
-                            return;
-                        }
-
-                        const tiposPermitidos = [
-                            "application/pdf",
-                            "image/jpeg",
-                            "image/png"
-                        ];
-
-                        if (
-                            !tiposPermitidos.includes(archivo.type) ||
-                            archivo.size === 0 ||
-                            archivo.size > 5 * 1024 * 1024
-                        ) {
-                            alert(
-                                "Selecciona un archivo PDF, JPG o PNG de máximo 5 MB."
-                            );
-                            return;
-                        }
-
-                        const formulario = new FormData();
-
-                        formulario.append(
-                            "comprobante",
-                            archivo
-                        );
-
-                        botonGuardarEfectivo.disabled = true;
-                        botonGuardarEfectivo.textContent =
-                            "Guardando comprobante...";
-
-                        mensajeComprobanteEfectivo.textContent = "";
-
-                        try {
-                            const respuesta = await fetch(
-                                `http://127.0.0.1:8787/api/admin/pagos/${pagoDetalle.id}/comprobante-efectivo`,
-                                {
-                                    method: "POST",
-                                    credentials: "include",
-                                    cache: "no-store",
-                                    headers: {
-                                        "X-ICEC-Solicitud": "web"
-                                    },
-                                    body: formulario
-                                }
-                            );
-
-                            const resultado =
-                                await respuesta.json();
-
-                            if (
-                                !respuesta.ok ||
-                                resultado.estado !== "OK"
-                            ) {
-                                throw new Error(
-                                    resultado.mensaje ||
-                                    "No se pudo guardar el comprobante."
-                                );
-                            }
-
-                            
-mensajeComprobanteEfectivo.textContent =
-    "✅ Comprobante guardado correctamente.";
-
-archivoComprobanteEfectivo.value = "";
-
-// Actualizar los detalles de la inscripción
-// para mostrar el comprobante recién guardado
-botonDetalles.click();
-
-
-                        } catch (error) {
-                            console.error(error);
-
-                            mensajeComprobanteEfectivo.textContent =
-                                "❌ " + error.message;
-
-                        } finally {
-                            botonGuardarEfectivo.disabled = false;
-                            botonGuardarEfectivo.textContent =
-                                "Guardar comprobante de efectivo";
-                        }
-                    }
-                );
-
 
 
 
@@ -1786,12 +1596,15 @@ botonExportarExcel.addEventListener("click", async () => {
             { header: "Correo", key: "correo", width: 38 },
             { header: "Habitación", key: "habitacion", width: 36 },
             
-{ header: "Estado de pago", key: "estado", width: 20 },
-{ header: "Monto total (CLP)", key: "monto", width: 23 },
-{ header: "Estado de inscripción", key: "estadoInscripcion", width: 25 },
-{ header: "Fecha de cancelación", key: "fechaCancelacion", width: 24 },
-{ header: "Motivo de cancelación", key: "motivoCancelacion", width: 55 },
-{ header: "Estado de devolución", key: "estadoDevolucion", width: 25 }
+
+            { header: "Estado de pago", key: "estado", width: 20 },
+            { header: "Método de pago", key: "metodoPago", width: 22 },
+            { header: "Monto total (CLP)", key: "monto", width: 23 },
+
+            { header: "Estado de inscripción", key: "estadoInscripcion", width: 25 },
+            { header: "Fecha de cancelación", key: "fechaCancelacion", width: 24 },
+            { header: "Motivo de cancelación", key: "motivoCancelacion", width: 55 },
+            { header: "Estado de devolución", key: "estadoDevolucion", width: 25 }
 
         ];
 
@@ -1815,6 +1628,9 @@ botonExportarExcel.addEventListener("click", async () => {
                 correo: textoSeguro(registro.correo),
                 habitacion: textoSeguro(registro.habitacion),
                 estado: textoSeguro(registro.estado_pago),
+                
+metodoPago: textoSeguro(registro.metodo_pago || "Sin registrar"),
+
                 
 monto: registro.monto_total == null
     ? null
@@ -1859,7 +1675,7 @@ estadoDevolucion: textoSeguro(
         hoja.getColumn("monto").numFmt = '"$"#,##0';
 
         // Filtros y encabezado fijo
-        hoja.autoFilter = "A1:H1";
+        hoja.autoFilter = "A1:M1";
         hoja.views = [{
             state: "frozen",
             ySplit: 1

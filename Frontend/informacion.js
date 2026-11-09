@@ -109,11 +109,31 @@ async function mostrarHabitacionesAsignadas(datos) {
         }))
     ];
 
-    // Carteles disponibles para la prueba
+    
+    // Carteles oficiales de las 17 habitaciones
     const cartelesHabitaciones = {
+        // Habitaciones de hombres
         "H1": "habitaciones-carteles/h1-muerte-y-resurreccion.png",
-        "H4": "habitaciones-carteles/h4-fe.png"
+        "H2": "habitaciones-carteles/h2-victoria.png",
+        "H3": "habitaciones-carteles/h3-salvacion.png",
+        "H4": "habitaciones-carteles/h4-fe.png",
+        "H5": "habitaciones-carteles/h5-humildad-y-obediencia.png",
+        "H6": "habitaciones-carteles/h6-cruz-diaria.png",
+        "H7": "habitaciones-carteles/h7-nuevo-pacto.png",
+
+        // Habitaciones de mujeres
+        "M1": "habitaciones-carteles/m1-redencion.png",
+        "M2": "habitaciones-carteles/m2-expiacion.png",
+        "M3": "habitaciones-carteles/m3-sacrificio.png",
+        "M4": "habitaciones-carteles/m4-sangre-de-cristo.png",
+        "M5": "habitaciones-carteles/m5-gracia.png",
+        "M6": "habitaciones-carteles/m6-perdon.png",
+        "M7": "habitaciones-carteles/m7-reconciliacion.png",
+        "M8": "habitaciones-carteles/m8-justificacion.png",
+        "M9": "habitaciones-carteles/m9-amor-de-dios.png",
+        "M10": "habitaciones-carteles/m10-sustitucion.png"
     };
+
 
     // Contenedor de tarjetas
     const lista = document.createElement("div");
@@ -154,11 +174,15 @@ async function mostrarHabitacionesAsignadas(datos) {
 
         tarjeta.appendChild(nombreHabitacion);
 
-        // Identificar cartel correspondiente
+        
+        // Identificar el cartel de cualquiera de las 17 habitaciones
         const codigo = habitacion?.nombre
-            ?.match(/\bH[14]\b/i)?.[0]?.toUpperCase();
+            ?.match(/\b(?:H[1-7]|M(?:10|[1-9]))\b/i)
+            ?.[0]
+            ?.toUpperCase();
 
         const rutaCartel = cartelesHabitaciones[codigo];
+
 
         if (rutaCartel) {
             const imagen = document.createElement("img");

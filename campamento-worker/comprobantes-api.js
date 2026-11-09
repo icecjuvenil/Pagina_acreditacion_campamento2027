@@ -183,12 +183,15 @@ export async function manejarComprobantes(
   const participanteId = Number(usuario.participante_id);
 
   const pago = await env.DB.prepare(
-    `SELECT id, monto_total, monto_pagado,
-            estado, comprobante_key
-     FROM pagos
-     WHERE participante_id = ?
-     LIMIT 1`
-  ).bind(participanteId).first();
+  `SELECT id, monto_total, monto_pagado,
+          estado,
+          metodo_pago,
+          comprobante_key,
+          comprobante_efectivo_key
+   FROM pagos
+   WHERE participante_id = ?
+   LIMIT 1`
+).bind(participanteId).first();
 
   if (!pago) {
     return responder({
@@ -199,14 +202,19 @@ export async function manejarComprobantes(
   
 if (
   !["PENDIENTE", "RECHAZADO"].includes(pago.estado) ||
-  (pago.estado === "PENDIENTE" && pago.comprobante_key) ||
+  (
+    pago.estado === "PENDIENTE" &&
+    (
+      pago.comprobante_key ||
+      pago.comprobante_efectivo_key
+    )
+  ) ||
   Number(pago.monto_pagado) !== 0
 ) {
-
-    return responder({
-      mensaje: "Este pago ya tiene un comprobante o está en revisión."
-    }, 409);
-  }
+  return responder({
+    mensaje: "Este pago ya tiene un comprobante o está en revisión."
+  }, 409);
+}
 
   if (Number(pago.monto_total) <= 0) {
     return responder({
@@ -243,7 +251,19 @@ if (
         : "No se pudo leer el formulario."
     }, error.message === "ARCHIVO_GRANDE" ? 413 : 400);
   }
+// Método de pago seleccionado por el participante
+const metodoPago = String(
+  formulario.get("metodoPago") || ""
+).trim();
 
+if (
+  metodoPago !== "TRANSFERENCIA" &&
+  metodoPago !== "EFECTIVO"
+) {
+  return responder({
+    mensaje: "Selecciona un método de pago válido."
+  }, 400);
+}
   const titular = String(
     formulario.get("titularTransferencia") || ""
   ).trim();
@@ -254,6 +274,8 @@ if (
 
   const archivo = formulario.get("comprobante");
 
+  // Validar los datos bancarios solo para transferencias
+if (metodoPago === "TRANSFERENCIA") {
   if (
     titular.length < 3 ||
     titular.length > 120 ||
@@ -264,6 +286,7 @@ if (
       mensaje: "Revisa el titular y la fecha de transferencia."
     }, 400);
   }
+}
 
   if (
     !(archivo instanceof File) ||
@@ -293,6 +316,7 @@ if (
     `${crypto.randomUUID()}.${formato.extension}`;
 
   let archivoGuardado = false;
+  let pagoActualizado = false;
 
   try {
     const resultadoR2 = await env.COMPROBANTES.put(
@@ -314,57 +338,87 @@ if (
     archivoGuardado = true;
 
     
-const actualizacion = await env.DB.prepare(
-  `UPDATE pagos
-   SET titular_transferencia = ?,
-       fecha_transferencia = ?,
-       comprobante_key = ?,
-       estado = 'EN_REVISION',
-       observaciones = NULL,
-       fecha_revision = NULL
-   WHERE id = ?
-     AND participante_id = ?
-     AND (
-       (estado = 'PENDIENTE' AND comprobante_key IS NULL)
-       OR estado = 'RECHAZADO'
-     )
-     AND monto_pagado = 0`
-).bind(
-  titular,
-  fecha,
-  clave,
-  pago.id,
-  participanteId
-).run();
 
+    // Guardar el comprobante según el método de pago seleccionado
+    const esTransferencia = metodoPago === "TRANSFERENCIA";
 
-    if (actualizacion.meta?.changes !== 1) {
-      await env.COMPROBANTES.delete(clave);
+    const actualizacion = await env.DB.prepare(
+      `UPDATE pagos
+       SET metodo_pago = ?,
+           titular_transferencia = ?,
+           fecha_transferencia = ?,
+           comprobante_key = ?,
+           comprobante_efectivo_key = ?,
+           estado = 'EN_REVISION',
+           observaciones = NULL,
+           fecha_revision = NULL
+       WHERE id = ?
+         AND participante_id = ?
+         AND estado = ?
+         AND estado IN ('PENDIENTE', 'RECHAZADO')
+         AND comprobante_key IS ?
+         AND comprobante_efectivo_key IS ?
+         AND monto_pagado = 0`
+    ).bind(
+      metodoPago,
+      esTransferencia ? titular : null,
+      esTransferencia ? fecha : null,
+      esTransferencia ? clave : null,
+      esTransferencia ? null : clave,
+      pago.id,
+      participanteId,
+      pago.estado,
+      pago.comprobante_key,
+      pago.comprobante_efectivo_key
+    ).run();
 
-      return responder({
-        mensaje: "El pago cambió de estado. Actualiza la página."
-      }, 409);
-    }
 
     
-    // Eliminar el comprobante anterior solo después
-    // de confirmar que D1 guardó el nuevo archivo.
-    if (
-      pago.estado === "RECHAZADO" &&
-      pago.comprobante_key &&
-      pago.comprobante_key !== clave
-    ) {
-      try {
-        await env.COMPROBANTES.delete(
-          pago.comprobante_key
-        );
-      } catch (errorLimpieza) {
-        console.error(
-          "No se pudo eliminar el comprobante anterior:",
-          errorLimpieza?.message
-        );
+
+if (actualizacion.meta?.changes !== 1) {
+  try {
+    await env.COMPROBANTES.delete(clave);
+    archivoGuardado = false;
+  } catch (errorLimpieza) {
+    console.error(
+      "No se pudo eliminar el archivo sin registrar:",
+      errorLimpieza?.message
+    );
+  }
+
+  return responder({
+    mensaje: "El pago cambió de estado. Actualiza la página."
+  }, 409);
+}
+
+
+    pagoActualizado = true;
+
+    
+    // Eliminar comprobantes anteriores de pagos rechazados
+    // solo después de guardar correctamente el nuevo en D1.
+    if (pago.estado === "RECHAZADO") {
+      const comprobantesAnteriores = [
+        pago.comprobante_key,
+        pago.comprobante_efectivo_key
+      ].filter(
+        (claveAnterior) =>
+          claveAnterior &&
+          claveAnterior !== clave
+      );
+
+      for (const claveAnterior of new Set(comprobantesAnteriores)) {
+        try {
+          await env.COMPROBANTES.delete(claveAnterior);
+        } catch (errorLimpieza) {
+          console.error(
+            "No se pudo eliminar el comprobante anterior:",
+            errorLimpieza?.message
+          );
+        }
       }
     }
+
 
 
     return responder({
@@ -378,16 +432,18 @@ const actualizacion = await env.DB.prepare(
       error?.message
     );
 
-    if (archivoGuardado) {
-      try {
-        await env.COMPROBANTES.delete(clave);
-      } catch (errorLimpieza) {
-        console.error(
-          "No fue posible limpiar el archivo:",
-          errorLimpieza?.message
-        );
-      }
-    }
+    
+if (archivoGuardado && !pagoActualizado) {
+  try {
+    await env.COMPROBANTES.delete(clave);
+  } catch (errorLimpieza) {
+    console.error(
+      "No fue posible limpiar el archivo:",
+      errorLimpieza?.message
+    );
+  }
+}
+
 
     return responder({
       mensaje: "No se pudo guardar el comprobante."

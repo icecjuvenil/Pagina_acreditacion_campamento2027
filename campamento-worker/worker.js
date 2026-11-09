@@ -1807,6 +1807,50 @@ async function manejarSolicitud(request, env) {
   }
   
   // ==========================================
+  // CUPOS PÚBLICOS DEL CAMPAMENTO
+  // ==========================================
+
+  if (url.pathname === "/api/cupos") {
+    if (request.method !== "GET") {
+      return responder({
+        mensaje: "Método no permitido."
+      }, 405);
+    }
+
+    if (!env.DB) {
+      return responder({
+        mensaje: "Base de datos no disponible."
+      }, 503);
+    }
+
+    const cupos = await env.DB.prepare(
+      `SELECT
+        (
+          SELECT COALESCE(SUM(capacidad), 0)
+          FROM habitaciones
+          WHERE activa = 1
+        ) AS total,
+        (
+          SELECT COUNT(*)
+          FROM asignaciones_habitaciones a
+          INNER JOIN habitaciones h
+            ON h.id = a.habitacion_id
+          WHERE h.activa = 1
+        ) AS ocupados`
+    ).first();
+
+    const total = Number(cupos.total);
+    const ocupados = Number(cupos.ocupados);
+
+    return responder({
+      estado: "OK",
+      total,
+      ocupados,
+      disponibles: Math.max(0, total - ocupados)
+    });
+  }
+
+  // ==========================================
   // HABITACIONES Y CUPOS DISPONIBLES
   // ==========================================
 
