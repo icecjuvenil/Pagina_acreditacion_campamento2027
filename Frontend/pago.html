@@ -190,6 +190,91 @@
 
         </section>
 
+            <!-- ==================================================
+                BENEFICIO PARA LÍDERES
+             ================================================== -->
+
+        <section
+            class="tarjeta-pago tarjeta-beneficio-lider"
+            aria-labelledby="titulo-beneficio-lider">
+
+            <div class="cabecera-tarjeta-pago">
+
+                <div
+                    class="icono-tarjeta-pago"
+                    aria-hidden="true">
+                    ★
+                </div>
+
+                <h2 id="titulo-beneficio-lider">
+                    Beneficio para líderes
+                </h2>
+
+            </div>
+
+            <p class="descripcion-beneficio-lider">
+                Si eres líder, ingresa la palabra clave
+                entregada.
+            </p>
+
+            <!-- Casilla que mostrará el campo de la clave -->
+            <label class="casilla-soy-lider">
+
+                <input
+                    type="checkbox"
+                    id="soy-lider"
+                    aria-controls="campos-clave-lider">
+
+                <span>Soy líder</span>
+
+            </label>
+
+            <!-- Se mostrará al marcar “Soy líder” -->
+            <div
+                id="campos-clave-lider"
+                class="campos-clave-lider"
+                hidden>
+
+                <label for="clave-lider">
+                    Palabra clave
+                </label>
+
+                <div class="fila-clave-lider">
+
+                    <input
+                        type="password"
+                        id="clave-lider"
+                        name="claveLider"
+                        placeholder="Ingresa la palabra clave"
+                        autocomplete="off"
+                        spellcheck="false"
+                        aria-describedby="ayuda-clave-lider">
+
+                    <button
+                        type="button"
+                        id="validar-clave-lider"
+                        class="boton-validar-clave-lider">
+                        Validar clave
+                    </button>
+
+                </div>
+
+                <p id="ayuda-clave-lider">
+                    El beneficio se aplicará después
+                    de validar la clave.
+                </p>
+
+                <!-- Resultado de la validación -->
+                <p
+                    id="mensaje-clave-lider"
+                    role="status"
+                    aria-live="polite">
+                </p>
+
+            </div>
+
+        </section>
+
 
         <!-- ==================================================
              TOTAL DE LA INSCRIPCIÓN

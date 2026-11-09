@@ -1,20 +1,11 @@
 /* ==================================================
-   1. RECUPERACIÓN SEGURA DE DATOS
+   1. RECUPERACIÓN DE DATOS
    ================================================== */
 
-function obtenerDatosGuardados(
-    clave,
-    valorInicial
-) {
-    const datosGuardados =
-        sessionStorage.getItem(clave);
-
-    if (!datosGuardados) {
-        return valorInicial;
-    }
-
+function obtenerDatosGuardados(clave, valorInicial) {
     try {
-        return JSON.parse(datosGuardados);
+        const datos = sessionStorage.getItem(clave);
+        return datos ? JSON.parse(datos) : valorInicial;
     } catch (error) {
         console.error(
             `No fue posible recuperar ${clave}:`,
@@ -25,206 +16,129 @@ function obtenerDatosGuardados(
     }
 }
 
-
-/* Persona inscrita mediante acreditacion.html */
 const personaPrincipal = obtenerDatosGuardados(
     "personaPrincipalCampamento",
     null
 );
 
-/* Personas agregadas mediante acompanantes.html */
 const datosAcompanantes = obtenerDatosGuardados(
     "acompanantesCampamento",
     []
 );
 
-const acompanantes = Array.isArray(
-    datosAcompanantes
-)
+const acompanantes = Array.isArray(datosAcompanantes)
     ? datosAcompanantes
     : [];
 
 
 /* ==================================================
-   2. ELEMENTOS DEL RESUMEN
+   2. ELEMENTOS DE LA PÁGINA
    ================================================== */
 
 const resumenPersonaPrincipal =
-    document.getElementById(
-        "resumen-personal-principal"
-    ) ||
-    document.getElementById(
-        "resumen-persona-principal"
-    );
+    document.getElementById("resumen-personal-principal") ||
+    document.getElementById("resumen-persona-principal");
 
-const resumenAcompanantes = document.getElementById(
-    "resumen-acompanantes"
-);
+const resumenAcompanantes =
+    document.getElementById("resumen-acompanantes");
 
 const cantidadAcompanantesPago =
-    document.getElementById(
-        "cantidad-acompanantes-pago"
-    );
+    document.getElementById("cantidad-acompanantes-pago");
 
-const salidaTotal = document.getElementById(
-    "total-acreditacion"
-);
+const salidaTotal =
+    document.getElementById("total-acreditacion");
 
 const totalTransferenciaBancaria =
-    document.getElementById(
-        "total-transferencia-bancaria"
-    );
+    document.getElementById("total-transferencia-bancaria");
 
 const detalleTotalInscripciones =
-    document.getElementById(
-        "detalle-total-inscripciones"
-    );
+    document.getElementById("detalle-total-inscripciones");
 
-const enlaceVolver = document.getElementById(
-    "volver-formulario"
-);
+const enlaceVolver =
+    document.getElementById("volver-formulario");
+
+const formularioComprobante =
+    document.getElementById("formulario-comprobante");
+
+const entradaComprobante =
+    document.getElementById("comprobante-transferencia") ||
+    document.getElementById("comprobante-tranferencia");
+
+const nombreArchivoComprobante =
+    document.getElementById("nombre-archivo-comprobante");
+
+const entradaFechaTransferencia =
+    document.getElementById("fecha-transferencia");
+
+const entradaTitularTransferencia =
+    document.getElementById("titular-tranferencia") ||
+    document.getElementById("titular-transferencia");
+
+const estadoPago =
+    document.getElementById("estado-pago");
+
+const mensajeEstadoPago =
+    document.getElementById("mensaje-estado-pago");
 
 
 /* ==================================================
-   3. FUNCIONES DE FORMATO
+   3. FORMATO Y CREACIÓN DEL RESUMEN
    ================================================== */
 
 function formatearDinero(valor) {
-    const numero = Number(valor || 0);
-
-    return `$${numero.toLocaleString("es-CL")}`;
+    return `$${Number(valor || 0).toLocaleString("es-CL")}`;
 }
 
 function obtenerNombrePersona(persona) {
-    return (
-        persona?.nombreCompleto ||
+    return persona?.nombreCompleto ||
         persona?.nombre ||
-        "No informado"
-    );
+        "No informado";
 }
 
-function obtenerCorreoPersona(persona) {
-    return persona?.correo || "No informado";
-}
-
-
-/* ==================================================
-   4. CREACIÓN DE DATOS DEL RESUMEN
-   ================================================== */
-
-function crearDatoPago(
-    etiqueta,
-    valor,
-    claseAdicional = ""
-) {
-    const contenedor =
-        document.createElement("div");
-
+function crearDatoPago(etiqueta, valor, claseAdicional = "") {
+    const contenedor = document.createElement("div");
     contenedor.classList.add("dato-pago");
 
     if (claseAdicional) {
-        contenedor.classList.add(
-            claseAdicional
-        );
+        contenedor.classList.add(claseAdicional);
     }
 
-    const nombreDato =
-        document.createElement("small");
-
+    const nombreDato = document.createElement("small");
     nombreDato.textContent = etiqueta;
 
-    const contenidoDato =
-        document.createElement("strong");
+    const contenidoDato = document.createElement("strong");
+    contenidoDato.textContent = valor || "No informado";
 
-    contenidoDato.textContent =
-        valor || "No informado";
-
-    contenedor.append(
-        nombreDato,
-        contenidoDato
-    );
+    contenedor.append(nombreDato, contenidoDato);
 
     return contenedor;
 }
 
-
-/* Crea los cuatro datos de una persona */
-function crearResumenPersona(persona) {
-    const contenedor =
-        document.createElement("div");
-
-    contenedor.classList.add(
-        "datos-persona-pago"
-    );
-
+function agregarDatosPersona(contenedor, persona) {
     contenedor.append(
         crearDatoPago(
             "Nombre completo",
             obtenerNombrePersona(persona)
         ),
-
         crearDatoPago(
             "RUT",
             persona?.rut
         ),
-
         crearDatoPago(
             "Correo",
-            obtenerCorreoPersona(persona)
+            persona?.correo || "No informado"
         ),
-
         crearDatoPago(
             "Valor",
-            formatearDinero(
-                persona?.valorAcreditacion
-            ),
+            formatearDinero(persona?.valorAcreditacion),
             "dato-valor-pago"
         )
     );
-
-    return contenedor;
-}
-
-
-/* Crea una fila para un acompañante */
-function crearFilaAcompanante(acompanante) {
-    const fila = document.createElement("article");
-
-    fila.classList.add(
-        "fila-acompanante-pago"
-    );
-
-    fila.append(
-        crearDatoPago(
-            "Nombre completo",
-            obtenerNombrePersona(acompanante)
-        ),
-
-        crearDatoPago(
-            "RUT",
-            acompanante?.rut
-        ),
-
-        crearDatoPago(
-            "Correo",
-            obtenerCorreoPersona(acompanante)
-        ),
-
-        crearDatoPago(
-            "Valor",
-            formatearDinero(
-                acompanante?.valorAcreditacion
-            ),
-            "dato-valor-pago"
-        )
-    );
-
-    return fila;
 }
 
 
 /* ==================================================
-   5. PERSONA PRINCIPAL
+   4. MOSTRAR PERSONA PRINCIPAL
    ================================================== */
 
 function mostrarPersonaPrincipal() {
@@ -235,114 +149,78 @@ function mostrarPersonaPrincipal() {
     resumenPersonaPrincipal.replaceChildren();
 
     if (!personaPrincipal) {
-        const mensaje =
-            document.createElement("p");
-
-        mensaje.classList.add(
-            "mensaje-sin-datos-pago"
-        );
-
+        const mensaje = document.createElement("p");
+        mensaje.className = "mensaje-sin-datos-pago";
         mensaje.textContent =
             "No se encontraron los datos de la persona principal.";
 
-        resumenPersonaPrincipal.appendChild(
-            mensaje
-        );
-
+        resumenPersonaPrincipal.appendChild(mensaje);
         return;
     }
 
-    resumenPersonaPrincipal.appendChild(
-        crearResumenPersona(
-            personaPrincipal
-        )
-    );
+    const contenedor = document.createElement("div");
+    contenedor.className = "datos-persona-pago";
+
+    agregarDatosPersona(contenedor, personaPrincipal);
+    resumenPersonaPrincipal.appendChild(contenedor);
 }
 
 
 /* ==================================================
-   6. ACOMPAÑANTES
+   5. MOSTRAR ACOMPAÑANTES
    ================================================== */
 
-function actualizarCantidadAcompanantes() {
-    if (!cantidadAcompanantesPago) {
-        return;
+function mostrarAcompanantes() {
+    if (cantidadAcompanantesPago) {
+        cantidadAcompanantesPago.textContent =
+            acompanantes.length === 1
+                ? "1 inscrito"
+                : `${acompanantes.length} inscritos`;
     }
 
-    const cantidad = acompanantes.length;
-
-    cantidadAcompanantesPago.textContent =
-        cantidad === 1
-            ? "1 inscrito"
-            : `${cantidad} inscritos`;
-}
-
-function mostrarAcompanantes() {
     if (!resumenAcompanantes) {
         return;
     }
 
     resumenAcompanantes.replaceChildren();
 
-    actualizarCantidadAcompanantes();
-
     if (acompanantes.length === 0) {
-        const mensaje =
-            document.createElement("p");
+        const mensaje = document.createElement("p");
+        mensaje.className = "mensaje-sin-datos-pago";
+        mensaje.textContent = "No se agregaron acompañantes.";
 
-        mensaje.classList.add(
-            "mensaje-sin-datos-pago"
-        );
-
-        mensaje.textContent =
-            "No se agregaron acompañantes.";
-
-        resumenAcompanantes.appendChild(
-            mensaje
-        );
-
+        resumenAcompanantes.appendChild(mensaje);
         return;
     }
 
     acompanantes.forEach((acompanante) => {
-        resumenAcompanantes.appendChild(
-            crearFilaAcompanante(
-                acompanante
-            )
-        );
+        const fila = document.createElement("article");
+        fila.className = "fila-acompanante-pago";
+
+        agregarDatosPersona(fila, acompanante);
+        resumenAcompanantes.appendChild(fila);
     });
 }
 
 
 /* ==================================================
-   7. CÁLCULO DEL TOTAL
+   6. CÁLCULO Y PRESENTACIÓN DEL TOTAL
    ================================================== */
 
-const valorPersonaPrincipal = Number(
-    personaPrincipal?.valorAcreditacion || 0
-);
+const valorPersonaPrincipal =
+    Number(personaPrincipal?.valorAcreditacion || 0);
 
 const valorAcompanantes = acompanantes.reduce(
-    (total, acompanante) => {
-        return (
-            total +
-            Number(
-                acompanante?.valorAcreditacion || 0
-            )
-        );
-    },
+    (total, acompanante) =>
+        total + Number(acompanante?.valorAcreditacion || 0),
     0
 );
 
 const totalInscripcion =
-    valorPersonaPrincipal +
-    valorAcompanantes;
+    valorPersonaPrincipal + valorAcompanantes;
 
 function mostrarTotal() {
-    const existeInscripcion =
-        Boolean(personaPrincipal);
-
-    const textoTotal = existeInscripcion
+    const textoTotal = personaPrincipal
         ? formatearDinero(totalInscripcion)
         : "No disponible";
 
@@ -351,38 +229,32 @@ function mostrarTotal() {
     }
 
     if (totalTransferenciaBancaria) {
-        totalTransferenciaBancaria.textContent =
-            textoTotal;
+        totalTransferenciaBancaria.textContent = textoTotal;
     }
 
-    if (detalleTotalInscripciones) {
-        if (!existeInscripcion) {
-            detalleTotalInscripciones.textContent =
-                "No se encontraron datos de la inscripción.";
+    if (!detalleTotalInscripciones) {
+        return;
+    }
 
-            return;
-        }
-
-        const cantidadAcompanantes =
-            acompanantes.length;
-
-        const cantidadInscripciones =
-            1 + cantidadAcompanantes;
-
-        const textoAcompanantes =
-            cantidadAcompanantes === 1
-                ? "1 acompañante"
-                : `${cantidadAcompanantes} acompañantes`;
-
+    if (!personaPrincipal) {
         detalleTotalInscripciones.textContent =
-            `${cantidadInscripciones} inscripciones ` +
-            `(1 principal + ${textoAcompanantes})`;
+            "No se encontraron datos de la inscripción.";
+        return;
     }
+
+    const cantidad = acompanantes.length;
+    const textoAcompanantes = cantidad === 1
+        ? "1 acompañante"
+        : `${cantidad} acompañantes`;
+
+    detalleTotalInscripciones.textContent =
+        `${1 + cantidad} inscripciones ` +
+        `(1 principal + ${textoAcompanantes})`;
 }
 
 
 /* ==================================================
-   8. ENLACE PARA VOLVER Y CORREGIR
+   7. ENLACE PARA VOLVER Y CORREGIR
    ================================================== */
 
 function configurarEnlaceVolver() {
@@ -390,86 +262,22 @@ function configurarEnlaceVolver() {
         return;
     }
 
-    const parametrosActuales =
-        new URLSearchParams(
-            window.location.search
-        );
+    const parametros = new URLSearchParams(
+        window.location.search
+    );
 
-    const estaEnModoQA =
-        parametrosActuales.get("qa") === "1";
+    const sufijoQA = parametros.get("qa") === "1"
+        ? "?qa=1"
+        : "";
 
-    if (acompanantes.length > 0) {
-        enlaceVolver.href = estaEnModoQA
-            ? "acompanantes.html?qa=1"
-            : "acompanantes.html";
-
-        return;
-    }
-
-    enlaceVolver.href = estaEnModoQA
-        ? "acreditacion.html?qa=1"
-        : "acreditacion.html";
+    enlaceVolver.href = acompanantes.length > 0
+        ? `acompanantes.html${sufijoQA}`
+        : `acreditacion.html${sufijoQA}`;
 }
 
 
 /* ==================================================
-   9. ELEMENTOS DEL COMPROBANTE
-   ================================================== */
-
-const formularioComprobante =
-    document.getElementById(
-        "formulario-comprobante"
-    );
-
-const entradaComprobante =
-    document.getElementById(
-        "comprobante-transferencia"
-    ) ||
-    document.getElementById(
-        "comprobante-tranferencia"
-    );
-
-const nombreArchivoComprobante =
-    document.getElementById(
-        "nombre-archivo-comprobante"
-    );
-
-const entradaFechaTransferencia =
-    document.getElementById(
-        "fecha-transferencia"
-    );
-
-/*
- * Se consideran las dos versiones porque el HTML
- * utiliza actualmente titular-tranferencia.
- */
-const entradaTitularTransferencia =
-    document.getElementById(
-        "titular-tranferencia"
-    ) ||
-    document.getElementById(
-        "titular-transferencia"
-    );
-
-const estadoPago = document.getElementById(
-    "estado-pago"
-);
-
-const mensajeEstadoPago =
-    document.getElementById(
-        "mensaje-estado-pago"
-    );
-
-
-/* Oculta el formulario si falta la persona principal */
-if (formularioComprobante) {
-    formularioComprobante.hidden =
-        !personaPrincipal;
-}
-
-
-/* ==================================================
-   10. FECHA DE TRANSFERENCIA
+   8. FECHA DE TRANSFERENCIA
    ================================================== */
 
 const fechaActual = new Date();
@@ -479,22 +287,23 @@ const fechaLocal = new Date(
     fechaActual.getTimezoneOffset() * 60000
 );
 
-const fechaActualFormato = fechaLocal
-    .toISOString()
-    .split("T")[0];
+const fechaActualFormato =
+    fechaLocal.toISOString().split("T")[0];
 
 if (entradaFechaTransferencia) {
-    entradaFechaTransferencia.max =
-        fechaActualFormato;
+    entradaFechaTransferencia.max = fechaActualFormato;
+
+    entradaFechaTransferencia.addEventListener("input", () => {
+        entradaFechaTransferencia.setCustomValidity("");
+    });
 }
 
 
 /* ==================================================
-   11. VALIDACIÓN DEL COMPROBANTE
+   9. VALIDACIÓN DEL COMPROBANTE
    ================================================== */
 
-const tamanioMaximoComprobante =
-    5 * 1024 * 1024;
+const tamanioMaximoComprobante = 5 * 1024 * 1024;
 
 const tiposPermitidos = [
     "image/jpeg",
@@ -510,20 +319,15 @@ const extensionesPermitidas = [
 ];
 
 function mostrarNombreArchivo() {
-    if (
-        !entradaComprobante ||
-        !nombreArchivoComprobante
-    ) {
+    if (!entradaComprobante || !nombreArchivoComprobante) {
         return;
     }
 
-    const archivo =
-        entradaComprobante.files[0];
+    const archivo = entradaComprobante.files[0];
 
-    nombreArchivoComprobante.textContent =
-        archivo
-            ? `Archivo seleccionado: ${archivo.name}`
-            : "";
+    nombreArchivoComprobante.textContent = archivo
+        ? `Archivo seleccionado: ${archivo.name}`
+        : "";
 }
 
 function validarComprobante() {
@@ -533,8 +337,7 @@ function validarComprobante() {
 
     entradaComprobante.setCustomValidity("");
 
-    const archivo =
-        entradaComprobante.files[0];
+    const archivo = entradaComprobante.files[0];
 
     if (!archivo) {
         entradaComprobante.setCustomValidity(
@@ -545,28 +348,18 @@ function validarComprobante() {
         return false;
     }
 
-    const partesNombre =
-        archivo.name.split(".");
+    const partesNombre = archivo.name.split(".");
 
-    const extension =
-        partesNombre.length > 1
-            ? partesNombre.pop().toLowerCase()
-            : "";
+    const extension = partesNombre.length > 1
+        ? partesNombre.pop().toLowerCase()
+        : "";
 
-    /*
-     * Algunos navegadores pueden entregar un tipo vacío.
-     * En ese caso se valida mediante la extensión.
-     */
     const tipoValido =
         (
             archivo.type === "" ||
-            tiposPermitidos.includes(
-                archivo.type
-            )
+            tiposPermitidos.includes(archivo.type)
         ) &&
-        extensionesPermitidas.includes(
-            extension
-        );
+        extensionesPermitidas.includes(extension);
 
     if (!tipoValido) {
         entradaComprobante.setCustomValidity(
@@ -577,10 +370,7 @@ function validarComprobante() {
         return false;
     }
 
-    if (
-        archivo.size >
-        tamanioMaximoComprobante
-    ) {
+    if (archivo.size > tamanioMaximoComprobante) {
         entradaComprobante.setCustomValidity(
             "El comprobante no puede superar los 5 MB."
         );
@@ -592,25 +382,26 @@ function validarComprobante() {
     return true;
 }
 
-
-/* Revisa el archivo al seleccionarlo */
 if (entradaComprobante) {
-    entradaComprobante.addEventListener(
-        "change",
-        () => {
-            mostrarNombreArchivo();
+    entradaComprobante.addEventListener("change", () => {
+        entradaComprobante.setCustomValidity("");
+        mostrarNombreArchivo();
 
-            if (entradaComprobante.files.length > 0) {
-                validarComprobante();
-            }
+        if (entradaComprobante.files.length > 0) {
+            validarComprobante();
         }
-    );
+    });
 }
 
 
 /* ==================================================
-   12. ENVÍO DEL COMPROBANTE
+   10. REGISTRO LOCAL DEL COMPROBANTE
+   La carga real del archivo corresponde al backend.
    ================================================== */
+
+if (formularioComprobante) {
+    formularioComprobante.hidden = !personaPrincipal;
+}
 
 if (
     formularioComprobante &&
@@ -618,120 +409,161 @@ if (
     entradaFechaTransferencia &&
     entradaTitularTransferencia
 ) {
-    formularioComprobante.addEventListener(
-        "submit",
-        (evento) => {
-            evento.preventDefault();
+    formularioComprobante.addEventListener("submit", (evento) => {
+        evento.preventDefault();
 
-            if (!personaPrincipal) {
-                alert(
-                    "No se encontraron los datos de la inscripción."
-                );
-
-                return;
-            }
-
-            if (!formularioComprobante.checkValidity()) {
-                formularioComprobante.reportValidity();
-                return;
-            }
-
-            if (!validarComprobante()) {
-                return;
-            }
-
-            if (
-                entradaFechaTransferencia.value >
-                fechaActualFormato
-            ) {
-                entradaFechaTransferencia.setCustomValidity(
-                    "La fecha de transferencia no puede ser futura."
-                );
-
-                entradaFechaTransferencia.reportValidity();
-                return;
-            }
-
-            entradaFechaTransferencia.setCustomValidity(
-                ""
-            );
-
-            const archivo =
-                entradaComprobante.files[0];
-
-            /*
-             * En esta etapa solo se guarda la información
-             * del archivo. La carga real corresponde al backend.
-             */
-            const datosComprobante = {
-                titularTransferencia:
-                    entradaTitularTransferencia
-                        .value
-                        .trim(),
-
-                fechaTransferencia:
-                    entradaFechaTransferencia.value,
-
-                nombreArchivo:
-                    archivo.name,
-
-                tipoArchivo:
-                    archivo.type,
-
-                tamanioArchivo:
-                    archivo.size,
-
-                totalEsperado:
-                    totalInscripcion,
-
-                estado:
-                    "pendiente_revision"
-            };
-
-            sessionStorage.setItem(
-                "pagoCampamento",
-                JSON.stringify(
-                    datosComprobante
-                )
-            );
-
-           /* Muestra el estado pendiente en la página de pago */
-            if (estadoPago) {
-                estadoPago.hidden = false;
-
-                estadoPago.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-            }
-
-            /* Informa que el comprobante fue registrado */
-            if (mensajeEstadoPago) {
-                mensajeEstadoPago.textContent =
-                "Comprobante recibido. " +
-                "El pago está pendiente de revisión.";
-            }
-
-            /*
-            * Después de registrar el comprobante,
-            * abre la información privada del campamento.
-            */
-            setTimeout(() => {
-                window.location.href = "informacion.html";
-            }, 1200);
-
-            /*if (mensajeEstadoPago) {
-                mensajeEstadoPago.textContent =
-                    "Comprobante recibido. " +
-                    "El pago está pendiente de revisión.";*/
-            
+        if (!personaPrincipal) {
+            alert("No se encontraron los datos de la inscripción.");
+            return;
         }
-    );
+
+        entradaFechaTransferencia.setCustomValidity("");
+
+        if (
+            entradaFechaTransferencia.value >
+            fechaActualFormato
+        ) {
+            entradaFechaTransferencia.setCustomValidity(
+                "La fecha de transferencia no puede ser futura."
+            );
+        }
+
+        if (!formularioComprobante.checkValidity()) {
+            formularioComprobante.reportValidity();
+            return;
+        }
+
+        if (!validarComprobante()) {
+            return;
+        }
+
+        const archivo = entradaComprobante.files[0];
+
+        const datosComprobante = {
+            titularTransferencia:
+                entradaTitularTransferencia.value.trim(),
+            fechaTransferencia:
+                entradaFechaTransferencia.value,
+            nombreArchivo:
+                archivo.name,
+            tipoArchivo:
+                archivo.type,
+            tamanioArchivo:
+                archivo.size,
+            totalEsperado:
+                totalInscripcion,
+            estado:
+                "pendiente_revision"
+        };
+
+        sessionStorage.setItem(
+            "pagoCampamento",
+            JSON.stringify(datosComprobante)
+        );
+
+        if (estadoPago) {
+            estadoPago.hidden = false;
+
+            estadoPago.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+
+        if (mensajeEstadoPago) {
+            mensajeEstadoPago.textContent =
+                "Datos del comprobante guardados en este navegador. " +
+                "La carga al servidor está pendiente de integración.";
+        }
+
+        /* Conserva la navegación del prototipo actual */
+        setTimeout(() => {
+            window.location.href = "informacion.html";
+        }, 1200);
+    });
 }
 
 
 /* ==================================================
-   13. CARGA INICIAL
+   11. BENEFICIO PARA LÍDERES
+   Solo interfaz: la clave se validará en el backend.
+   ================================================== */
+
+(() => {
+    const casillaLider =
+        document.getElementById("soy-lider");
+
+    const camposClave =
+        document.getElementById("campos-clave-lider");
+
+    const entradaClave =
+        document.getElementById("clave-lider");
+
+    const botonValidar =
+        document.getElementById("validar-clave-lider");
+
+    const mensajeClave =
+        document.getElementById("mensaje-clave-lider");
+
+    if (!casillaLider || !camposClave || !entradaClave) {
+        return;
+    }
+
+    function actualizarCampoLider() {
+        const esLider = casillaLider.checked;
+
+        camposClave.hidden = !esLider;
+        entradaClave.disabled = !esLider;
+
+        if (!esLider) {
+            entradaClave.value = "";
+        }
+
+        if (mensajeClave) {
+            mensajeClave.textContent = "";
+        }
+    }
+
+    casillaLider.addEventListener("change", () => {
+        actualizarCampoLider();
+
+        if (casillaLider.checked) {
+            entradaClave.focus();
+        }
+    });
+
+    entradaClave.addEventListener("input", () => {
+        if (mensajeClave) {
+            mensajeClave.textContent = "";
+        }
+    });
+
+    if (botonValidar) {
+        botonValidar.addEventListener("click", () => {
+            if (!mensajeClave) {
+                return;
+            }
+
+            if (!entradaClave.value.trim()) {
+                mensajeClave.textContent =
+                    "Ingresa la palabra clave entregada.";
+
+                entradaClave.focus();
+                return;
+            }
+
+            mensajeClave.textContent =
+                "La validación de líderes está pendiente de conexión. " +
+                "El beneficio todavía no se ha aplicado.";
+        });
+    }
+
+    actualizarCampoLider();
+})();
+
+
+/* ==================================================
+   12. CARGA INICIAL
    ================================================== */
 
 mostrarPersonaPrincipal();
@@ -742,14 +574,13 @@ mostrarNombreArchivo();
 
 
 /* ==================================================
-   14. MODO DE PRUEBAS LOCALES
+   13. DATOS PARA PRUEBAS LOCALES
    ================================================== */
 
 (() => {
-    const parametrosPagina =
-        new URLSearchParams(
-            window.location.search
-        );
+    const parametrosPagina = new URLSearchParams(
+        window.location.search
+    );
 
     const sitioLocal = [
         "localhost",
