@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         const respuesta = await fetch(
-            "http://127.0.0.1:8787/api/resumen",
+            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
             {
                 method: "GET",
                 credentials: "include",
@@ -104,7 +104,7 @@ async function mostrarHabitacionesAsignadas(datos) {
     if (!contenedor) return;
 
     const respuesta = await fetch(
-        "http://127.0.0.1:8787/api/habitaciones",
+        "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/habitaciones",
         {
             method: "GET",
             credentials: "include",

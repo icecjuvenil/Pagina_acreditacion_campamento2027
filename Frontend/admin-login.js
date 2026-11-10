@@ -8,7 +8,7 @@
  * solamente será necesario cambiar esta constante.
  */
 
-const URL_LOGIN_ADMIN = "http://127.0.0.1:8787/api/login";
+const URL_LOGIN_ADMIN = "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/login";
 
 /* ==================================================
    ELEMENTOS DE LA PÁGINA
@@ -229,7 +229,7 @@ if (resultado.rol !== "ADMINISTRADOR") {
     // Cerrar la sesión si corresponde a un participante
     try {
         await fetch(
-            "http://127.0.0.1:8787/api/logout",
+            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/logout",
             {
                 method: "POST",
                 credentials: "include",

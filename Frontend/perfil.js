@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!menuPrincipal) return;
 
-    const API = "http://127.0.0.1:8787";
+    const API = "https://icec-campamento-2027-api.brantemarco777.workers.dev";
 
     // Mostrar el menú solo si existe una sesión activa.
     let usuario;

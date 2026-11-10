@@ -445,7 +445,7 @@ if (entradaComprobante) {
    ================================================== */
 
 // Dirección de pruebas. No publicar así en producción.
-const API_PAGOS = "http://127.0.0.1:8787";
+const API_PAGOS = "https://icec-campamento-2027-api.brantemarco777.workers.dev";
 
 if (
     formularioComprobante &&
@@ -834,7 +834,7 @@ async function cargarResumenDesdeD1() {
 
     try {
         const respuesta = await fetch(
-            "http://127.0.0.1:8787/api/resumen",
+            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
             {
                 method: "GET",
                 credentials: "include",
@@ -1027,7 +1027,7 @@ setInterval(async () => {
 
     try {
         const respuesta = await fetch(
-            "http://127.0.0.1:8787/api/resumen",
+            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
             {
                 method: "GET",
                 credentials: "include",
