@@ -48,7 +48,10 @@ const ORIGENES_PERMITIDOS = [
   "http://localhost:5500",
   "http://127.0.0.1:5500",
   "http://localhost:5501",
-  "http://127.0.0.1:5501"
+  "http://127.0.0.1:5501",
+  "https://pagina-acreditacion-campamento2027.pages.dev",
+  "https://icec.cl",
+  "https://www.icec.cl"
 ];
 
 // ==========================================
@@ -717,19 +720,12 @@ async function verificarTurnstile(
       };
     }
 
-    // Añadir aquí el dominio definitivo.
-
-    const ES_PRUEBA_LOCAL =
-  ["localhost", "127.0.0.1"].includes(
-    new URL(request.url).hostname
-  ) &&
-  env.TURNSTILE_SECRET_KEY ===
-    "1x0000000000000000000000000000000AA";
-
+  
 const HOSTNAMES_PERMITIDOS = [
   "localhost",
-  "127.0.0.1",
-  ...(ES_PRUEBA_LOCAL ? ["example.com"] : [])
+  "pagina-acreditacion-campamento2027.pages.dev",
+  "icec.cl",
+  "www.icec.cl"
 ];
 
     if (
