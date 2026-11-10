@@ -34,7 +34,7 @@
                 src="Logos/logo-elegidos.png"
                 alt="Logo Elegidos ICEC Juvenil">
 
-            <span>ICECJUVENIL</span>
+            <span>ICEC JUVENIL</span>
 
         </a>
 
@@ -156,15 +156,30 @@
 
                     </div>
 
-                    <!-- Se conectará al envío de correos posteriormente -->
+                                        <!-- Solicitar la contraseña provisoria -->
                     <button
-                        type="button"
+                        type="submit"
+                        id="enviar-provisoria"
                         class="boton-login">
 
-                        Enviar enlace de recuperación
+                        Enviar contraseña provisoria
                     </button>
 
-                </form>
+                    <!-- Acceso directo si ya recibió la provisoria -->
+                    <div class="volver-login">
+
+                        <a href="nueva-contrasena.html">
+                            Ya tengo una contraseña provisoria
+                        </a>
+
+                    </div>
+
+                    <!-- Mensajes de la solicitud -->
+                    <p
+                        id="mensaje-recuperacion"
+                        role="status"
+                        aria-live="polite">
+                    </p>
 
                 <!-- Regreso al inicio de sesión -->
                 <div class="volver-login">

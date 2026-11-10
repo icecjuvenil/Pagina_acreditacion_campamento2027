@@ -5969,6 +5969,405 @@ body.pagina-login .boton-login:hover {
         width: 100%;
     }
 }
+/* ==================================================
+   NUEVA CONTRASEÑA — DISEÑO COMPLETO
+   ================================================== */
+
+/* Encabezado y navegación */
+body:has(#formulario-nueva-contrasena) .encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    min-height: 88px;
+    padding: 12px clamp(24px, 4vw, 64px);
+
+    background: #fffdf8;
+    border-bottom: 1px solid #e7e0cf;
+}
+
+/* Recuperar el tamaño original del logo */
+body:has(#formulario-nueva-contrasena) .marca {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 14px;
+
+    width: auto;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+
+body:has(#formulario-nueva-contrasena) .marca img {
+    display: block;
+    position: static;
+    flex: 0 0 auto;
+
+    width: 190px;
+    height: auto;
+    max-width: none;
+    margin: -27px -57px -26px;
+    padding: 0;
+
+    object-fit: contain;
+    clip-path: inset(25% 30% 24% 30%);
+    transform: none;
+}
+
+body:has(#formulario-nueva-contrasena) .marca span {
+    position: static;
+    margin: 0;
+    padding: 7px 0 7px 18px;
+
+    color: var(--verde-profundo);
+    border-left: 1px solid var(--dorado-medio);
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+body:has(#formulario-nueva-contrasena) .menu-principal {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    gap: 28px;
+
+    width: auto;
+    margin-left: auto;
+}
+
+body:has(#formulario-nueva-contrasena) .menu-principal a {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 10px 0;
+
+    color: var(--verde-profundo);
+    background: transparent;
+    border-radius: 0;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+body:has(#formulario-nueva-contrasena)
+.menu-principal a[href="login.html"] {
+    border-bottom: 2px solid var(--dorado-medio);
+}
+
+body:has(#formulario-nueva-contrasena)
+.menu-principal a:hover {
+    color: #886520;
+}
+
+/* Fotografía panorámica */
+body:has(#formulario-nueva-contrasena)
+.banner-nueva-contrasena {
+    width: 100%;
+    height: clamp(150px, 19vw, 240px);
+    min-height: 0;
+    margin: 0;
+}
+
+body:has(#formulario-nueva-contrasena)
+.banner-nueva-contrasena img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center 65%;
+    filter: brightness(0.85);
+}
+
+/* Contenido de la página */
+body:has(#formulario-nueva-contrasena) .contenido-login {
+    box-sizing: border-box;
+    width: min(900px, calc(100% - 36px));
+    margin: 0 auto;
+    padding: 30px 0 50px;
+}
+
+body:has(#formulario-nueva-contrasena) .seccion-login {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Título como en Resumen y pago */
+body:has(#formulario-nueva-contrasena) .cabecera-login {
+    margin: 0 0 28px;
+    text-align: center;
+}
+
+body:has(#formulario-nueva-contrasena)
+#titulo-nueva-contrasena {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: none;
+}
+
+body:has(#formulario-nueva-contrasena)
+.cabecera-login h2::after {
+    display: none;
+}
+
+body:has(#formulario-nueva-contrasena)
+.cabecera-login p {
+    max-width: 650px;
+    margin: 12px auto 0;
+
+    color: #62675d;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Tarjeta blanca */
+body:has(#formulario-nueva-contrasena) .tarjeta-login {
+    box-sizing: border-box;
+    width: min(620px, 100%);
+    margin: 0 auto;
+    padding: 28px 30px;
+
+    background: #ffffff;
+    border: 1px solid #e8e5db;
+    border-radius: 20px;
+
+    box-shadow: 0 14px 36px rgba(37, 30, 23, 0.12);
+}
+
+/* Encabezado Protege tu cuenta */
+body:has(#formulario-nueva-contrasena)
+.cabecera-seguridad {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #dce3d5;
+}
+
+body:has(#formulario-nueva-contrasena)
+.icono-seguridad {
+    display: grid;
+    place-items: center;
+    flex: 0 0 48px;
+
+    width: 48px;
+    height: 48px;
+
+    color: var(--verde-profundo);
+    background: #edf2e7;
+    border-radius: 50%;
+}
+
+/* Candado verde del encabezado */
+body:has(#formulario-nueva-contrasena)
+.icono-seguridad svg {
+    width: 28px;
+    height: 28px;
+
+    fill: none;
+    stroke: var(--verde-profundo);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Cuerpo del candado relleno de verde */
+body:has(#formulario-nueva-contrasena)
+.icono-seguridad svg rect {
+    fill: var(--verde-profundo);
+}
+
+body:has(#formulario-nueva-contrasena)
+.cabecera-seguridad h3 {
+    margin: 0;
+
+    color: var(--verde-profundo);
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Formulario */
+#formulario-nueva-contrasena {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+#formulario-nueva-contrasena .campo-login {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin: 0;
+}
+
+#formulario-nueva-contrasena .campo-login label {
+    margin: 0;
+
+    color: #283322;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* Entradas e iconos */
+#formulario-nueva-contrasena .control-login {
+    position: relative;
+    min-height: 0;
+
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    overflow: visible;
+}
+
+#formulario-nueva-contrasena .control-login input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+    min-height: 0;
+    padding: 0 14px 0 44px;
+
+    color: var(--texto);
+    background: #ffffff;
+    border: 1px solid #c8cec2;
+    border-radius: 10px;
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 0.95rem;
+}
+
+#formulario-nueva-contrasena .control-login svg {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+
+    width: 20px;
+    height: 20px;
+
+    fill: none;
+    stroke: #75806d;
+    stroke-width: 1.7;
+    pointer-events: none;
+
+    transform: translateY(-50%);
+}
+
+#formulario-nueva-contrasena .control-login input:focus {
+    border-color: var(--verde-profundo);
+    outline: 3px solid rgba(59, 152, 51, 0.13);
+    outline-offset: 1px;
+}
+
+/* Botón principal */
+#guardar-nueva-contrasena {
+    width: 100%;
+    min-height: 50px;
+    margin: 4px 0 0;
+    padding: 12px 16px;
+
+    color: #ffffff;
+    background: var(--verde-profundo);
+    border: 1px solid var(--verde-profundo);
+    border-radius: 10px;
+
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#guardar-nueva-contrasena:hover:not(:disabled) {
+    background: var(--verde-intermedio);
+}
+
+#guardar-nueva-contrasena:disabled {
+    color: #5a6353;
+    background: #e6eadf;
+    border-color: #d4dacb;
+    cursor: not-allowed;
+}
+
+#guardar-nueva-contrasena:focus-visible {
+    outline: 3px solid var(--dorado-claro);
+    outline-offset: 3px;
+}
+
+/* Mensaje del formulario */
+#mensaje-nueva-contrasena {
+    margin: 0;
+    padding: 0;
+
+    color: #62685d;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* Enlaces inferiores */
+body:has(#formulario-nueva-contrasena)
+.tarjeta-login .volver-login {
+    margin: 18px 0 0;
+    padding: 0;
+    border: 0;
+
+    text-align: center;
+}
+
+body:has(#formulario-nueva-contrasena)
+.tarjeta-login .volver-login + .volver-login {
+    margin-top: 10px;
+}
+
+body:has(#formulario-nueva-contrasena)
+.volver-login a {
+    color: var(--verde-profundo);
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    body:has(#formulario-nueva-contrasena) .encabezado {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px 18px;
+    }
+
+    body:has(#formulario-nueva-contrasena) .menu-principal {
+        justify-content: center;
+        width: 100%;
+        margin: 0;
+        gap: 24px;
+    }
+
+    body:has(#formulario-nueva-contrasena)
+    .contenido-login {
+        padding-top: 24px;
+    }
+
+    body:has(#formulario-nueva-contrasena) .tarjeta-login {
+        padding: 24px 18px;
+    }
+}
 
 
 /* ==================================================
