@@ -7,7 +7,7 @@
 
 document.addEventListener("DOMContentLoaded", cargarMiPerfil);
 
-const API_PERFIL = "http://127.0.0.1:8787";
+const API_PERFIL = "https://icec-campamento-2027-api.brantemarco777.workers.dev";
 
 function obtenerElemento(id) {
     return document.getElementById(id);
