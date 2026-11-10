@@ -7212,3 +7212,598 @@ body.pagina-login .boton-login:hover {
     border-color: #66855b;
     box-shadow: 0 0 0 3px rgba(102, 133, 91, 0.15);
 }
+
+/* ==========================================
+   ACREDITACIÓN DE LÍDER
+   ========================================== */
+
+.estado-lider-acreditado {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 16px;
+    border-radius: 8px;
+
+    background-color: #e8f4e9;
+    color: #225c36;
+
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+/* Mensaje de alojamiento para líderes */
+
+.aviso-habitacion-lider {
+    margin-top: 10px;
+    padding: 0;
+
+    color: #667568;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Menú de navegación más compacto */
+.menu-principal {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 28px;
+}
+
+.menu-principal .icec-perfil {
+    margin-left: 4px;
+}
+
+/* ==========================================
+   MI PERFIL - ICEC JUVENIL 2027
+   ========================================== */
+
+/* Fondo de Mi perfil con árboles ICEC */
+
+.pagina-perfil {
+    min-height: 100vh;
+
+    background:
+        url("Logos/fondo-bosque.svg")
+        center bottom / 100% 340px no-repeat,
+
+        linear-gradient(
+            180deg,
+            #f6f2e4 0%,
+            #fbf8ef 55%,
+            #eee8d4 100%
+        );
+}
+
+.contenido-perfil {
+    width: min(1100px, 92%);
+    margin: 46px auto 80px;
+}
+
+.cabecera-perfil {
+    margin-bottom: 32px;
+    text-align: left;
+}
+
+.cabecera-perfil h1 {
+    margin: 0 0 12px;
+    color: #174224;
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cabecera-perfil p {
+    margin: 0;
+    color: #5e6d61;
+    font-size: 17px;
+    line-height: 1.65;
+    max-width: 760px;
+}
+
+.tarjeta-perfil {
+    background: #ffffff;
+    padding: 30px 30px 26px;
+    border-radius: 18px;
+    margin-bottom: 26px;
+    border: 1px solid #e7dcc0;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.tarjeta-perfil::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(
+        90deg,
+        #1b4b2b 0%,
+        #d8b75c 100%
+    );
+}
+
+.tarjeta-perfil h2 {
+    margin: 0 0 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #efe7d5;
+    color: #174224;
+    font-size: 28px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.perfil-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 34px;
+}
+
+.perfil-dato {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+    padding: 12px 0;
+}
+
+.perfil-dato strong {
+    color: #8b7a4c;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.perfil-dato span {
+    color: #20372a;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.perfil-acompanante {
+    padding: 22px;
+    border: 1px solid #eadfcb;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    background: linear-gradient(
+        180deg,
+        #fffefb 0%,
+        #f8f5ec 100%
+    );
+}
+
+.perfil-acompanante h3 {
+    color: #174224;
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.perfil-estado {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #e4f1e7;
+    color: #1f5a33;
+    font-size: 14px;
+    font-weight: 800;
+    border: 1px solid #cce2d1;
+}
+
+#perfil-cargando,
+#perfil-error {
+    padding: 26px;
+    background: #ffffff;
+    border: 1px solid #e7dcc0;
+    border-radius: 16px;
+    color: #174224;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+}
+
+#perfil-error h1 {
+    margin-top: 0;
+    color: #8d2b2b;
+}
+
+#perfil-error a {
+    color: #174224;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .cabecera-perfil h1 {
+        font-size: 38px;
+    }
+
+    .perfil-dato span {
+        font-size: 19px;
+    }
+}
+
+@media (max-width: 650px) {
+    .contenido-perfil {
+        margin-top: 28px;
+    }
+
+    .tarjeta-perfil {
+        padding: 22px 20px;
+        border-radius: 16px;
+    }
+
+    .tarjeta-perfil h2 {
+        font-size: 22px;
+    }
+
+    .perfil-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .cabecera-perfil h1 {
+        font-size: 31px;
+    }
+
+    .cabecera-perfil p {
+        font-size: 15px;
+    }
+
+    .perfil-dato span {
+        font-size: 18px;
+    }
+}
+
+/* ==========================================
+   MI PERFIL - EFECTO PAPEL RASGADO
+   ========================================== */
+
+/* Contenedor del cartel */
+.perfil-habitacion-media {
+    position: relative;
+    flex: 0 0 260px;
+    max-width: 42%;
+    min-height: 230px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        110deg,
+        #e7d5ad 0%,
+        #eadbbd 40%,
+        #f0e4ce 100%
+    );
+
+    /* Borde irregular como papel cortado a mano */
+    clip-path: polygon(
+        8% 0%,
+        100% 0%,
+        100% 100%,
+        7% 100%,
+        9% 96%,
+        6% 92%,
+        10% 87%,
+        5% 82%,
+        8% 77%,
+        4% 71%,
+        9% 66%,
+        6% 60%,
+        10% 55%,
+        5% 49%,
+        8% 43%,
+        4% 37%,
+        9% 31%,
+        6% 25%,
+        10% 19%,
+        5% 13%,
+        8% 7%
+    );
+}
+
+/* Imagen oficial de la habitación */
+.perfil-habitacion .perfil-habitacion-imagen {
+    width: auto;
+    max-width: 75%;
+    height: 190px;
+    object-fit: contain;
+
+    padding: 0;
+    background: transparent;
+    border-radius: 6px;
+    box-shadow: 0 5px 14px rgba(65, 45, 20, 0.14);
+}
+
+/* Adaptación para celulares */
+@media (max-width: 600px) {
+    .perfil-habitacion-media {
+        flex-basis: 145px;
+        max-width: 43%;
+        min-height: 170px;
+    }
+
+    .perfil-habitacion .perfil-habitacion-imagen {
+        max-width: 78%;
+        height: 135px;
+    }
+}
+
+/* Corregir distribución horizontal de habitaciones */
+
+#perfil-habitaciones .perfil-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+#perfil-habitaciones .perfil-habitacion {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+
+    width: 100%;
+    min-height: 230px;
+    padding: 0;
+    gap: 0;
+
+    background: #faf7ef;
+    border: 1px solid #e7dcc0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+#perfil-habitaciones .perfil-habitacion .perfil-dato {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+}
+
+#perfil-habitaciones .perfil-habitacion-media {
+    flex: 0 0 260px;
+    width: 260px;
+    max-width: 42%;
+    margin-left: auto;
+    align-self: stretch;
+}
+
+@media (max-width: 600px) {
+    #perfil-habitaciones .perfil-habitacion .perfil-dato {
+        padding: 16px;
+    }
+
+    #perfil-habitaciones .perfil-habitacion-media {
+        flex-basis: 140px;
+        width: 140px;
+        max-width: 45%;
+    }
+}
+
+/* ==========================================
+   MI PERFIL - DISTRIBUCIÓN EN DOS COLUMNAS
+   ========================================== */
+
+.perfil-columnas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 26px;
+    align-items: start;
+}
+
+.perfil-columna {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.perfil-columna .tarjeta-perfil {
+    width: 100%;
+    margin-bottom: 0;
+    box-sizing: border-box;
+}
+
+/* Evitar que los textos sobrepasen las tarjetas */
+.perfil-columna .perfil-grid {
+    min-width: 0;
+}
+
+.perfil-columna .perfil-dato span {
+    overflow-wrap: anywhere;
+}
+
+/* Habitaciones apiladas verticalmente */
+#perfil-habitaciones .perfil-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#perfil-habitaciones .perfil-habitacion {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Adaptar el diseño a celulares y tablets */
+@media (max-width: 900px) {
+    .perfil-columnas {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .perfil-columna {
+        gap: 24px;
+    }
+}
+
+/* ==========================================
+   MI PERFIL - APROVECHAR ANCHO DE PANTALLA
+   ========================================== */
+
+.pagina-perfil .contenido-perfil {
+    width: calc(100% - 64px);
+    max-width: 1700px;
+    margin: 40px auto 80px;
+}
+
+.pagina-perfil .perfil-columnas {
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+    gap: 28px;
+}
+
+@media (max-width: 900px) {
+    .pagina-perfil .contenido-perfil {
+        width: calc(100% - 32px);
+        margin-top: 25px;
+    }
+
+    .pagina-perfil .perfil-columnas {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagina-perfil .contenido-perfil {
+        width: calc(100% - 20px);
+    }
+}
+
+/* ==========================================
+   MI PERFIL - MONTOS DE ACREDITACIÓN
+   ========================================== */
+
+#perfil-acreditacion .perfil-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+#perfil-acreditacion .perfil-dato {
+    padding: 18px;
+    background: #faf7ef;
+    border: 1px solid #e8ddc5;
+    border-radius: 12px;
+}
+
+#perfil-acreditacion .perfil-dato strong {
+    color: #927439;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+#perfil-acreditacion .perfil-dato span {
+    color: #174224;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+@media (max-width: 600px) {
+    #perfil-acreditacion .perfil-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #perfil-acreditacion .perfil-dato span {
+        font-size: 22px;
+    }
+}
+
+/* ==========================================
+   MI PERFIL - TARJETAS ALINEADAS
+   ========================================== */
+
+@media (min-width: 901px) {
+
+    .pagina-perfil .perfil-columnas {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto auto;
+        align-items: stretch;
+        gap: 24px 28px;
+    }
+
+    .pagina-perfil .perfil-columna {
+        display: contents;
+    }
+
+    /* Fila superior */
+    .pagina-perfil .perfil-columna:first-child
+    > .tarjeta-perfil:first-child {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .pagina-perfil .perfil-columna:last-child
+    > .tarjeta-perfil:first-child {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    /* Fila inferior */
+    .pagina-perfil .perfil-columna:first-child
+    > .tarjeta-perfil:last-child {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .pagina-perfil .perfil-columna:last-child
+    > .tarjeta-perfil:last-child {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .pagina-perfil .tarjeta-perfil {
+        height: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+}
+
+
+/* ==========================================
+   MI PERFIL - BENEFICIO DE LÍDER
+   ========================================== */
+
+.perfil-beneficio-lider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 20px;
+    padding: 16px 20px;
+
+    background: linear-gradient(
+        135deg,
+        #eaf4e9,
+        #f8f2dd
+    );
+
+    border: 1px solid #d6b45c;
+    border-left: 5px solid #1b5630;
+    border-radius: 12px;
+
+    color: #174224;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+}

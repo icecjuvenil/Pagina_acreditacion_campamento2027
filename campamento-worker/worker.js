@@ -14,6 +14,7 @@
 // CONFIGURACIÓN
 // ==========================================
 import { manejarAcompanantes } from "./acompanantes-api.js";
+import { manejarBeneficioLider } from "./lideres-api.js";
 import { manejarComprobantes } from "./comprobantes-api.js";
 import { manejarResumen } from "./resumen-api.js";
 import { manejarPagosAdmin } from "./admin-api.js";
@@ -1864,7 +1865,20 @@ async function manejarSolicitud(request, env) {
       }
     );
   }
+// ==========================================
+// BENEFICIO PARA LÍDERES
+// ==========================================
 
+if (url.pathname === "/api/lideres/validar") {
+  return manejarBeneficioLider(
+    request,
+    env,
+    {
+      usuarioDeSesion,
+      ORIGENES_PERMITIDOS
+    }
+  );
+}
 
   // ----------------------------------------
   // INICIAR SESIÓN

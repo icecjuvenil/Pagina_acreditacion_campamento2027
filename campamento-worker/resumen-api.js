@@ -90,7 +90,9 @@ export async function manejarResumen(
          p.rut,
          p.fecha_nacimiento,
          p.genero,
+         p.telefono,
          p.valor_acreditacion,
+         p.beneficio_lider,
          u.correo
        FROM participantes p
        INNER JOIN usuarios u
@@ -174,8 +176,12 @@ export async function manejarResumen(
         fechaNacimiento:
         participante.fecha_nacimiento,
         genero: participante.genero,
+        telefono: participante.telefono || "",
         valorAcreditacion:
-        Number(participante.valor_acreditacion)
+  Number(participante.valor_acreditacion),
+
+beneficioLider:
+  Number(participante.beneficio_lider) === 1
       },
 
       acompanantes,

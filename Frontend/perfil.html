@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mi perfil | ICEC Juvenil 2027</title>
+
+    <link rel="icon"
+          type="image/png"
+          href="Logos/logo-elegidos-blanco.jpg">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="pagina-perfil">
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado">
+
+        <a href="index.html" class="marca">
+            <img src="Logos/logo-elegidos.png"
+                 alt="Logo ICEC Juvenil">
+
+            <span>ICEC Juvenil</span>
+        </a>
+
+        <nav class="menu-principal"
+             aria-label="Navegación principal">
+
+            <a href="index.html">Inicio</a>
+
+            <a href="informacion.html">
+                Informaciones
+            </a>
+
+            <a href="perfil.html" aria-current="page">
+                Mi perfil
+            </a>
+
+        </nav>
+
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="contenido-perfil">
+
+        <div id="perfil-cargando" role="status">
+            Cargando información de tu perfil...
+        </div>
+
+        <section id="perfil-error" role="alert" hidden>
+            <h1>No se pudo cargar tu perfil</h1>
+            <p id="perfil-error-mensaje"></p>
+            <a href="login.html">Ir a iniciar sesión</a>
+        </section>
+
+        <div id="perfil-contenido" hidden>
+
+            <header class="cabecera-perfil">
+                <div class="perfil-columnas">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <div class="perfil-columna">
+
+        <section class="tarjeta-perfil">
+            <h2>👤 Mis datos personales</h2>
+            <div id="perfil-datos-personales"></div>
+        </section>
+
+        <section class="tarjeta-perfil">
+            <h2>👥 Mis acompañantes</h2>
+            <div id="perfil-acompanantes"></div>
+        </section>
+
+    </div>
+
+    <!-- COLUMNA DERECHA -->
+    <div class="perfil-columna">
+
+        <section class="tarjeta-perfil">
+            <h2>✅ Mi acreditación</h2>
+            <div id="perfil-acreditacion"></div>
+        </section>
+
+        <section class="tarjeta-perfil">
+            <h2>🛏️ Mis habitaciones</h2>
+            <div id="perfil-habitaciones"></div>
+        </section>
+
+    </div>
+
+</div>
+    </main>
+
+    <!-- Menú circular -->
+<script src="perfil.js"></script>
+
+<!-- Información del participante desde Cloudflare D1 -->
+<script src="perfil-pagina.js"></script>
+
+</body>
+</html>

@@ -183,6 +183,7 @@ if (
                     WHERE h.id = ?
                     AND h.activa = 1
                     AND p.cancelada = 0
+                    AND p.beneficio_lider = 0
                     AND pg.estado = 'APROBADO'
                      AND UPPER(TRIM(h.genero)) =
                          UPPER(TRIM(p.genero))

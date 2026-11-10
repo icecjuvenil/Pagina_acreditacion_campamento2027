@@ -105,10 +105,11 @@ export async function manejarPagosAdmin(
          pg.fecha_transferencia,
          pg.fecha_registro,
          CASE
-           WHEN pg.comprobante_key IS NOT NULL
-           THEN 1
-           ELSE 0
-         END AS comprobante_recibido,
+  WHEN pg.comprobante_key IS NOT NULL
+    OR pg.comprobante_efectivo_key IS NOT NULL
+  THEN 1
+  ELSE 0
+END AS comprobante_recibido,
          (
            SELECT COUNT(*)
            FROM acompanantes a

@@ -169,17 +169,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     const participantes = [];
 
     // Participante principal
-    const principal = resumenInscripcion.participante;
+// Los líderes acreditados no requieren habitación.
+const principal = resumenInscripcion.participante;
 
-    if (principal) {
-        participantes.push({
-            id: `principal-${principal.id}`,
-            tipo: "principal",
-            nombre: principal.nombreCompleto,
-            genero: normalizarGenero(principal.genero),
-            datos: principal
-        });
-    }
+if (principal && principal.beneficioLider !== true) {
+    participantes.push({
+        id: `principal-${principal.id}`,
+        tipo: "principal",
+        nombre: principal.nombreCompleto,
+        genero: normalizarGenero(principal.genero),
+        datos: principal
+    });
+}
 
     // Acompañantes registrados
     const acompanantes = Array.isArray(
@@ -196,14 +197,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    if (participantes.length === 0) {
+   if (participantes.length === 0) {
+
+    // Un líder sin acompañantes no necesita habitación.
+    if (principal?.beneficioLider === true) {
         alert(
-            "No se encontraron participantes registrados."
+            "Tu inscripción como líder está aprobada. " +
+            "No necesitas seleccionar una habitación."
         );
 
-        window.location.replace("login.html");
+        window.location.replace("informacion.html");
         return;
     }
+
+    alert(
+        "No se encontraron participantes registrados."
+    );
+
+    window.location.replace("login.html");
+    return;
+}
 
 
 

@@ -45,6 +45,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 if (datos.pago?.estado === "APROBADO") {
     contenido.hidden = false;
     accesoDenegado.hidden = true;
+    // Ocultar la selección de piezas cuando
+// el líder no tiene acompañantes.
+const esLider = datos.participante?.beneficioLider === true;
+
+const tieneAcompanantes =
+    Array.isArray(datos.acompanantes) &&
+    datos.acompanantes.length > 0;
+
+const accesoPiezas = document.querySelector(
+    ".acceso-seleccion-piezas"
+);
+
+// Ocultar la selección de habitaciones
+// para líderes sin acompañantes.
+if (esLider && !tieneAcompanantes) {
+
+    // Ocultar el botón de la página.
+    if (accesoPiezas) {
+        accesoPiezas.hidden = true;
+    }
+
+    // Ocultar el enlace del menú superior.
+    const enlaceMenuPiezas = document.querySelector(
+        '.menu-principal a[href="piezas.html"]'
+    );
+
+    if (enlaceMenuPiezas) {
+        enlaceMenuPiezas.hidden = true;
+    }
+}
 
     try {
         await mostrarHabitacionesAsignadas(datos);
@@ -94,7 +124,13 @@ async function mostrarHabitacionesAsignadas(datos) {
 
     // Título principal
     const titulo = document.createElement("h3");
-    titulo.textContent = "🛏 Habitaciones asignadas";
+    const esLiderSinAcompanantes =
+    datos.participante?.beneficioLider === true &&
+    (!datos.acompanantes || datos.acompanantes.length === 0);
+
+titulo.textContent = esLiderSinAcompanantes
+    ? "✓ Acreditación de líder"
+    : "🛏 Habitaciones asignadas";
     contenedor.appendChild(titulo);
 
     // Participante principal y sus acompañantes
@@ -108,6 +144,35 @@ async function mostrarHabitacionesAsignadas(datos) {
             tipo: "acompanante"
         }))
     ];
+
+    // Mostrar "Escoger piezas" solo si falta alguna habitación.
+const accesoPiezas = document.querySelector(
+    ".acceso-seleccion-piezas"
+);
+
+const asignaciones = informacion.asignaciones || [];
+
+const faltanHabitaciones = personas.some(persona => {
+
+    // Los líderes no necesitan habitación.
+    if (
+        persona.tipo === "principal" &&
+        persona.beneficioLider === true
+    ) {
+        return false;
+    }
+
+    // Comprobar si tiene una habitación asignada.
+    return !asignaciones.some(asignacion =>
+        asignacion.personaId === persona.id &&
+        asignacion.tipo === persona.tipo &&
+        asignacion.habitacionId != null
+    );
+});
+
+if (accesoPiezas) {
+    accesoPiezas.hidden = !faltanHabitaciones;
+}
 
     
     // Carteles oficiales de las 17 habitaciones
@@ -169,10 +234,36 @@ async function mostrarHabitacionesAsignadas(datos) {
         const nombreHabitacion = document.createElement("p");
         nombreHabitacion.className = "tarjeta-habitacion-nombre";
 
-        nombreHabitacion.textContent = habitacion?.nombre
-            || "Sin habitación asignada";
+       if (
+    persona.tipo === "principal" &&
+    persona.beneficioLider === true
+) {
+    nombreHabitacion.textContent =
+        "✓ Inscripción gratuita confirmada";
+
+    nombreHabitacion.classList.add(
+        "estado-lider-acreditado"
+    );
+} else {
+    nombreHabitacion.textContent =
+        habitacion?.nombre || "Sin habitación asignada";
+}
 
         tarjeta.appendChild(nombreHabitacion);
+        // Indicación especial para líderes acreditados.
+if (
+    persona.tipo === "principal" &&
+    persona.beneficioLider === true
+) {
+    const avisoLider = document.createElement("p");
+
+    avisoLider.className = "aviso-habitacion-lider";
+
+    avisoLider.textContent =
+        "No requiere asignación de habitación.";
+
+    tarjeta.appendChild(avisoLider);
+}
 
         
         // Identificar el cartel de cualquiera de las 17 habitaciones

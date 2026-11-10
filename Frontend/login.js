@@ -299,10 +299,15 @@ async function iniciarSesion(evento) {
 
     mostrarUsuario(usuario);
 
-    mostrarMensaje(
-      "Sesión iniciada correctamente."
-    );
+mostrarMensaje(
+  "Sesión iniciada correctamente."
+);
 
+// Redirigir al participante a Mi perfil.
+if (usuario.rol === "PARTICIPANTE") {
+  window.location.replace("perfil.html");
+  return;
+}
   } catch (error) {
     console.error(
       "Error al iniciar sesión:",
@@ -414,10 +419,15 @@ document.addEventListener(
         await consultarSesionActiva();
 
       if (usuario) {
-        mostrarUsuario(usuario);
-      } else {
-        mostrarFormulario();
-      }
+    if (usuario.rol === "PARTICIPANTE") {
+        window.location.replace("perfil.html");
+        return;
+    }
+
+    mostrarUsuario(usuario);
+} else {
+    mostrarFormulario();
+}
 
     } catch (error) {
       console.error(

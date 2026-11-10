@@ -59,28 +59,7 @@ const detalleTotalInscripciones =
 const enlaceVolver =
     document.getElementById("volver-formulario");
 
-const formularioComprobante =
-    document.getElementById("formulario-comprobante");
 
-const entradaComprobante =
-    document.getElementById("comprobante-transferencia") ||
-    document.getElementById("comprobante-tranferencia");
-
-const nombreArchivoComprobante =
-    document.getElementById("nombre-archivo-comprobante");
-
-const entradaFechaTransferencia =
-    document.getElementById("fecha-transferencia");
-
-const entradaTitularTransferencia =
-    document.getElementById("titular-tranferencia") ||
-    document.getElementById("titular-transferencia");
-
-const estadoPago =
-    document.getElementById("estado-pago");
-
-const mensajeEstadoPago =
-    document.getElementById("mensaje-estado-pago");
 
 
 /* ==================================================
@@ -753,23 +732,78 @@ if (metodoSeleccionado === "TRANSFERENCIA") {
     });
 
     if (botonValidar) {
-        botonValidar.addEventListener("click", () => {
-            if (!mensajeClave) {
-                return;
+        
+botonValidar.addEventListener("click", async () => {
+    const clave = entradaClave.value;
+
+    if (!clave.trim()) {
+        mensajeClave.textContent =
+            "Ingresa la palabra clave entregada.";
+        entradaClave.focus();
+        return;
+    }
+
+    botonValidar.disabled = true;
+    mensajeClave.textContent = "Validando clave...";
+
+    try {
+        const respuesta = await fetch(
+            `${API_PAGOS}/api/lideres/validar`,
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-ICEC-Solicitud": "web"
+                },
+                body: JSON.stringify({ clave })
             }
+        );
 
-            if (!entradaClave.value.trim()) {
-                mensajeClave.textContent =
-                    "Ingresa la palabra clave entregada.";
+        const resultado = await respuesta.json();
 
-                entradaClave.focus();
-                return;
-            }
+        if (!respuesta.ok || resultado.estado !== "OK") {
+            throw new Error(
+                resultado.mensaje ||
+                "No fue posible validar la clave."
+            );
+        }
 
-            mensajeClave.textContent =
-                "La validación de líderes está pendiente de conexión. " +
-                "El beneficio todavía no se ha aplicado.";
-        });
+        mensajeClave.textContent = resultado.mensaje;
+entradaClave.value = "";
+
+// Actualizar inmediatamente los valores
+// confirmados por Cloudflare D1.
+if (resultado.beneficioLider === true) {
+
+    personaPrincipal.valorAcreditacion =
+        Number(resultado.valorLider);
+
+    totalInscripcion =
+        Number(resultado.montoTotal);
+
+    // Actualizar el valor del líder.
+    mostrarPersonaPrincipal();
+
+    // Actualizar el total y los datos bancarios.
+    mostrarTotal();
+}
+
+// Sincronizar nuevamente con la base de datos.
+await cargarResumenDesdeD1();
+        // Impedir volver a enviar el mismo beneficio.
+        botonValidar.disabled = true;
+        entradaClave.disabled = true;
+        casillaLider.disabled = true;
+
+    } catch (error) {
+        mensajeClave.textContent =
+            error.message || "Error al validar la clave.";
+
+        botonValidar.disabled = false;
+    }
+});
+
     }
 
     actualizarCampoLider();
@@ -829,6 +863,11 @@ async function cargarResumenDesdeD1() {
                 "El servidor entregó un resumen incompleto."
             );
         }
+        // Redirigir a información cuando el pago esté aprobado.
+if (datos.pago.estado === "APROBADO") {
+    window.location.replace("informacion.html");
+    return;
+}
 
         // Recuperar los datos del participante
         // que realmente inició sesión.
@@ -980,7 +1019,37 @@ if (
 
 // Consultar automáticamente cuando abre pago.html.
 cargarResumenDesdeD1();
+// Comprobar cada 15 segundos si el pago fue aprobado.
+setInterval(async () => {
+    if (document.visibilityState !== "visible") {
+        return;
+    }
 
+    try {
+        const respuesta = await fetch(
+            "http://127.0.0.1:8787/api/resumen",
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+        if (!respuesta.ok) return;
+
+        const datos = await respuesta.json();
+
+        if (datos.pago?.estado === "APROBADO") {
+            window.location.replace("informacion.html");
+        }
+
+    } catch (error) {
+        console.error(
+            "No se pudo comprobar el estado del pago:",
+            error
+        );
+    }
+}, 15000);
 
 
 /* ==================================================
