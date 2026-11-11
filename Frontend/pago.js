@@ -445,7 +445,7 @@ if (entradaComprobante) {
    ================================================== */
 
 // Dirección de pruebas. No publicar así en producción.
-const API_PAGOS = "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+const API_PAGOS = "https://api.icec.cl";
 
 if (
     formularioComprobante &&
@@ -834,7 +834,7 @@ async function cargarResumenDesdeD1() {
 
     try {
         const respuesta = await fetch(
-            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+            "https://api.icec.cl/api/resumen",
             {
                 method: "GET",
                 credentials: "include",
@@ -1027,7 +1027,7 @@ setInterval(async () => {
 
     try {
         const respuesta = await fetch(
-            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+            "https://api.icec.cl/api/resumen",
             {
                 method: "GET",
                 credentials: "include",

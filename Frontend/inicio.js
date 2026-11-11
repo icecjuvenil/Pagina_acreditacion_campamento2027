@@ -240,7 +240,7 @@
 async function actualizarCuposDisponibles() {
     try {
         const respuesta = await fetch(
-            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/cupos",
+            "https://api.icec.cl/api/cupos",
             {
                 method: "GET",
                 cache: "no-store"

@@ -17,8 +17,8 @@
 // ==========================================
 
 const API_LOGIN =
- /* "https://icec-campamento-2027-api.brantemarco777.workers.dev";*/
-    "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+ /* "https://api.icec.cl";*/
+    "https://api.icec.cl";
 // ==========================================
 // ELEMENTOS DEL FORMULARIO
 // ==========================================

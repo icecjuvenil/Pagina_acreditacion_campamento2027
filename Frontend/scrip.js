@@ -5,8 +5,8 @@
  */
 
 const API_CAMPAMENTO =
-   // "https://icec-campamento-2027-api.brantemarco777.workers.dev";
-    "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+   // "https://api.icec.cl";
+    "https://api.icec.cl";
 
 // Funcion que prepara la comunicacion entre formulario y API    
 async function enviarRegistroCampamento(datos) {

@@ -321,7 +321,7 @@
     <script>
 
         const API_ADMIN =
-            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/pagos";
+            "https://api.icec.cl/api/admin/pagos";
 
         const mensaje = document.getElementById(
             "admin-mensaje"
@@ -469,7 +469,7 @@ async function confirmarCancelacion(pago) {
     
     try {
         const respuesta = await fetch(
-            `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/inscripciones/${pago.participanteId}/cancelar`,
+            `https://api.icec.cl/api/admin/inscripciones/${pago.participanteId}/cancelar`,
             {
                 method: "POST",
                 credentials: "include",
@@ -797,7 +797,7 @@ botonDetalles.addEventListener(
         try {
 
             const respuesta = await fetch(
-                `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/inscripciones/${pago.participanteId}`,
+                `https://api.icec.cl/api/admin/inscripciones/${pago.participanteId}`,
                 {
                     method: "GET",
                     credentials: "include",
@@ -998,7 +998,7 @@ botonComprobante.addEventListener("click", async () => {
     try {
 
         const respuesta = await fetch(
-            `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/comprobantes/${pagoDetalle.id}`,
+            `https://api.icec.cl/api/admin/comprobantes/${pagoDetalle.id}`,
             {
                 method: "GET",
                 credentials: "include",
@@ -1113,7 +1113,7 @@ if (pagoDetalle.comprobanteEfectivoRecibido) {
 
         try {
             const respuesta = await fetch(
-                `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/comprobantes/${pagoDetalle.id}?tipo=EFECTIVO`,
+                `https://api.icec.cl/api/admin/comprobantes/${pagoDetalle.id}?tipo=EFECTIVO`,
                 {
                     method: "GET",
                     credentials: "include",
@@ -1221,7 +1221,7 @@ const confirmar = confirm(
 
     try {
         const respuesta = await fetch(
-            `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/pagos/${pagoDetalle.id}/revision`,
+            `https://api.icec.cl/api/admin/pagos/${pagoDetalle.id}/revision`,
             {
                 method: "POST",
                 credentials: "include",
@@ -1307,7 +1307,7 @@ botonRechazar.addEventListener("click", async () => {
     try {
 
         const respuesta = await fetch(
-            `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/pagos/${pagoDetalle.id}/revision`,
+            `https://api.icec.cl/api/admin/pagos/${pagoDetalle.id}/revision`,
             {
                 method: "POST",
                 credentials: "include",
@@ -1540,7 +1540,7 @@ botonExportarExcel.addEventListener("click", async () => {
 
     try {
         const respuesta = await fetch(
-            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/exportacion",
+            "https://api.icec.cl/api/admin/exportacion",
             {
                 credentials: "include",
                 cache: "no-store"
@@ -1809,7 +1809,7 @@ botonCerrarSesion.addEventListener(
         try {
 
             const respuesta = await fetch(
-                "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/logout",
+                "https://api.icec.cl/api/logout",
                 {
                     method: "POST",
                     credentials: "include",

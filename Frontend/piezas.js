@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         const respuesta = await fetch(
-            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+            "https://api.icec.cl/api/resumen",
             {
                 method: "GET",
                 credentials: "include",
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         const respuesta = await fetch(
-            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+            "https://api.icec.cl/api/resumen",
             {
                 method: "GET",
                 credentials: "include",
@@ -952,7 +952,7 @@ if (principal && principal.beneficioLider !== true) {
             try {
                 // Consultar las habitaciones reales de D1.
                 const respuestaHabitaciones = await fetch(
-                    "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/habitaciones",
+                    "https://api.icec.cl/api/habitaciones",
                     {
                         method: "GET",
                         credentials: "include",
@@ -984,7 +984,7 @@ if (principal && principal.beneficioLider !== true) {
 
                 // Enviar la asignación al backend.
                 const respuestaReserva = await fetch(
-                    "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/habitaciones",
+                    "https://api.icec.cl/api/habitaciones",
                     {
                         method: "POST",
                         credentials: "include",
@@ -1108,7 +1108,7 @@ if (principal && principal.beneficioLider !== true) {
 
     async function cargarDisponibilidadD1() {
         const respuesta = await fetch(
-            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/habitaciones",
+            "https://api.icec.cl/api/habitaciones",
             {
                 method: "GET",
                 credentials: "include",

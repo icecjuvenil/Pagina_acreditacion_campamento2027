@@ -5,8 +5,8 @@
  */
 
 const API_ACOMPANANTES =
-  //"https://icec-campamento-2027-api.brantemarco777.workers.dev";
-  "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+  //"https://api.icec.cl";
+  "https://api.icec.cl";
 
 const formularioAcompanante = document.getElementById(
   "formulario-acompanante"
