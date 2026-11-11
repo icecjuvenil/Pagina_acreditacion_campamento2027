@@ -4,7 +4,7 @@
  * Recepción segura de comprobantes
  * Cloudflare Workers + D1 + R2
  */
-
+import { enviarCorreo } from "./correo-api.js";
 const MAX_ARCHIVO = 5 * 1024 * 1024;
 const MAX_SOLICITUD = MAX_ARCHIVO + 256 * 1024;
 

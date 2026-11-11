@@ -26,10 +26,8 @@ export async function enviarCorreo(
         );
     }
 
-    // Mientras no tengamos dominio verificado,
-    // usamos el remitente de pruebas de Resend.
     const remitente =
-        "ICEC Juvenil <onboarding@resend.dev>";
+    "ICEC Juvenil <notificaciones@icec.cl>";
 
     const respuesta = await fetch(
         "https://api.resend.com/emails",

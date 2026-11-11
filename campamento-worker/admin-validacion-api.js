@@ -177,28 +177,28 @@ AND (
         }
 
         // ==========================================
-        // NOTIFICACIÓN DE RECHAZO - PRUEBA LOCAL
+        // NOTIFICACIÓN DE RECHAZO O APROBACIÓN POR CORREO ELECTRÓNICO
         // ==========================================
 
 
             if (
-                ["APROBAR", "RECHAZAR"].includes(accion) &&
-                env.ENTORNO === "local" &&
-                env.RESEND_TEST_EMAIL
-            ) {
+    ["APROBAR", "RECHAZAR"].includes(accion)
+) {
 
             try {
                 const participante = await env.DB.prepare(`
-                    SELECT p.nombre_completo
-                    FROM pagos pg
-                    INNER JOIN participantes p
-                        ON p.id = pg.participante_id
-                    WHERE pg.id = ?
-                    LIMIT 1
-                `).bind(id).first();
+    SELECT p.nombre_completo, u.correo
+    FROM pagos pg
+    INNER JOIN participantes p
+        ON p.id = pg.participante_id
+    INNER JOIN usuarios u
+        ON u.id = p.usuario_id
+    WHERE pg.id = ?
+    LIMIT 1
+`).bind(id).first();
 
                 await enviarCorreo(env, {
-                    destinatario: env.RESEND_TEST_EMAIL.trim(),
+                    destinatario: participante?.correo,
                     
 asunto: accion === "APROBAR"
     ? "Pago aprobado - ICEC Juvenil 2027"
