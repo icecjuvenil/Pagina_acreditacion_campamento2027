@@ -2,7 +2,6 @@
 <html lang="es">
 
 <head>
-    <!-- Configuración general de la página -->
     <meta charset="UTF-8">
 
     <meta
@@ -10,62 +9,46 @@
         content="width=device-width, initial-scale=1.0">
 
     <title>Recuperar contraseña | Elegidos ICEC Juvenil</title>
-    <!-- Logo mostrado en la pestaña del navegador -->
-     <link 
-        rel="icon" 
-        type="image/png"
+
+    <link
+        rel="icon"
+        type="image/jpeg"
         href="Logos/logo-elegidos-blanco.jpg">
 
-    <!-- Estilos generales del sitio -->
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="pagina-acreditacion pagina-login pagina-recuperacion">
+<body class="pagina-acreditacion pagina-login pagina-recuperacion pagina-solicitar-clave">
 
-    <!-- ==================================================
-         ENCABEZADO PRINCIPAL
-         ================================================== -->
+    <!-- ENCABEZADO -->
     <header class="encabezado">
 
-        <!-- Logo y nombre de Instagram -->
         <a href="index.html" class="marca">
-
             <img
                 src="Logos/logo-elegidos.png"
                 alt="Logo Elegidos ICEC Juvenil">
 
             <span>ICEC JUVENIL</span>
-
         </a>
 
-        <!-- Navegación principal -->
         <nav
             class="menu-principal"
             aria-label="Navegación principal">
 
-            <a href="index.html">
-                Inicio
-            </a>
+            <a href="index.html">Inicio</a>
 
             <a href="index.html#informacion">
                 Información
             </a>
 
-            <a
-                href="login.html"
-                aria-current="page">
-                Acreditación
+            <a href="login.html">
+                Iniciar sesión
             </a>
 
-           
-
         </nav>
-
     </header>
 
-    <!-- ==================================================
-         BANNER DEL CAMPAMENTO
-         ================================================== -->
+    <!-- BANNER DEL CAMPAMENTO -->
     <section
         class="banner-acreditacion"
         aria-labelledby="titulo-banner-recuperacion">
@@ -77,29 +60,22 @@
         <div class="contenido-banner-acreditacion">
 
             <h1 id="titulo-banner-recuperacion">
-
                 <span>Reiniciados</span>
-
                 <strong>En la Cruz</strong>
-
             </h1>
 
             <p>Campamento ICEC 2027</p>
 
         </div>
-
     </section>
 
-    <!-- ==================================================
-         RECUPERACIÓN DE CONTRASEÑA
-         ================================================== -->
+    <!-- RECUPERACIÓN DE CONTRASEÑA -->
     <main class="contenido-login">
 
         <section
             class="seccion-login"
             aria-labelledby="titulo-recuperacion">
 
-            <!-- Presentación de la sección -->
             <div class="cabecera-login">
 
                 <h2 id="titulo-recuperacion">
@@ -107,19 +83,60 @@
                 </h2>
 
                 <p>
-                    Ingresa el correo asociado a tu cuenta.
+                    Solicita una contraseña provisoria para
+                    volver a acceder a tu cuenta.
                 </p>
 
             </div>
 
-            <!-- Tarjeta de recuperación -->
             <div class="tarjeta-login">
+
+                <!-- Presentación de la tarjeta -->
+                <div class="cabecera-tarjeta-recuperacion">
+
+                    <span
+                        class="icono-recuperacion"
+                        aria-hidden="true">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            focusable="false">
+
+                            <path
+                                d="M7 10V7a5 5 0 0 1 10 0v3"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round">
+                            </path>
+
+                            <rect
+                                x="4"
+                                y="9"
+                                width="16"
+                                height="13"
+                                rx="3"
+                                fill="currentColor">
+                            </rect>
+
+                        </svg>
+                    </span>
+
+                    <div>
+                        <h3>Recupera el acceso</h3>
+
+                        <p>
+                            Ingresa el correo asociado a tu cuenta.
+                        </p>
+                    </div>
+
+                </div>
 
                 <form
                     id="formulario-recuperacion"
-                    class="formulario-login">
+                    class="formulario-login"
+                    method="post">
 
-                    <!-- Correo de la cuenta -->
                     <div class="campo-login">
 
                         <label for="correo-recuperacion">
@@ -128,10 +145,10 @@
 
                         <div class="control-login">
 
-                            <!-- Icono de correo -->
                             <svg
                                 viewBox="0 0 24 24"
-                                aria-hidden="true">
+                                aria-hidden="true"
+                                focusable="false">
 
                                 <rect
                                     x="3"
@@ -150,13 +167,17 @@
                                 id="correo-recuperacion"
                                 name="correo"
                                 autocomplete="email"
+                                placeholder="nombre@correo.cl"
                                 required>
 
                         </div>
-
                     </div>
 
-                                        <!-- Solicitar la contraseña provisoria -->
+                    <p class="ayuda-recuperacion">
+                        Recibirás una contraseña provisoria por correo.
+                        Luego podrás elegir una nueva.
+                    </p>
+
                     <button
                         type="submit"
                         id="enviar-provisoria"
@@ -165,26 +186,27 @@
                         Enviar contraseña provisoria
                     </button>
 
-                    <!-- Acceso directo si ya recibió la provisoria -->
-                    <div class="volver-login">
-
-                        <a href="nueva-contrasena.html">
-                            Ya tengo una contraseña provisoria
-                        </a>
-
-                    </div>
-
-                    <!-- Mensajes de la solicitud -->
                     <p
                         id="mensaje-recuperacion"
                         role="status"
                         aria-live="polite">
                     </p>
 
-                <!-- Regreso al inicio de sesión -->
-                <div class="volver-login">
+                </form>
 
-                    <a href="login.html">
+                <div class="accesos-recuperacion">
+
+                    <a
+                        href="nueva-contrasena.html"
+                        class="acceso-provisoria">
+
+                        Ya tengo una contraseña provisoria
+                    </a>
+
+                    <a
+                        href="login.html"
+                        class="acceso-volver">
+
                         Volver al inicio de sesión
                     </a>
 
@@ -193,9 +215,7 @@
             </div>
 
         </section>
-
     </main>
 
 </body>
-
 </html>
