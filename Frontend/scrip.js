@@ -435,7 +435,36 @@ if (
     actualizarValorAcreditacion();
 }
 
+// Formato automático del RUT chileno
+function formatearRut(rut) {
+    const limpio = String(rut)
+        .replace(/[^0-9kK]/g, "")
+        .slice(0, 9)
+        .toUpperCase();
 
+    if (limpio.length <= 1) {
+        return limpio;
+    }
+
+    const cuerpo = limpio.slice(0, -1);
+    const verificador = limpio.slice(-1);
+
+    const cuerpoFormateado = cuerpo.replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        "."
+    );
+
+    return `${cuerpoFormateado}-${verificador}`;
+}
+
+// Aplicar el formato mientras se escribe
+const campoRut = document.getElementById("rut");
+
+if (campoRut) {
+    campoRut.addEventListener("input", () => {
+        campoRut.value = formatearRut(campoRut.value);
+    });
+}
 /* ==================================================
    4. GUARDAR ACREDITACIÓN PRINCIPAL
    ================================================== */
