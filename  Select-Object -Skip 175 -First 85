@@ -1,0 +1,62 @@
+[1mdiff --git a/campamento-worker/admin-validacion-api.js b/campamento-worker/admin-validacion-api.js[m
+[1mindex ded5f7e..4cebd24 100644[m
+[1m--- a/campamento-worker/admin-validacion-api.js[m
+[1m+++ b/campamento-worker/admin-validacion-api.js[m
+[36m@@ -177,28 +177,28 @@[m [mAND ([m
+         }[m
+ [m
+         // ==========================================[m
+[31m-        // NOTIFICACIÓN DE RECHAZO - PRUEBA LOCAL[m
+[32m+[m[32m        // NOTIFICACIÓN DE RECHAZO O APROBACIÓN POR CORREO ELECTRÓNICO[m
+         // ==========================================[m
+ [m
+ [m
+             if ([m
+[31m-                ["APROBAR", "RECHAZAR"].includes(accion) &&[m
+[31m-                env.ENTORNO === "local" &&[m
+[31m-                env.RESEND_TEST_EMAIL[m
+[31m-            ) {[m
+[32m+[m[32m    ["APROBAR", "RECHAZAR"].includes(accion)[m
+[32m+[m[32m) {[m
+ [m
+             try {[m
+                 const participante = await env.DB.prepare(`[m
+[31m-                    SELECT p.nombre_completo[m
+[31m-                    FROM pagos pg[m
+[31m-                    INNER JOIN participantes p[m
+[31m-                        ON p.id = pg.participante_id[m
+[31m-                    WHERE pg.id = ?[m
+[31m-                    LIMIT 1[m
+[31m-                `).bind(id).first();[m
+[32m+[m[32m    SELECT p.nombre_completo, u.correo[m
+[32m+[m[32m    FROM pagos pg[m
+[32m+[m[32m    INNER JOIN participantes p[m
+[32m+[m[32m        ON p.id = pg.participante_id[m
+[32m+[m[32m    INNER JOIN usuarios u[m
+[32m+[m[32m        ON u.id = p.usuario_id[m
+[32m+[m[32m    WHERE pg.id = ?[m
+[32m+[m[32m    LIMIT 1[m
+[32m+[m[32m`).bind(id).first();[m
+ [m
+                 await enviarCorreo(env, {[m
+[31m-                    destinatario: env.RESEND_TEST_EMAIL.trim(),[m
+[32m+[m[32m                    destinatario: participante.correo,[m
+                     [m
+ asunto: accion === "APROBAR"[m
+     ? "Pago aprobado - ICEC Juvenil 2027"[m
+[1mdiff --git a/campamento-worker/correo-api.js b/campamento-worker/correo-api.js[m
+[1mindex 5882f01..f75fcca 100644[m
+[1m--- a/campamento-worker/correo-api.js[m
+[1m+++ b/campamento-worker/correo-api.js[m
+[36m@@ -26,10 +26,8 @@[m [mexport async function enviarCorreo([m
+         );[m
+     }[m
+ [m
+[31m-    // Mientras no tengamos dominio verificado,[m
+[31m-    // usamos el remitente de pruebas de Resend.[m
+     const remitente =[m
+[31m-        "ICEC Juvenil <onboarding@resend.dev>";[m
+[32m+[m[32m    "ICEC Juvenil <notificaciones@icec.cl>";[m
+ [m
+     const respuesta = await fetch([m
+         "https://api.resend.com/emails",[m

@@ -1,0 +1,83 @@
+﻿
+Frontend\acompanantes.js:8:  //"https://icec-campamento-2027-api.brantemarco777.workers.dev";
+Frontend\acompanantes.js:9:  "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+Frontend\acompanantes.js:50:    respuesta = await fetch(
+Frontend\acompanantes.js:365:      "/api/acompanantes"
+Frontend\acompanantes.js:428:      "/api/acompanantes",
+Frontend\acompanantes.js:477:      `/api/acompanantes/${a.id}`,
+Frontend\acompanantes.js:504:      "/api/acompanantes"
+Frontend\admin-login.js:11:const URL_LOGIN_ADMIN = "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/login";
+Frontend\admin-login.js:191:        const respuesta = await fetch(URL_LOGIN_ADMIN, {
+Frontend\admin-login.js:231:        await fetch(
+Frontend\admin-login.js:232:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/logout",
+Frontend\admin.html:300:          desde /api/admin/inscripciones/:id
+Frontend\admin.html:324:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/pagos";
+Frontend\admin.html:471:        const respuesta = await fetch(
+Frontend\admin.html:472:            `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/inscripciones/${pago.participanteId}/cancelar`,
+Frontend\admin.html:799:            const respuesta = await fetch(
+Frontend\admin.html:800:                `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/inscripciones/${pago.participanteId}`,
+Frontend\admin.html:1000:        const respuesta = await fetch(
+Frontend\admin.html:1001:            `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/comprobantes/${pagoDetalle.id}`,
+Frontend\admin.html:1115:            const respuesta = await fetch(
+Frontend\admin.html:1116:                `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/comprobantes/${pagoDetalle.id}?tipo=EFECTIVO`,
+Frontend\admin.html:1223:        const respuesta = await fetch(
+Frontend\admin.html:1224:            `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/pagos/${pagoDetalle.id}/revision`,
+Frontend\admin.html:1309:        const respuesta = await fetch(
+Frontend\admin.html:1310:            `https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/pagos/${pagoDetalle.id}/revision`,
+Frontend\admin.html:1441:                const respuesta = await fetch(
+Frontend\admin.html:1542:        const respuesta = await fetch(
+Frontend\admin.html:1543:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/admin/exportacion",
+Frontend\admin.html:1811:            const respuesta = await fetch(
+Frontend\admin.html:1812:                "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/logout",
+Frontend\informacion.js:29:        const respuesta = await fetch(
+Frontend\informacion.js:30:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+Frontend\informacion.js:106:    const respuesta = await fetch(
+Frontend\informacion.js:107:        "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/habitaciones",
+Frontend\inicio.js:242:        const respuesta = await fetch(
+Frontend\inicio.js:243:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/cupos",
+Frontend\login.js:20: /* "https://icec-campamento-2027-api.brantemarco777.workers.dev";*/
+Frontend\login.js:21:    "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+Frontend\login.js:103:        const respuesta = await fetch(
+Frontend\login.js:104:            `${API_LOGIN}/api/resumen`,
+Frontend\login.js:187:  const respuesta = await fetch(
+Frontend\login.js:188:    `${API_LOGIN}/api/sesion`,
+Frontend\login.js:260:    const respuesta = await fetch(
+Frontend\login.js:261:      `${API_LOGIN}/api/login`,
+Frontend\login.js:344:    const respuesta = await fetch(
+Frontend\login.js:345:      `${API_LOGIN}/api/logout`,
+Frontend\pago.js:448:const API_PAGOS = "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+Frontend\pago.js:515:                const respuestaSesion = await fetch(
+Frontend\pago.js:516:                    `${API_PAGOS}/api/sesion`,
+Frontend\pago.js:587:                const respuesta = await fetch(
+Frontend\pago.js:588:                    `${API_PAGOS}/api/comprobantes`,
+Frontend\pago.js:750:        const respuesta = await fetch(
+Frontend\pago.js:751:            `${API_PAGOS}/api/lideres/validar`,
+Frontend\pago.js:836:        const respuesta = await fetch(
+Frontend\pago.js:837:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+Frontend\pago.js:1029:        const respuesta = await fetch(
+Frontend\pago.js:1030:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+Frontend\perfil-pagina.js:10:const API_PERFIL = "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+Frontend\perfil-pagina.js:89:    const respuesta = await fetch(
+Frontend\perfil-pagina.js:370:        const datos = await consultarAPI("/api/resumen");
+Frontend\perfil-pagina.js:397:                    "/api/habitaciones"
+Frontend\perfil.js:14:    const API = "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+Frontend\perfil.js:20:        const respuesta = await fetch(
+Frontend\perfil.js:21:            `${API}/api/sesion`,
+Frontend\perfil.js:206:            const respuesta = await fetch(
+Frontend\perfil.js:207:                `${API}/api/logout`,
+Frontend\piezas.js:91:        const respuesta = await fetch(
+Frontend\piezas.js:92:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+Frontend\piezas.js:139:        const respuesta = await fetch(
+Frontend\piezas.js:140:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/resumen",
+Frontend\piezas.js:954:                const respuestaHabitaciones = await fetch(
+Frontend\piezas.js:955:                    "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/habitaciones",
+Frontend\piezas.js:986:                const respuestaReserva = await fetch(
+Frontend\piezas.js:987:                    "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/habitaciones",
+Frontend\piezas.js:1110:        const respuesta = await fetch(
+Frontend\piezas.js:1111:            "https://icec-campamento-2027-api.brantemarco777.workers.dev/api/habitaciones",
+Frontend\scrip.js:8:   // "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+Frontend\scrip.js:9:    "https://icec-campamento-2027-api.brantemarco777.workers.dev";
+Frontend\scrip.js:27:const respuesta = await fetch(
+Frontend\scrip.js:28:    `${API_CAMPAMENTO}/api/registro`,
+
+
