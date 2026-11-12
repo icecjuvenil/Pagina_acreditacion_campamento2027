@@ -16,6 +16,11 @@
         href="Logos/logo-elegidos-blanco.jpg">
 
     <link rel="stylesheet" href="style.css">
+    <script
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer>
+</script>
 </head>
 
 <body class="pagina-acreditacion pagina-login pagina-recuperacion pagina-solicitar-clave">
@@ -177,7 +182,11 @@
                         Recibirás una contraseña provisoria por correo.
                         Luego podrás elegir una nueva.
                     </p>
-
+                    <!-- Verificación de seguridad Cloudflare Turnstile -->
+                    <div
+                        class="cf-turnstile"
+                        data-sitekey="0x4AAAAAAFsHJQwPGsRUwZEf">
+                    </div>
                     <button
                         type="submit"
                         id="enviar-provisoria"
@@ -216,6 +225,6 @@
 
         </section>
     </main>
-
+    <script src="recuperar-contrasena.js"></script>
 </body>
 </html>

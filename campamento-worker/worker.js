@@ -23,6 +23,10 @@ import { manejarComprobanteEfectivoAdmin } from "./admin-efectivo-api.js";
 import { manejarCancelacionAdmin } from "./admin-cancelacion-api.js";
 import { manejarHabitaciones } from "./habitaciones-api.js";
 import { manejarExportacion } from "./exportacion-api.js";
+import {
+    solicitarRecuperacion,
+    guardarNuevaContrasena
+} from "./recuperacion-api.js";
 
 import {
     manejarDetalleAdmin,
@@ -1875,7 +1879,61 @@ if (url.pathname === "/api/lideres/validar") {
     }
   );
 }
+// ==========================================
+// SOLICITAR RECUPERACIÓN DE CONTRASEÑA
+// ==========================================
 
+if (url.pathname === "/api/recuperar-contrasena") {
+    if (request.method !== "POST") {
+        return responder({
+            mensaje: "Método no permitido."
+        }, 405);
+    }
+if (
+    !validarOrigenPrivado(request) ||
+    request.headers.get("X-ICEC-Solicitud") !== "web"
+) {
+    return responder({
+        mensaje: "Solicitud no autorizada."
+    }, 403);
+}
+    const datos = await request.clone().json().catch(() => null);
+
+const verificacion = await verificarTurnstile(
+    datos?.turnstileToken,
+    request,
+    env
+);
+
+if (!verificacion.correcto) {
+    return responder({
+        mensaje: verificacion.mensaje
+    }, verificacion.estado);
+}
+
+return solicitarRecuperacion(request, env);
+}
+
+// ==========================================
+// GUARDAR NUEVA CONTRASEÑA
+// ==========================================
+
+if (url.pathname === "/api/nueva-contrasena") {
+    if (request.method !== "POST") {
+        return responder({
+            mensaje: "Método no permitido."
+        }, 405);
+    }
+if (
+    !validarOrigenPrivado(request) ||
+    request.headers.get("X-ICEC-Solicitud") !== "web"
+) {
+    return responder({
+        mensaje: "Solicitud no autorizada."
+    }, 403);
+}
+    return guardarNuevaContrasena(request, env);
+}
   // ----------------------------------------
   // INICIAR SESIÓN
   // ----------------------------------------

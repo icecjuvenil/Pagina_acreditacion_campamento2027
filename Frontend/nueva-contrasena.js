@@ -81,24 +81,70 @@
         actualizarFormulario
     );
 
-    /* Evitar enviar contraseñas sin una conexión configurada */
-    formulario.addEventListener("submit", (evento) => {
-        evento.preventDefault();
 
-        revisarConfirmacion();
+/* Enviar nueva contraseña al backend */
+formulario.addEventListener("submit", async (evento) => {
+    evento.preventDefault();
 
-        if (!formulario.reportValidity()) {
-            return;
+    revisarConfirmacion();
+
+    if (!formulario.reportValidity()) {
+        return;
+    }
+
+    botonGuardar.disabled = true;
+    mensaje.textContent = "Actualizando contraseña...";
+    let respuestaExitosa = false;
+    try {
+        const respuesta = await fetch(
+            "https://api.icec.cl/api/nueva-contrasena",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-ICEC-Solicitud": "web"
+                },
+                body: JSON.stringify({
+                    correo: entradaCorreo.value.trim().toLowerCase(),
+                    contrasenaProvisoria: entradaProvisoria.value.trim(),
+                    nuevaContrasena: entradaNueva.value
+                })
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(
+                resultado.mensaje ||
+                "No se pudo actualizar la contraseña."
+            );
+            
         }
-
-        /*
-         * Aquí se conectará la solicitud al backend.
-         * No se guardan contraseñas en el navegador.
-         */
+        respuestaExitosa = true;
         mensaje.textContent =
-            "No es posible guardar la contraseña en este momento. " +
-            "Inténtalo más tarde.";
-    });
+            "Contraseña actualizada correctamente. Ya puedes iniciar sesión.";
+
+        formulario.reset();
+        entradaProvisoria.value = "";
+        entradaNueva.value = "";
+        entradaConfirmacion.value = "";
+
+    } catch (error) {
+        mensaje.textContent =
+            error.message ||
+            "Ocurrió un error al actualizar la contraseña.";
+
+    } finally {
+    actualizarFormulario();
+
+    if (respuestaExitosa) {
+        mensaje.textContent =
+            "Contraseña actualizada correctamente. Ya puedes iniciar sesión.";
+    }
+}
+});
+
 
     actualizarFormulario();
 })();
