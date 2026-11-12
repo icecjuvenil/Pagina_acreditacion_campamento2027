@@ -53,7 +53,10 @@ export async function manejarExportacion(
         const resultado = await env.DB.prepare(`
             SELECT
                 p.id AS inscripcion_id,
-                'PARTICIPANTE' AS tipo,
+                CASE
+                WHEN p.beneficio_lider = 1 THEN 'LÍDER'
+                ELSE 'PARTICIPANTE'
+                END AS tipo,
                 p.nombre_completo AS nombre,
                 p.telefono,
                 u.correo,
@@ -61,17 +64,17 @@ export async function manejarExportacion(
                     AS habitacion,
                 
 
-pg.estado AS estado_pago,
-pg.metodo_pago AS metodo_pago,
+                pg.estado AS estado_pago,
+                pg.metodo_pago AS metodo_pago,
 
-pg.monto_total,
-CASE
-    WHEN p.cancelada = 1 THEN 'CANCELADA'
-    ELSE 'ACTIVA'
-END AS estado_inscripcion,
-p.fecha_cancelacion,
-p.motivo_cancelacion,
-p.estado_devolucion
+                pg.monto_total,
+                CASE
+                    WHEN p.cancelada = 1 THEN 'CANCELADA'
+                    ELSE 'ACTIVA'
+                END AS estado_inscripcion,
+                p.fecha_cancelacion,
+                p.motivo_cancelacion,
+                p.estado_devolucion
 
 
             FROM participantes p
@@ -135,7 +138,10 @@ p.estado_devolucion
 
         const resultadoSalud = await env.DB.prepare(`
             SELECT
-                'PARTICIPANTE' AS tipo,
+                CASE
+                WHEN p.beneficio_lider = 1 THEN 'LÍDER'
+                ELSE 'PARTICIPANTE'
+                END AS tipo,
                 p.nombre_completo AS nombre,
                 p.nombre_completo AS responsable,
                 COALESCE(h.nombre, 'Sin asignar') AS habitacion,
