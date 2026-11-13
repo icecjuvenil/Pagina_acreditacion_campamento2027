@@ -42,7 +42,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const datos = await respuesta.json();
 
         
-if (datos.pago?.estado === "APROBADO") {
+if (
+    datos.pago?.estado === "APROBADO" ||
+    datos.esAdministrador === true
+) {
     contenido.hidden = false;
     accesoDenegado.hidden = true;
     // Ocultar la selección de piezas cuando
@@ -59,7 +62,10 @@ const accesoPiezas = document.querySelector(
 
 // Ocultar la selección de habitaciones
 // para líderes sin acompañantes.
-if (esLider && !tieneAcompanantes) {
+if (
+    datos.esAdministrador === true ||
+    (esLider && !tieneAcompanantes)
+) {
 
     // Ocultar el botón de la página.
     if (accesoPiezas) {
@@ -128,9 +134,11 @@ async function mostrarHabitacionesAsignadas(datos) {
     datos.participante?.beneficioLider === true &&
     (!datos.acompanantes || datos.acompanantes.length === 0);
 
-titulo.textContent = esLiderSinAcompanantes
-    ? "✓ Acreditación de líder"
-    : "🛏 Habitaciones asignadas";
+titulo.textContent = datos.esAdministrador === true
+    ? "✓ Acreditación de administrador"
+    : esLiderSinAcompanantes
+        ? "✓ Acreditación de líder"
+        : "🛏 Habitaciones asignadas";
     contenedor.appendChild(titulo);
 
     // Participante principal y sus acompañantes
@@ -171,7 +179,9 @@ const faltanHabitaciones = personas.some(persona => {
 });
 
 if (accesoPiezas) {
-    accesoPiezas.hidden = !faltanHabitaciones;
+    accesoPiezas.hidden =
+        datos.esAdministrador === true ||
+        !faltanHabitaciones;
 }
 
     
@@ -246,7 +256,10 @@ if (accesoPiezas) {
     );
 } else {
     nombreHabitacion.textContent =
-        habitacion?.nombre || "Sin habitación asignada";
+    habitacion?.nombre ||
+    (datos.esAdministrador === true
+        ? "Administrador — No requiere habitación"
+        : "Sin habitación asignada");
 }
 
         tarjeta.appendChild(nombreHabitacion);

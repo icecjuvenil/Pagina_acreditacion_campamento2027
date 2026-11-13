@@ -63,11 +63,14 @@ export async function manejarResumen(
       }, 401);
     }
 
-    if (usuario.rol !== "PARTICIPANTE") {
-      return responder({
-        mensaje: "No tienes permiso para consultar esta inscripción."
-      }, 403);
-    }
+    if (
+  usuario.rol !== "PARTICIPANTE" &&
+  usuario.rol !== "ADMINISTRADOR"
+) {
+  return responder({
+    mensaje: "No tienes permiso para consultar esta inscripción."
+  }, 403);
+}
 
     const participanteId =
       Number(usuario.participante_id);
@@ -165,7 +168,8 @@ export async function manejarResumen(
     // Responder sin exponer datos médicos,
     // contraseñas ni rutas privadas de R2.
     return responder({
-      estado: "OK",
+  estado: "OK",
+  esAdministrador: usuario.rol === "ADMINISTRADOR",
 
       participante: {
         id: Number(participante.id),

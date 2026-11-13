@@ -196,7 +196,7 @@ function obtenerEstadoPago(estado) {
     return estados[estado] || mostrarTexto(estado);
 }
 
-function mostrarAcreditacion(participante, pago) {
+function mostrarAcreditacion(participante, pago, esAdministrador = false) {
     const contenedor = obtenerElemento(
         "perfil-acreditacion"
     );
@@ -236,7 +236,9 @@ if (participante.beneficioLider === true) {
 
     const estado = document.createElement("p");
     estado.className = "perfil-estado";
-    estado.textContent = obtenerEstadoPago(pago.estado);
+    estado.textContent = esAdministrador
+    ? "Acreditación habilitada — Administrador"
+    : obtenerEstadoPago(pago.estado);
 
     contenedor.prepend(estado);
 
@@ -383,15 +385,19 @@ async function cargarMiPerfil() {
         mostrarAcompanantes(datos.acompanantes);
 
         mostrarAcreditacion(
-            datos.participante,
-            datos.pago
-        );
+    datos.participante,
+    datos.pago,
+    datos.esAdministrador === true
+);
 
         const habitacionesContenedor = obtenerElemento(
             "perfil-habitaciones"
         );
 
-        if (datos.pago.estado === "APROBADO") {
+        if (
+    datos.pago.estado === "APROBADO" ||
+    datos.esAdministrador === true
+) {
             try {
                 const habitaciones = await consultarAPI(
                     "/api/habitaciones"

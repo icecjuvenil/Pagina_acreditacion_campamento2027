@@ -65,13 +65,13 @@ if (
         );
 
         if (
-            !usuario ||
-            usuario.rol !== "PARTICIPANTE"
-        ) {
-            return responder({
-                mensaje: "Debes iniciar sesión como participante."
-            }, 401);
-        }
+    !usuario ||
+    !["PARTICIPANTE", "ADMINISTRADOR"].includes(usuario.rol)
+) {
+    return responder({
+        mensaje: "Debes iniciar sesión."
+    }, 401);
+}
 
         const participanteId = Number(
             usuario.participante_id
@@ -108,11 +108,14 @@ if (
             }
 
 
-        if (pago?.estado !== "APROBADO") {
-            return responder({
-                mensaje: "Debes tener tu pago aprobado."
-            }, 403);
-        }
+        if (
+    usuario.rol !== "ADMINISTRADOR" &&
+    pago?.estado !== "APROBADO"
+) {
+    return responder({
+        mensaje: "Debes tener tu pago aprobado."
+    }, 403);
+}
 
         
         // ==========================================
@@ -120,7 +123,16 @@ if (
         // ==========================================
 
         if (request.method === "POST") {
-            let datos;
+
+    // Los administradores pueden consultar habitaciones,
+    // pero no reservarlas.
+    if (usuario.rol === "ADMINISTRADOR") {
+        return responder({
+            mensaje: "Los administradores no pueden reservar habitaciones."
+        }, 403);
+    }
+
+    let datos;
 
             try {
                 datos = await request.json();

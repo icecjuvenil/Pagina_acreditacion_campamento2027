@@ -95,9 +95,12 @@ async function verificarAccesosCampamento(usuario) {
     // Mantener ocultos los accesos por defecto.
     accesos.hidden = true;
 
-    if (usuario?.rol !== "PARTICIPANTE") {
-        return;
-    }
+    if (
+    usuario?.rol !== "PARTICIPANTE" &&
+    usuario?.rol !== "ADMINISTRADOR"
+) {
+    return;
+}
 
     try {
         const respuesta = await fetch(
@@ -113,9 +116,12 @@ async function verificarAccesosCampamento(usuario) {
 
         const datos = await respuesta.json();
 
-        if (datos.pago?.estado === "APROBADO") {
-            accesos.hidden = false;
-        }
+        if (
+    datos.pago?.estado === "APROBADO" ||
+    datos.esAdministrador === true
+) {
+    accesos.hidden = false;
+}
 
     } catch (error) {
         console.error(
@@ -422,10 +428,13 @@ document.addEventListener(
         await consultarSesionActiva();
 
       if (usuario) {
-    if (usuario.rol === "PARTICIPANTE") {
-        window.location.replace("perfil.html");
-        return;
-    }
+    if (
+    usuario.rol === "PARTICIPANTE" ||
+    usuario.rol === "ADMINISTRADOR"
+) {
+    window.location.replace("perfil.html");
+    return;
+}
 
     mostrarUsuario(usuario);
 } else {

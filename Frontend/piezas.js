@@ -104,7 +104,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const datos = await respuesta.json();
 
         pagoAutorizado =
-            datos.pago?.estado === "APROBADO";
+    datos.pago?.estado === "APROBADO" ||
+    datos.esAdministrador === true;
 
     } catch (error) {
         console.error(
@@ -153,7 +154,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         resumenInscripcion = await respuesta.json();
 
-        if (resumenInscripcion.pago?.estado !== "APROBADO") {
+        if (
+    resumenInscripcion.pago?.estado !== "APROBADO" &&
+    resumenInscripcion.esAdministrador !== true
+) {
             throw new Error(
                 "Tu pago debe estar aprobado."
             );
@@ -165,7 +169,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.replace("login.html");
         return;
     }
+// Los administradores pueden consultar las habitaciones,
+// pero no necesitan seleccionar una.
+if (resumenInscripcion.esAdministrador === true) {
+    alert(
+        "Tu acreditación como administrador está habilitada. " +
+        "Puedes consultar las habitaciones desde Informaciones, " +
+        "pero no necesitas seleccionar una."
+    );
 
+    window.location.replace("informacion.html");
+    return;
+}
     const participantes = [];
 
     // Participante principal
