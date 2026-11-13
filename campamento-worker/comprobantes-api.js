@@ -419,7 +419,42 @@ if (actualizacion.meta?.changes !== 1) {
       }
     }
 
+// Notificar a los administradores cuando llega un comprobante.
+try {
+  const administradores = await env.DB.prepare(`
+    SELECT correo
+    FROM usuarios
+    WHERE rol = 'ADMINISTRADOR'
+      AND activo = 1
+  `).all();
 
+  for (const admin of administradores.results || []) {
+    try {
+      await enviarCorreo(env, {
+        destinatario: admin.correo,
+        asunto: "Nuevo comprobante pendiente - ICEC Juvenil 2027",
+        mensaje:
+          "Se ha recibido un nuevo comprobante de pago.\n\n" +
+          "Inscripción: " + participanteId + "\n" +
+          "Método: " + metodoPago + "\n" +
+          "Estado: EN REVISIÓN\n\n" +
+          "Ingresa al panel de administración para revisar " +
+          "el comprobante y aprobar o rechazar el pago.\n\n" +
+          "https://icec.cl/admin"
+      });
+    } catch (errorCorreo) {
+      console.error(
+        "Error al notificar al administrador:",
+        errorCorreo.message
+      );
+    }
+  }
+} catch (errorNotificacion) {
+  console.error(
+    "No se pudo consultar administradores:",
+    errorNotificacion.message
+  );
+}
 
     return responder({
       mensaje: "Comprobante recibido correctamente.",

@@ -169,18 +169,159 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.replace("login.html");
         return;
     }
-// Los administradores pueden consultar las habitaciones,
-// pero no necesitan seleccionar una.
+
+// Administradores: consultar habitaciones sin reservar.
 if (resumenInscripcion.esAdministrador === true) {
-    alert(
-        "Tu acreditación como administrador está habilitada. " +
-        "Puedes consultar las habitaciones desde Informaciones, " +
-        "pero no necesitas seleccionar una."
+
+    document.querySelector(
+        ".selector-participante-pieza"
+    )?.setAttribute("hidden", "");
+
+    document.getElementById(
+        "boton-confirmar-pieza"
+    )?.setAttribute("hidden", "");
+
+    const mensaje = document.getElementById(
+        "mensaje-seleccion-pieza"
     );
 
-    window.location.replace("informacion.html");
+    if (mensaje) {
+        mensaje.textContent =
+            "Vista de administrador: puedes consultar " +
+            "las habitaciones, sus cupos y ocupantes. " +
+            "No puedes realizar reservas.";
+    }
+
+    // Mostrar todas las habitaciones sin permitir selección.
+    const tarjetas = document.querySelectorAll(
+        ".tarjeta-pieza"
+    );
+
+    tarjetas.forEach(tarjeta => {
+        tarjeta.disabled = true;
+    });
+
+    try {
+        const respuesta = await fetch(
+            "https://api.icec.cl/api/habitaciones",
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+        if (!respuesta.ok) {
+            throw new Error(
+                "No se pudieron consultar las habitaciones."
+            );
+        }
+
+        const datos = await respuesta.json();
+
+        if (!Array.isArray(datos.habitaciones)) {
+            throw new Error(
+                "La información de habitaciones no es válida."
+            );
+        }
+
+        let disponibles = 0;
+
+        for (const habitacion of datos.habitaciones) {
+
+            const tarjeta = Array.from(tarjetas).find(t =>
+                habitacion.nombre.startsWith(
+                    `${t.dataset.codigo} - `
+                )
+            );
+
+            if (!tarjeta) continue;
+
+            tarjeta.dataset.capacidad =
+                String(habitacion.capacidad);
+
+            tarjeta.dataset.disponibles =
+                String(habitacion.disponibles);
+
+            disponibles += habitacion.disponibles;
+
+            tarjeta.classList.remove(
+                "habitacion-verde",
+                "habitacion-amarilla",
+                "habitacion-roja"
+            );
+
+            if (habitacion.disponibles === 0) {
+                tarjeta.classList.add("habitacion-roja");
+            } else if (
+                habitacion.disponibles < habitacion.capacidad
+            ) {
+                tarjeta.classList.add("habitacion-amarilla");
+            } else {
+                tarjeta.classList.add("habitacion-verde");
+            }
+
+            const estado = tarjeta.querySelector(
+                ".estado-pieza"
+            );
+
+            if (estado) {
+                estado.textContent =
+                    `${habitacion.disponibles} de ` +
+                    `${habitacion.capacidad} cupos disponibles`;
+            }
+
+            let lista = tarjeta.querySelector(
+                ".lista-ocupantes-pieza"
+            );
+
+            if (!lista) {
+                lista = document.createElement("div");
+                lista.className = "lista-ocupantes-pieza";
+                tarjeta.appendChild(lista);
+            }
+
+            lista.replaceChildren();
+
+            const titulo = document.createElement("strong");
+            titulo.textContent = "Personas asignadas:";
+            lista.appendChild(titulo);
+
+            const ocupantes = habitacion.ocupantes || [];
+
+            if (ocupantes.length === 0) {
+                const texto = document.createElement("span");
+                texto.textContent = "Sin personas asignadas";
+                lista.appendChild(texto);
+            } else {
+                ocupantes.forEach(nombre => {
+                    const texto = document.createElement("span");
+                    texto.textContent = "• " + nombre;
+                    lista.appendChild(texto);
+                });
+            }
+        }
+
+        const contador = document.getElementById(
+            "contador-piezas-disponibles"
+        );
+
+        if (contador) {
+            contador.textContent =
+                `${disponibles} cupos disponibles`;
+        }
+
+    } catch (error) {
+        console.error(error);
+        if (mensaje) {
+            mensaje.textContent =
+                "No se pudo cargar la disponibilidad de habitaciones.";
+        }
+    }
+
     return;
 }
+
     const participantes = [];
 
     // Participante principal

@@ -180,6 +180,13 @@ agregarEnlace(
     "Mi perfil",
     "perfil.html"
 );
+// Acceso exclusivo para administradores.
+if (usuario.rol === "ADMINISTRADOR") {
+    agregarEnlace(
+        "Panel de administración",
+        "admin.html"
+    );
+}
 
     agregarEnlace(
         "Informaciones",
