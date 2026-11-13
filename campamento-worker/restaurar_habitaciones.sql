@@ -1,0 +1,17 @@
+﻿INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(1,'M5 - Gracia','FEMENINO',3,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(2,'M4 - Sangre de Cristo','FEMENINO',3,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(3,'M3 - Sacrificio','FEMENINO',4,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(4,'M2 - ExpiaciÃ³n','FEMENINO',4,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(5,'M1 - RedenciÃ³n','FEMENINO',4,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(6,'M6 - PerdÃ³n','FEMENINO',4,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(7,'M7 - ReconciliaciÃ³n','FEMENINO',4,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(8,'M8 - JustificaciÃ³n','FEMENINO',4,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(9,'M9 - Amor de Dios','FEMENINO',4,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(10,'M10 - SustituciÃ³n','FEMENINO',2,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(11,'H1 - Muerte y resurrecciÃ³n','MASCULINO',2,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(12,'H2 - Victoria','MASCULINO',4,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(13,'H3 - SalvaciÃ³n','MASCULINO',3,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(14,'H4 - Fe','MASCULINO',3,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(15,'H5 - Humildad y obediencia','MASCULINO',3,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(16,'H7 - Nuevo pacto','MASCULINO',6,1,NULL,'2026-11-05 17:00:57');
+INSERT INTO "habitaciones" ("id","nombre","genero","capacidad","activa","observaciones","fecha_creacion") VALUES(17,'H6 - Cruz diaria','MASCULINO',3,1,NULL,'2026-11-05 17:00:57');
