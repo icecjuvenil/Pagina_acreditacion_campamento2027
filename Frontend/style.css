@@ -6855,6 +6855,72 @@ body:has(#formulario-nueva-contrasena)
         font-size: 1.1rem;
     }
 }
+/* ==================================================
+   LUGAR DEL CAMPAMENTO
+   ================================================== */
+
+.pagina-informacion .recinto-campamento {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    align-items: stretch;
+    gap: 18px;
+}
+
+.pagina-informacion .recinto-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: clamp(22px, 3vw, 36px);
+    background: #193e23;
+    border-radius: 16px;
+}
+
+.pagina-informacion .recinto-panel h2 {
+    margin: 0;
+    color: #fff;
+    font: 700 clamp(1.4rem, 2.5vw, 2rem)/1.2 Roboto, Arial, sans-serif;
+    text-transform: none;
+}
+
+.pagina-informacion .recinto-panel h2::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 4px;
+    margin: 16px 0;
+    background: #e4c674;
+    border-radius: 999px;
+}
+
+.pagina-informacion .recinto-panel p {
+    margin: 0 0 20px;
+    color: #f0f5ed;
+    line-height: 1.6;
+}
+
+.pagina-informacion .recinto-mapa {
+    box-sizing: border-box;
+    max-width: 100%;
+    text-align: center;
+}
+
+.pagina-informacion .recinto-video {
+    display: block;
+    align-self: center;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 16px;
+}
+
+@media (max-width: 760px) {
+    .pagina-informacion .recinto-campamento {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+
 
 /* ==================================================
    MÉTODO DE PAGO

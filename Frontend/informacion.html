@@ -210,37 +210,38 @@
                     </div>
                  </article>
 
-                 <article class="tarjeta-informacion-acreditado">
-                    <header class="cabecera-tarjeta-informacion">
-                        <div>
-                            <h2>Lugar del campamento</h2>
-                            <p>Conoce el recinto y revisa cómo llegar.</p>
-                        </div>
-                    </header>
 
-                    <a
-                        class="boton-seleccionar-pieza"
-                        href="https://www.google.com/maps/dir/?api=1&amp;destination=-32.8738333%2C-70.9429722"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Cómo llegar en Google Maps
-                    </a>
+                <!--Ubicacion y video-->
+                <article
+                    class="tarjeta-informacion-acreditado recinto-campamento"
+                    aria-labelledby="titulo-recinto">
 
-                     <figure style="margin: 24px 0 0;">
-                        <figcaption style="margin-bottom: 8px;">
-                            <strong>Video del recinto</strong>
-                        </figcaption>
+                    <div class="recinto-panel">
+                        <h2 id="titulo-recinto">Lugar del campamento</h2>
+                        <p>Conoce el recinto y revisa cómo llegar.</p>
+
+                        <a
+                            class="boton-seleccionar-pieza recinto-mapa"
+                            href="https://www.google.com/maps/dir/?api=1&amp;destination=-32.8738333%2C-70.9429722"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            Cómo llegar en Google Maps
+                        </a>
+                    </div>
 
                         <video
+                            class="recinto-video"
                             controls
                             playsinline
-                            preload="none"
-                            style="display: block; width: 100%; max-width: 760px; border-radius: 12px;">
+                            preload="metadata"
+                            poster="VideoRecinto/portada-recinto.jpg"
+                            aria-label="Video del recinto del campamento">
                             <source src="VideoRecinto/IMG_0269.MP4" type="video/mp4">
                             Tu navegador no puede reproducir este video.
                         </video>
-                    </figure>
                 </article>
+
+
 
 
                  <!-- ==================================================
