@@ -304,7 +304,10 @@ mostrarMensaje(
 );
 
 // Redirigir al participante a Mi perfil.
-if (usuario.rol === "PARTICIPANTE") {
+if (
+  usuario.rol === "PARTICIPANTE" ||
+  usuario.rol === "ADMINISTRADOR"
+) {
   window.location.replace("perfil.html");
   return;
 }
