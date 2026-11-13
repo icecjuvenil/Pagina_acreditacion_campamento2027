@@ -203,14 +203,26 @@ if (principal && principal.beneficioLider !== true) {
     ) ? resumenInscripcion.acompanantes : [];
 
     acompanantes.forEach((acompanante) => {
-        participantes.push({
-            id: `acompanante-${acompanante.id}`,
-            tipo: "acompanante",
-            nombre: acompanante.nombreCompleto,
-            genero: normalizarGenero(acompanante.genero),
-            datos: acompanante
-        });
+
+    const fechaNacimiento = acompanante.fechaNacimiento;
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaNacimiento)) {
+        return;
+    }
+
+    // Debe tener al menos 6 años al 8 de enero de 2027.
+    if (fechaNacimiento > "2021-01-08") {
+        return;
+    }
+
+    participantes.push({
+        id: `acompanante-${acompanante.id}`,
+        tipo: "acompanante",
+        nombre: acompanante.nombreCompleto,
+        genero: normalizarGenero(acompanante.genero),
+        datos: acompanante
     });
+});
 
    if (participantes.length === 0) {
 

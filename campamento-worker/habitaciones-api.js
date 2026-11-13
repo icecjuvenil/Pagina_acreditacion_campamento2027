@@ -215,6 +215,7 @@ if (
                         WHERE h.id = ?
                         AND h.activa = 1
                         AND a.participante_id = ?
+                        AND a.fecha_nacimiento <= '2021-01-08'
                         AND EXISTS (
                             SELECT 1
                             FROM participantes p
