@@ -241,6 +241,32 @@ if (participante.beneficioLider === true) {
     : obtenerEstadoPago(pago.estado);
 
     contenedor.prepend(estado);
+    // Permitir continuar el pago de una inscripción existente.
+const puedeContinuarPago =
+    (
+        pago.estado === "PENDIENTE" &&
+        pago.comprobanteRecibido === false
+    ) ||
+    pago.estado === "RECHAZADO";
+
+if (
+    !esAdministrador &&
+    puedeContinuarPago &&
+    Number(pago.montoTotal) > 0 &&
+    Number(pago.montoPagado) === 0
+) {
+    const botonContinuar = document.createElement("a");
+
+    botonContinuar.href = "pago.html";
+    botonContinuar.className = "boton-continuar-pago";
+
+    botonContinuar.textContent =
+        pago.estado === "RECHAZADO"
+            ? "Enviar nuevo comprobante"
+            : "Continuar con mi pago";
+
+    contenedor.appendChild(botonContinuar);
+}
 
     if (pago.estado === "RECHAZADO" && pago.motivoRechazo) {
         const motivo = document.createElement("p");

@@ -1837,6 +1837,12 @@ async function manejarSolicitud(request, env) {
           INNER JOIN habitaciones h
             ON h.id = a.habitacion_id
           WHERE h.activa = 1
+        ) + (
+          SELECT COUNT(*)
+          FROM reservas_especiales r
+          INNER JOIN habitaciones h
+            ON h.id = r.habitacion_id
+          WHERE h.activa = 1
         ) AS ocupados`
     ).first();
 

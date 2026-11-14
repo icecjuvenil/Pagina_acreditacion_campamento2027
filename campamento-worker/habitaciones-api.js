@@ -200,9 +200,15 @@ if (
                      AND UPPER(TRIM(h.genero)) =
                          UPPER(TRIM(p.genero))
                      AND (
-                         SELECT COUNT(*)
-                         FROM asignaciones_habitaciones a
-                         WHERE a.habitacion_id = h.id
+                        SELECT (
+                        SELECT COUNT(*)
+                        FROM asignaciones_habitaciones a
+                        WHERE a.habitacion_id = h.id
+                    ) + (
+                        SELECT COUNT(*)
+                        FROM reservas_especiales r
+                        WHERE r.habitacion_id = h.id
+                    )
                      ) < h.capacidad`
                 : `INSERT INTO asignaciones_habitaciones
                      (habitacion_id, acompanante_id, asignado_por)
@@ -226,9 +232,15 @@ if (
                      AND UPPER(TRIM(h.genero)) =
                          UPPER(TRIM(a.genero))
                      AND (
-                         SELECT COUNT(*)
-                         FROM asignaciones_habitaciones x
-                         WHERE x.habitacion_id = h.id
+                         SELECT (
+                        SELECT COUNT(*)
+                        FROM asignaciones_habitaciones x
+                        WHERE x.habitacion_id = h.id
+                    ) + (
+                        SELECT COUNT(*)
+                        FROM reservas_especiales r
+                        WHERE r.habitacion_id = h.id
+                    )
                      ) < h.capacidad`;
 
             try {
@@ -321,14 +333,35 @@ if (
                 );
             }
         }
+        // Incorporar los nombres de las reservas especiales.
+        const reservasEspeciales = await env.DB.prepare(`
+            SELECT habitacion_id, nombre_completo
+            FROM reservas_especiales
+            ORDER BY id
+        `).all();
 
+        for (const reserva of reservasEspeciales.results || []) {
+            const id = Number(reserva.habitacion_id);
+
+            if (!ocupantesPorHabitacion.has(id)) {
+                ocupantesPorHabitacion.set(id, []);
+            }
+
+            ocupantesPorHabitacion.get(id).push(
+                reserva.nombre_completo
+            );
+        }
         const resultado = await env.DB.prepare(
             `SELECT
                 h.id,
                 h.nombre,
                 h.genero,
                 h.capacidad,
-                COUNT(a.id) AS ocupados
+                COUNT(a.id) + (
+                SELECT COUNT(*)
+                FROM reservas_especiales r
+                WHERE r.habitacion_id = h.id
+            ) AS ocupados
              FROM habitaciones h
              LEFT JOIN asignaciones_habitaciones a
                ON a.habitacion_id = h.id
