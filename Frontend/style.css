@@ -7221,6 +7221,43 @@ body:has(#formulario-nueva-contrasena)
     line-height: 1.5;
 }
 
+.pagina-perfil .fila-estado-acreditacion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.pagina-perfil .fila-estado-acreditacion > .perfil-estado {
+    margin: 0;
+}
+
+.pagina-perfil .fila-estado-acreditacion > .boton-continuar-pago {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 18px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: var(--dorado-claro);
+    color: var(--verde-profundo);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.pagina-perfil .fila-estado-acreditacion > .boton-continuar-pago:hover {
+    background-color: #285332;
+    border: 1px solid var(--dorado-medio);
+}
+
+.pagina-perfil .fila-estado-acreditacion > .boton-continuar-pago:focus-visible {
+    outline: 3px solid #d6b45c;
+    outline-offset: 3px;
+}
+
 .pagina-perfil #perfil-acreditacion .perfil-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;

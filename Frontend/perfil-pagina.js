@@ -238,7 +238,18 @@ if (participante.beneficioLider === true) {
     estado.className = "perfil-estado";
     estado.textContent = obtenerEstadoPago(pago.estado);
 
-    contenedor.prepend(estado);
+    const filaEstado = document.createElement("div");
+    filaEstado.className = "fila-estado-acreditacion";
+    filaEstado.appendChild(estado);
+        if (pago.estado === "PENDIENTE") {
+            const enlacePago = document.createElement("a");
+                enlacePago.href = "pago.html";
+                enlacePago.className = "boton-continuar-pago";
+                enlacePago.textContent = "Continuar pago";
+                filaEstado.appendChild(enlacePago);
+        }
+
+        contenedor.prepend(filaEstado);
 
     if (pago.estado === "RECHAZADO" && pago.motivoRechazo) {
         const motivo = document.createElement("p");
