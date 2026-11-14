@@ -234,14 +234,20 @@ if (participante.beneficioLider === true) {
     contenedor.appendChild(beneficio);
 }
 
-    const estado = document.createElement("p");
-    estado.className = "perfil-estado";
-    estado.textContent = esAdministrador
+// Crear el estado de acreditación.
+const estado = document.createElement("p");
+
+estado.className = "perfil-estado";
+
+estado.textContent = esAdministrador
     ? "Acreditación habilitada — Administrador"
     : obtenerEstadoPago(pago.estado);
+    // Fila que contiene el estado de acreditación y el botón.
+const filaEstado = document.createElement("div");
+filaEstado.className = "fila-estado-acreditacion";
+filaEstado.appendChild(estado);
 
-    contenedor.prepend(estado);
-    // Permitir continuar el pago de una inscripción existente.
+// Verificar si el usuario puede continuar el pago.
 const puedeContinuarPago =
     (
         pago.estado === "PENDIENTE" &&
@@ -249,24 +255,28 @@ const puedeContinuarPago =
     ) ||
     pago.estado === "RECHAZADO";
 
+// Mostrar el botón solamente cuando corresponda.
 if (
     !esAdministrador &&
     puedeContinuarPago &&
     Number(pago.montoTotal) > 0 &&
     Number(pago.montoPagado) === 0
 ) {
-    const botonContinuar = document.createElement("a");
+    const enlacePago = document.createElement("a");
 
-    botonContinuar.href = "pago.html";
-    botonContinuar.className = "boton-continuar-pago";
+    enlacePago.href = "pago.html";
+    enlacePago.className = "boton-continuar-pago";
 
-    botonContinuar.textContent =
+    enlacePago.textContent =
         pago.estado === "RECHAZADO"
             ? "Enviar nuevo comprobante"
-            : "Continuar con mi pago";
+            : "Continuar pago";
 
-    contenedor.appendChild(botonContinuar);
+    filaEstado.appendChild(enlacePago);
 }
+
+// Insertar la fila completa en Mi acreditación.
+contenedor.prepend(filaEstado);
 
     if (pago.estado === "RECHAZADO" && pago.motivoRechazo) {
         const motivo = document.createElement("p");

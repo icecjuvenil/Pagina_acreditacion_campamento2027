@@ -427,6 +427,12 @@ try {
     WHERE rol = 'ADMINISTRADOR'
       AND activo = 1
   `).all();
+  const participante = await env.DB.prepare(`
+    SELECT nombre_completo
+    FROM participantes
+    WHERE id = ?
+    LIMIT 1
+`).bind(participanteId).first();
 
   for (const admin of administradores.results || []) {
     try {
@@ -435,6 +441,9 @@ try {
         asunto: "Nuevo comprobante pendiente - ICEC Juvenil 2027",
         mensaje:
           "Se ha recibido un nuevo comprobante de pago.\n\n" +
+          "Participante: " +
+          (participante?.nombre_completo || "No identificado") +
+          "\n" +
           "Inscripción: " + participanteId + "\n" +
           "Método: " + metodoPago + "\n" +
           "Estado: EN REVISIÓN\n\n" +
