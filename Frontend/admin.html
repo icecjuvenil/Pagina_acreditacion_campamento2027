@@ -220,7 +220,42 @@
 
                     </div>
                 </div>
+                                <!-- FILTROS DE INSCRIPCIONES -->
+                <div class="admin-filtros">
+                    <label for="filtro-nombre">
+                        Buscar participante
+                        <input
+                            type="search"
+                            id="filtro-nombre"
+                            placeholder="Escribe el nombre del participante"
+                            autocomplete="off"
+                        >
+                    </label>
+                    <label for="filtro-tipo">
+                        Tipo de participante
+                        <select id="filtro-tipo">
+                            <option value="TODOS">Todos</option>
+                            <option value="Joven">Jóvenes</option>
+                            <option value="Líder">Líderes</option>
+                        </select>
+                    </label>
 
+                    <label for="filtro-estado">
+                        Estado del pago
+                        <select id="filtro-estado">
+                            <option value="TODOS">Todos</option>
+                            <option value="PENDIENTE">Pendientes</option>
+                            <option value="EN_REVISION">En revisión</option>
+                            <option value="APROBADO">Aprobados</option>
+                            <option value="RECHAZADO">Rechazados</option>
+                        </select>
+                    </label>
+
+                    <button id="limpiar-filtros" type="button">
+                        Limpiar filtros
+                    </button>
+
+                </div>
                 <!-- TABLA -->
                 <div class="admin-tabla-contenedor">
 
@@ -524,7 +559,8 @@ async function confirmarCancelacion(pago) {
     }
 
 }
-
+        // Almacenar las inscripciones para aplicar filtros.
+        let pagosCargados = [];
         // Mostrar inscripciones
         function mostrarPagos(pagos) {
 
@@ -1437,6 +1473,55 @@ botonRechazar.addEventListener("click", async () => {
 
             }
         }
+            // Filtrar inscripciones por tipo de participante y estado de pago.
+            function aplicarFiltros() {
+
+                const tipo = document.getElementById("filtro-tipo").value;
+                const estado = document.getElementById("filtro-estado").value;
+                const nombre = document.getElementById("filtro-nombre")
+                .value.trim().toLocaleLowerCase("es");
+
+                const pagosFiltrados = pagosCargados.filter((pago) => {
+
+                    const coincideTipo =
+                        tipo === "TODOS" ||
+                        pago.tipoParticipante === tipo;
+
+                    const coincideEstado =
+                        estado === "TODOS" ||
+                        pago.estado === estado;
+
+                    const coincideNombre =
+                    (pago.nombreCompleto || "")
+                        .toLocaleLowerCase("es")
+                        .includes(nombre);
+
+                return coincideTipo && coincideEstado && coincideNombre;
+                });
+
+                mostrarPagos(pagosFiltrados);
+            }
+
+            // Activar filtros al cambiar una selección.
+            document.getElementById("filtro-tipo")
+                .addEventListener("change", aplicarFiltros);
+
+            document.getElementById("filtro-estado")
+                .addEventListener("change", aplicarFiltros);
+
+                // Buscar participantes mientras se escribe.
+            document.getElementById("filtro-nombre")
+                .addEventListener("input", aplicarFiltros);
+
+            // Restablecer los filtros.
+            document.getElementById("limpiar-filtros")
+                .addEventListener("click", () => {
+
+                    document.getElementById("filtro-tipo").value = "TODOS";
+                    document.getElementById("filtro-estado").value = "TODOS";
+                    document.getElementById("filtro-nombre").value = "";
+                    aplicarFiltros();
+                });
 
         // Consultar backend
         async function cargarPanel() {
@@ -1505,7 +1590,11 @@ botonRechazar.addEventListener("click", async () => {
 
                 mostrarResumen(resultado.resumen);
 
-                mostrarPagos(resultado.pagos);
+                // Guardar todas las inscripciones recibidas desde D1.
+                pagosCargados = resultado.pagos;
+
+                // Mostrar inicialmente todas las inscripciones.
+                mostrarPagos(pagosCargados);
 
                 identidad.textContent =
                     "Administrador: " +
