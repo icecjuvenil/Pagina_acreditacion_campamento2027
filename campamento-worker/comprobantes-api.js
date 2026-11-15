@@ -440,16 +440,31 @@ try {
         destinatario: admin.correo,
         asunto: "Nuevo comprobante pendiente - ICEC Juvenil 2027",
         mensaje:
-          "Se ha recibido un nuevo comprobante de pago.\n\n" +
-          "Participante: " +
-          (participante?.nombre_completo || "No identificado") +
-          "\n" +
-          "Inscripción: " + participanteId + "\n" +
-          "Método: " + metodoPago + "\n" +
-          "Estado: EN REVISIÓN\n\n" +
-          "Ingresa al panel de administración para revisar " +
-          "el comprobante y aprobar o rechazar el pago.\n\n" +
-          "https://icec.cl/admin"
+    "Estimado equipo de administración:\n\n" +
+
+    "Se informa que se ha recibido un nuevo comprobante de pago " +
+    "correspondiente a una inscripción del Campamento Juvenil ICEC 2027.\n\n" +
+
+    "DATOS DE LA INSCRIPCIÓN\n" +
+    "----------------------------------------\n" +
+    "Participante: " +
+    (participante?.nombre_completo || "No identificado") + "\n" +
+    "N.º de inscripción: " + participanteId + "\n" +
+    "Método de pago: " +
+    (metodoPago === "TRANSFERENCIA" ? "Transferencia bancaria" : "Efectivo") + "\n" +
+    "Estado: Pendiente de revisión\n" +
+    "----------------------------------------\n\n" +
+
+    "Se solicita ingresar al panel de administración para verificar " +
+    "el comprobante recibido y proceder con su aprobación o rechazo, " +
+    "según corresponda.\n\n" +
+
+    "Panel de administración:\n" +
+    "https://icec.cl/admin\n\n" +
+
+    "Atentamente,\n" +
+    "Sistema de Acreditación\n" +
+    "Campamento Juvenil ICEC 2027"
       });
     } catch (errorCorreo) {
       console.error(

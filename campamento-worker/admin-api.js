@@ -93,6 +93,7 @@ export async function manejarPagosAdmin(
          pg.participante_id,
         p.nombre_completo,
         p.rut,
+        p.beneficio_lider,
         p.cancelada,
         p.fecha_cancelacion,
         p.motivo_cancelacion,
@@ -139,19 +140,22 @@ END AS comprobante_recibido,
 
         nombreCompleto:
           fila.nombre_completo,
+          tipoParticipante:
+          Number(fila.beneficio_lider) === 1
+            ? "Líder"
+            : "Joven",
 
-        
-rut: fila.rut,
+          rut: fila.rut,
 
-cancelada: Number(fila.cancelada) === 1,
+          cancelada: Number(fila.cancelada) === 1,
 
-fechaCancelacion: fila.fecha_cancelacion,
+          fechaCancelacion: fila.fecha_cancelacion,
 
-motivoCancelacion: fila.motivo_cancelacion || "",
+          motivoCancelacion: fila.motivo_cancelacion || "",
 
-estadoDevolucion: fila.estado_devolucion,
+          estadoDevolucion: fila.estado_devolucion,
 
-correo: fila.correo,
+          correo: fila.correo,
 
 
         cantidadAcompanantes:
@@ -181,6 +185,10 @@ correo: fila.correo,
     // Resumen general para el panel.
     const resumen = {
       totalInscripciones: pagos.length,
+
+      lideres: pagos.filter(
+        (p) => p.tipoParticipante === "Líder"
+      ).length,
 
       pendientes: pagos.filter(
         (p) => p.estado === "PENDIENTE"

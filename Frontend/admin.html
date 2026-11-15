@@ -128,6 +128,11 @@
             <!-- INDICADORES -->
             <section class="admin-indicadores"
                      aria-label="Resumen de pagos">
+                     <article class="admin-indicador">
+                    <span>Líderes inscritos</span>
+                    <strong id="admin-lideres">0</strong>
+                    <small>Total de líderes registrados</small>
+                </article>
 
                 <article class="admin-indicador">
                     <span>Inscripciones</span>
@@ -224,6 +229,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">Participante</th>
+                                <th scope="col">Tipo de participante</th>
                                 <th scope="col">Correo</th>
                                 <th scope="col">Acompañantes</th>
                                 <th scope="col">Monto total</th>
@@ -417,6 +423,9 @@
                 "admin-total":
                     resumen.totalInscripciones,
 
+                "admin-lideres":
+                    resumen.lideres,
+
                 "admin-pendientes":
                     resumen.pendientes,
 
@@ -532,6 +541,11 @@ async function confirmarCancelacion(pago) {
                 agregarCelda(
                     fila,
                     pago.nombreCompleto
+                );
+
+                agregarCelda(
+                    fila,
+                    pago.tipoParticipante
                 );
 
                 agregarCelda(
