@@ -90,7 +90,7 @@ export async function manejarExportacion(
 
             LEFT JOIN habitaciones h
                 ON h.id = ah.habitacion_id
-
+            WHERE LOWER(TRIM(u.correo)) <> 'brantemarcoantonio@gmail.com'
             UNION ALL
 
             SELECT
@@ -119,6 +119,8 @@ p.estado_devolucion
             FROM acompanantes a
             INNER JOIN participantes p
                 ON p.id = a.participante_id
+            INNER JOIN usuarios u
+            ON u.id = p.usuario_id
 
             LEFT JOIN pagos pg
                 ON pg.participante_id = a.participante_id
@@ -128,7 +130,7 @@ p.estado_devolucion
 
             LEFT JOIN habitaciones h
                 ON h.id = ah.habitacion_id
-
+            WHERE LOWER(TRIM(u.correo)) <> 'brantemarcoantonio@gmail.com'
             ORDER BY inscripcion_id, tipo DESC
         `).all();
 
@@ -155,7 +157,8 @@ p.estado_devolucion
                 im.detalle_alimentacion
 
             FROM participantes p
-
+            INNER JOIN usuarios u
+                ON u.id = p.usuario_id
             LEFT JOIN informacion_medica im
                 ON im.participante_id = p.id
 
@@ -164,7 +167,7 @@ p.estado_devolucion
 
             LEFT JOIN habitaciones h
                 ON h.id = ah.habitacion_id
-
+            WHERE LOWER(TRIM(u.correo)) <> 'brantemarcoantonio@gmail.com'
             UNION ALL
 
             SELECT
@@ -185,6 +188,8 @@ p.estado_devolucion
 
             INNER JOIN participantes p
                 ON p.id = a.participante_id
+            INNER JOIN usuarios u
+                ON u.id = p.usuario_id    
 
             LEFT JOIN informacion_medica im
                 ON im.acompanante_id = a.id
@@ -194,7 +199,7 @@ p.estado_devolucion
 
             LEFT JOIN habitaciones h
                 ON h.id = ah.habitacion_id
-
+            WHERE LOWER(TRIM(u.correo)) <> 'brantemarcoantonio@gmail.com'
             ORDER BY responsable, tipo, nombre
         `).all();
 

@@ -181,31 +181,100 @@ END AS comprobante_recibido,
         comprobanteRecibido:
           Number(fila.comprobante_recibido) === 1
       }));
+      // Excluir usuarios de prueba de las estadísticas.
+      // Sus registros permanecen en D1 y en la tabla administrativa.
+      const correosDePrueba = [
+        "brantemarcoantonio@gmail.com"
+      ];
 
+      const pagosContabilizables = pagos.filter(
+        (pago) =>
+          !correosDePrueba.includes(
+            (pago.correo || "").trim().toLowerCase()
+          )
+      );
+
+            // Fecha de referencia para clasificar edades.
+      const FECHA_CAMPAMENTO = "2027-01-08";
+
+      // Límites de nacimiento para las categorías.
+      const LIMITE_JOVENES = "2015-01-08";
+      const LIMITE_NINOS = "2022-01-08";
+
+            // Contar asistentes según su edad al 8 de enero de 2027.
+      const resultadoEdades = await env.DB.prepare(`
+          SELECT
+              SUM(
+                  CASE WHEN fecha_nacimiento <= ? THEN 1 ELSE 0 END
+              ) AS jovenes,
+
+              SUM(
+                  CASE
+                      WHEN fecha_nacimiento > ?
+                      AND fecha_nacimiento <= ?
+                      THEN 1 ELSE 0
+                  END
+              ) AS ninos,
+
+              SUM(
+                  CASE WHEN fecha_nacimiento > ? THEN 1 ELSE 0 END
+              ) AS bebes
+
+          FROM (
+              -- Participantes que no son líderes.
+              SELECT p.fecha_nacimiento
+              FROM participantes p
+              INNER JOIN usuarios u ON u.id = p.usuario_id
+              WHERE COALESCE(p.beneficio_lider, 0) = 0
+                AND LOWER(TRIM(u.correo)) <> 'brantemarcoantonio@gmail.com'
+                AND COALESCE(p.cancelada, 0) = 0
+
+              UNION ALL
+
+              -- Acompañantes, incluidos los de líderes.
+              SELECT a.fecha_nacimiento
+              FROM acompanantes a
+              INNER JOIN participantes p ON p.id = a.participante_id
+              INNER JOIN usuarios u ON u.id = p.usuario_id
+              WHERE LOWER(TRIM(u.correo)) <> 'brantemarcoantonio@gmail.com'
+                AND COALESCE(p.cancelada, 0) = 0
+          )
+      `).bind(
+          LIMITE_JOVENES,
+          LIMITE_JOVENES,
+          LIMITE_NINOS,
+          LIMITE_NINOS
+      ).first();
     // Resumen general para el panel.
     const resumen = {
-      totalInscripciones: pagos.length,
+  totalInscripciones: pagosContabilizables.length,
 
-      lideres: pagos.filter(
-        (p) => p.tipoParticipante === "Líder"
-      ).length,
+  lideres: pagosContabilizables.filter(
+    (p) => p.tipoParticipante === "Líder"
+  ).length,
 
-      pendientes: pagos.filter(
-        (p) => p.estado === "PENDIENTE"
-      ).length,
+  jovenes: Number(resultadoEdades?.jovenes || 0),
 
-      enRevision: pagos.filter(
-        (p) => p.estado === "EN_REVISION"
-      ).length,
+  ninos: Number(resultadoEdades?.ninos || 0),
 
-      aprobados: pagos.filter(
-        (p) => p.estado === "APROBADO"
-      ).length,
+  bebes: Number(resultadoEdades?.bebes || 0),
 
-      rechazados: pagos.filter(
-        (p) => p.estado === "RECHAZADO"
-      ).length
-    };
+  pendientes: pagosContabilizables.filter(
+    (p) => p.estado === "PENDIENTE"
+  ).length,
+
+  enRevision: pagosContabilizables.filter(
+    (p) => p.estado === "EN_REVISION"
+  ).length,
+
+  aprobados: pagosContabilizables.filter(
+    (p) => p.estado === "APROBADO"
+  ).length,
+
+  rechazados: pagosContabilizables.filter(
+    (p) => p.estado === "RECHAZADO"
+  ).length
+};
 
     return responder({
       estado: "OK",
