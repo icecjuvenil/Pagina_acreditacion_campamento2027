@@ -155,9 +155,15 @@
                 </article>
 
                 <article class="admin-indicador">
-                    <span>Inscripciones</span>
+                    <span>Total Asistentes</span>
+                    <strong id="admin-asistentes">0</strong>
+                    <small>Total Asistentes al campamento</small>
+                </article>
+
+                <article class="admin-indicador">
+                    <span>Perfiles Creados</span>
                     <strong id="admin-total">0</strong>
-                    <small>Total registrado</small>
+                    <small>Inscripciones principales registradas</small>
                 </article>
 
                 <article class="admin-indicador admin-indicador--pendiente">
@@ -477,6 +483,12 @@
 
                 "admin-total":
                     resumen.totalInscripciones,
+
+                "admin-asistentes":
+                    Number(resumen.lideres || 0) +
+                    Number(resumen.jovenes || 0) +
+                    Number(resumen.ninos || 0) +
+                    Number(resumen.bebes || 0),    
 
                 "admin-lideres":
                     resumen.lideres,
