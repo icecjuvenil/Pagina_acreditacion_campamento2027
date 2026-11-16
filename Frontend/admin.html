@@ -1674,8 +1674,9 @@ botonExportarExcel.addEventListener("click", async () => {
         const hojaSalud = libro.addWorksheet("Información de salud");
 
         hojaSalud.columns = [
-            { header: "Tipo", key: "tipo", width: 20 },
+
             { header: "Nombre completo", key: "nombre", width: 35 },
+            { header: "Tipo", key: "tipo", width: 20 },
             { header: "Participante responsable", key: "responsable", width: 35 },
             { header: "Habitación", key: "habitacion", width: 36 },
             { header: "Alergias", key: "alergias", width: 15 },
@@ -1690,13 +1691,16 @@ botonExportarExcel.addEventListener("click", async () => {
 
         // Los datos médicos se incorporarán en el siguiente paso.
 
-
+        // Comprobar si existen inscripciones canceladas.
+        const hayCancelaciones = datos.registros.some(
+            (registro) => Boolean(registro.fecha_cancelacion)
+        );
         hoja.columns = [
-            { header: "ID inscripción", key: "id", width: 18 },
-            { header: "Tipo", key: "tipo", width: 52 },
+            
             { header: "Nombre completo", key: "nombre", width: 34 },
             { header: "Teléfono", key: "telefono", width: 19 },
             { header: "Correo", key: "correo", width: 38 },
+            { header: "Tipo", key: "tipo", width: 52 },
             { header: "Habitación", key: "habitacion", width: 36 },
             
 
@@ -1704,10 +1708,12 @@ botonExportarExcel.addEventListener("click", async () => {
             { header: "Método de pago", key: "metodoPago", width: 22 },
             { header: "Monto total (CLP)", key: "monto", width: 23 },
 
+            ...(hayCancelaciones ? [
             { header: "Estado de inscripción", key: "estadoInscripcion", width: 25 },
             { header: "Fecha de cancelación", key: "fechaCancelacion", width: 24 },
             { header: "Motivo de cancelación", key: "motivoCancelacion", width: 55 },
             { header: "Estado de devolución", key: "estadoDevolucion", width: 25 }
+        ] : [])
 
         ];
 
@@ -1724,11 +1730,10 @@ botonExportarExcel.addEventListener("click", async () => {
 
         for (const registro of datos.registros) {
             hoja.addRow({
-                id: Number(registro.inscripcion_id),
-                tipo: textoSeguro(registro.tipo),
                 nombre: textoSeguro(registro.nombre),
                 telefono: textoSeguro(registro.telefono),
                 correo: textoSeguro(registro.correo),
+                tipo: textoSeguro(registro.tipo),
                 habitacion: textoSeguro(registro.habitacion),
                 estado: textoSeguro(registro.estado_pago),
                 
@@ -1778,7 +1783,9 @@ estadoDevolucion: textoSeguro(
         hoja.getColumn("monto").numFmt = '"$"#,##0';
 
         // Filtros y encabezado fijo
-        hoja.autoFilter = "A1:M1";
+        // Ajustar los filtros según las columnas visibles.
+hoja.autoFilter =
+    `A1:${hoja.getColumn(hoja.columnCount).letter}1`;
         hoja.views = [{
             state: "frozen",
             ySplit: 1
@@ -1808,8 +1815,9 @@ estadoDevolucion: textoSeguro(
             // Incorporar participantes y acompañantes.
             for (const persona of datos.salud) {
                 hojaSalud.addRow({
-                    tipo: textoSeguro(persona.tipo),
+                    
                     nombre: textoSeguro(persona.nombre),
+                    tipo: textoSeguro(persona.tipo),
                     responsable: textoSeguro(persona.responsable),
                     habitacion: textoSeguro(persona.habitacion),
 
