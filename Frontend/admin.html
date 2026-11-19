@@ -1639,7 +1639,8 @@ botonRechazar.addEventListener("click", async () => {
 
                 identidad.textContent =
                     "Administrador: " +
-                    resultado.administrador.correo;
+                        (resultado.administrador.nombreCompleto ||
+                        resultado.administrador.correo);
 
                 identidad.hidden = false;
 

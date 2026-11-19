@@ -280,9 +280,10 @@ END AS comprobante_recibido,
       estado: "OK",
 
       administrador: {
-        id: Number(usuario.id),
-        correo: usuario.correo
-      },
+  id: Number(usuario.id),
+  correo: usuario.correo,
+  nombreCompleto: usuario.nombre_completo
+},
 
       resumen,
       pagos
